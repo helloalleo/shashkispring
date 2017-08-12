@@ -1,0 +1,92 @@
+group 'com.workingbit.core'
+version '1.0-SNAPSHOT'
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+    sourceCompatibility=1.8
+    targetCompatibility=1.8
+    apply plugin: 'maven'
+    apply plugin: 'application'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'propdeps'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.workingbit'
+    version = '1.0'
+}
+
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url 'http://repo.spring.io/milestone' }
+        maven { url 'http://repo.spring.io/snapshot' }
+        maven { url 'https://repository.jboss.org/nexus/content/repositories/releases' }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'http://repo.maven.apache.org/maven2' }
+        maven { url "http://dl.bintray.com/helloalleo/shashkionline" }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${spring_boot_version}"
+            mavenBom "com.amazonaws:aws-java-sdk-bom:${amazonaws_version}"
+        }
+    }
+
+    dependencies {
+        compile "com.workingbit.share:sharemodule:${sharemodule_version}"
+
+        compile 'org.springframework.boot:spring-boot-starter-web'
+        compile 'org.springframework.boot:spring-boot-starter-jersey'
+        compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
+        compile 'com.amazonaws.serverless:aws-serverless-java-container-spring:0.5.1'
+        compile 'com.amazonaws:aws-java-sdk-dynamodb'
+        compile 'org.apache.commons:commons-lang3:3.5'
+        compile 'org.projectlombok:lombok:1.16.16'
+
+        testCompile 'org.springframework.boot:spring-boot-starter-test'
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
+    }
+    dependencies {
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
+        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
+        //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
+    }
+}
+
+
+defaultTasks 'bootRun'
+
+repositories {
+    mavenCentral()
+}
+
+clean {
+    delete "target"
+}
+
+task cleanResources(type: Delete) {
+    delete 'build/resources'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0'
+}

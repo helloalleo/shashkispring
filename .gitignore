@@ -1,0 +1,15 @@
+.idea
+*.iml
+lambda/node_modules
+lambda/dist
+lambda/**/.baseDir.js
+lambda/**/.baseDir.ts
+lambda/**/*.js
+lambda/**/config.json
+lambda/node_modules
+
+# package directories
+lambda/jspm_packages
+
+# Serverless directories
+lambda/.serverless
