@@ -38,8 +38,6 @@ subprojects {
     }
 
     dependencies {
-        compile "com.workingbit.share:sharemodule:${sharemodule_version}"
-
         compile 'org.springframework.boot:spring-boot-starter-web'
         compile 'org.springframework.boot:spring-boot-starter-jersey'
         compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
