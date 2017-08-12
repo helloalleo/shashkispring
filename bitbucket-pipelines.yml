@@ -1,0 +1,11 @@
+pipelines:
+  default:
+    - step:
+        caches:
+          - gradle
+        script:
+          - ./gradlew clean build
+          - cd wikiservice
+          - ./sls deploy
+          - cd ../boardservice
+          - ./sls deploy
