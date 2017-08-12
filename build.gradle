@@ -4,8 +4,6 @@ version '1.0-SNAPSHOT'
 allprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
-    sourceCompatibility=1.8
-    targetCompatibility=1.8
     apply plugin: 'maven'
     apply plugin: 'application'
     apply plugin: 'org.springframework.boot'
@@ -51,6 +49,88 @@ subprojects {
     }
 }
 
+project(':sharedmodule') {
+    jar {
+        baseName = 'sharedmdoule'
+        version = "${sharemodule_version}"
+    }
+}
+
+project(':boardservice') {
+    bootRepackage {
+        mainClass = 'com.workingbit.board.LocalBoardApplication'
+    }
+
+    springBoot {
+        mainClass = 'com.workingbit.board.LocalBoardApplication'
+        executable = true
+        buildInfo()
+    }
+
+    bootRun {
+        addResources = false
+    }
+
+    task stage(dependsOn: 'bootRepackage') {
+    }
+
+    dependencies {
+        compile project(':sharedmodule')
+    }
+
+    task copyRuntimeLibs(type: Copy) {
+        into "$buildDir/libs/deps/lib"
+        from configurations.runtime
+    }
+
+    task batchZip(type: Zip) {
+        from "$buildDir/classes/java/main", "$buildDir/resources/main", "$buildDir/libs/deps"
+    }
+}
+
+project(':wikiservice') {
+    bootRepackage {
+        mainClass = 'com.workingbit.wiki.LocalWikiApplication'
+    }
+
+    springBoot {
+        mainClass = 'com.workingbit.wiki.LocalWikiApplication'
+        executable = true
+        buildInfo()
+    }
+
+    bootRun {
+        addResources = false
+    }
+
+    dependencies {
+        compile project(':sharedmodule')
+    }
+
+    bootRun {
+        addResources = false
+    }
+
+    task stage(dependsOn: 'bootRepackage') {
+    }
+
+    dependencies {
+        compile project(':sharedmodule')
+    }
+
+    task copyRuntimeLibs(type: Copy) {
+        into "$buildDir/libs/deps/lib"
+        from configurations.runtime
+    }
+
+    task batchZip(type: Zip) {
+        from "$buildDir/classes/java/main", "$buildDir/resources/main", "$buildDir/libs/deps"
+    }
+}
+
+sourceCompatibility=1.8
+targetCompatibility=1.8
+
 buildscript {
     repositories {
         mavenLocal()
@@ -88,3 +168,6 @@ task cleanResources(type: Delete) {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
 }
+
+startScripts.enabled = false
+bootRepackage.enabled = false

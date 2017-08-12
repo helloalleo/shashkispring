@@ -7,8 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
  * Created by Aleksey Popryaduhin on 18:31 09/08/2017.
  */
@@ -23,8 +21,8 @@ public class Board implements IBoard {
   private String id;
 
   @DynamoDBTypeConvertedJson(targetType = BoardChanger.class)
-  @DynamoDBAttribute(attributeName = "Squares")
-  private BoardChanger squares;
+  @DynamoDBAttribute(attributeName = "CurrentBoard")
+  private BoardChanger currentBoard;
 
   /**
    * Is player on the black side?
@@ -42,8 +40,8 @@ public class Board implements IBoard {
   @DynamoDBAttribute(attributeName = "SquareSize")
   private int squareSize;
 
-  public Board(BoardChanger squares, Draught selectedDraught, List<Draught> whiteDraughts, List<Draught> blackDraughts, boolean black, EnumRules rules, int squareSize) {
-    this.squares = squares;
+  public Board(BoardChanger boardChanger, boolean black, EnumRules rules, int squareSize) {
+    this.currentBoard = boardChanger;
     this.black = black;
     this.rules = rules;
     this.squareSize = squareSize;

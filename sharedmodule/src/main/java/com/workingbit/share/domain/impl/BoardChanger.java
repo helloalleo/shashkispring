@@ -1,8 +1,9 @@
 package com.workingbit.share.domain.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.share.domain.Changeable;
-import com.workingbit.share.domain.ISquare;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,17 +11,21 @@ import java.util.List;
  */
 public class BoardChanger implements Changeable {
 
-  private final List<ISquare> board;
-  private final List<Draught> whiteDraughts;
-  private final List<Draught> blackDraughts;
-  private final Draught selectedDraught;
+  private List<Square> squares;
+  private List<Draught> whiteDraughts;
+  private List<Draught> blackDraughts;
+  private Draught selectedDraught;
 
-  public BoardChanger(List<ISquare> board,
+  public BoardChanger() {
+    super();
+  }
+
+  public BoardChanger(List<Square> squares,
                       List<Draught> whiteDraughts,
                       List<Draught> blackDraughts,
                       Draught selectedDraught) {
     super();
-    this.board = board;
+    this.squares = squares;
     this.whiteDraughts = whiteDraughts;
     this.blackDraughts = blackDraughts;
     this.selectedDraught = selectedDraught;
@@ -36,8 +41,8 @@ public class BoardChanger implements Changeable {
     return this;
   }
 
-  public List<ISquare> getBoard() {
-    return board;
+  public List<Square> getSquares() {
+    return squares;
   }
 
   public List<Draught> getWhiteDraughts() {
@@ -50,5 +55,18 @@ public class BoardChanger implements Changeable {
 
   public Draught getSelectedDraught() {
     return selectedDraught;
+  }
+
+  public void setSelectedDraught(Draught selectedDraught) {
+    this.selectedDraught = selectedDraught;
+  }
+
+  public void mapBoard(ObjectMapper objectMapper) {
+    List<Square> mappedSquares = new ArrayList<>(squares.size());
+    for (int i = 0; i < squares.size(); i++) {
+      Square square = objectMapper.convertValue(squares.get(i), Square.class);
+      mappedSquares.add(square);
+    }
+    squares = mappedSquares;
   }
 }
