@@ -1,0 +1,5 @@
+server:
+  port: 8001
+
+BOARD_API_URL: http://localhost:8002
+BOARD_RESOURCE: /board

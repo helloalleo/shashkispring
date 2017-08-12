@@ -1,0 +1,121 @@
+package com.workingbit.wiki.service;
+
+import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.domain.IArticle;
+import com.workingbit.share.domain.impl.Article;
+import com.workingbit.share.domain.impl.NewBoardRequest;
+import com.workingbit.wiki.common.EnumResponse;
+import org.junit.After;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+
+/**
+ * Created by Aleksey Popryaduhin on 13:53 09/08/2017.
+ */
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ArticleServiceTest {
+
+  @Test
+  public void delete() throws Exception {
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getNewBoardRequest()));
+    IArticle iArticle = (IArticle) save.get(EnumResponse.article.name());
+    articleService.delete(iArticle.getId());
+    Optional<IArticle> byId = articleService.findById(iArticle.getId());
+    assertFalse(byId.isPresent());
+  }
+
+  @Test
+  public void findById() throws Exception {
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getNewBoardRequest()));
+    IArticle iArticle = (IArticle) save.get(EnumResponse.article.name());
+    toDelete(iArticle);
+    Optional<IArticle> byId = articleService.findById(iArticle.getId());
+    assertTrue(byId.isPresent());
+  }
+
+  @Test
+  public void publishArticle() throws Exception {
+    IArticle article = getArticle();
+    article.setNewAdded(true);
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    IArticle iArticle = (IArticle) save.get(EnumResponse.article.name());
+    toDelete(iArticle);
+    boolean publishArticle = articleService.publishArticle(iArticle);
+    assertTrue(publishArticle);
+    Optional<IArticle> byId = articleService.findById(iArticle.getId());
+    assertTrue(byId.isPresent());
+    assertTrue(byId.get().isPublished());
+  }
+
+  @Test
+  public void findPublishedArticles() throws Exception {
+    IArticle article = getArticle();
+    article.setNewAdded(true);
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    IArticle iArticle = (IArticle) save.get(EnumResponse.article.name());
+    toDelete(iArticle);
+    boolean publishArticle = articleService.publishArticle(iArticle);
+    assertTrue(publishArticle);
+    List<IArticle> publishedArticles = articleService.findPublishedArticles();
+    IArticle published = publishedArticles.get(publishedArticles.indexOf(iArticle));
+    assertTrue(published.isPublished());
+  }
+
+  @Autowired
+  private ArticleService articleService;
+
+  @After
+  public void tearUp() {
+    articles.forEach(article -> articleService.delete(article.getId()));
+  }
+
+  @Test
+  public void save() throws Exception {
+    IArticle article = getArticle();
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    IArticle iArticle = (IArticle) save.get(EnumResponse.article.name());
+    Optional<IArticle> articleOptional = articleService.findById(iArticle.getId());
+    assertTrue(articleOptional.isPresent());
+    toDelete(articleOptional.get());
+    assertEquals(articleOptional.get().getTitle(), "test1");
+    assertEquals(articleOptional.get().getContent(), "article1");
+  }
+
+  @Test
+  public void findAll() throws Exception {
+    IArticle article = getArticle();
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    IArticle iArticle = (IArticle) save.get(EnumResponse.article.name());
+    toDelete(iArticle);
+    assertTrue(articleService.findAll().contains(iArticle));
+  }
+
+  private Map<String, Object> getArticleAndBoard(IArticle article, NewBoardRequest newBoardRequest) {
+    return new HashMap<String, Object>() {{
+      put(EnumResponse.article.name(), article);
+      put(EnumResponse.board.name(), getNewBoardRequest());
+    }};
+  }
+
+  private List<IArticle> articles = new ArrayList<>();
+
+  private void toDelete(IArticle save) {
+    articles.add(save);
+  }
+
+  private IArticle getArticle() {
+    return new Article("alex", "test1", "article1");
+  }
+
+  private NewBoardRequest getNewBoardRequest() {
+    return new NewBoardRequest(true, false, EnumRules.RUSSIAN, 60);
+  }
+}

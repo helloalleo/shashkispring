@@ -1,0 +1,46 @@
+group 'com.workingbit.board'
+version '1.0-SNAPSHOT'
+
+defaultTasks 'bootRun'
+
+//bootRepackage {
+//    mainClass = 'com.workingbit.board.LocalBoardApplication'
+//}
+//
+//springBoot {
+//    mainClass = 'com.workingbit.board.LocalBoardApplication'
+//    executable = true
+//    buildInfo()
+//}
+//
+//bootRun {
+//    addResources = false
+//}
+
+//jar {
+//    baseName = 'boardservice'
+//    version = '0.1.0'
+//}
+
+//dependencies {
+//}
+
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '4.0'
+//}
+
+//task stage(dependsOn: 'bootRepackage') {
+//}
+
+//compileJava.dependsOn processResources
+//processResources.dependsOn cleanResources, bootBuildInfo
+//bootBuildInfo.mustRunAfter cleanResources
+
+//task copyRuntimeLibs(type: Copy) {
+//    into 'build/libs/deps/lib'
+//    from configurations.runtime
+//}
+//
+//task batchZip(type: Zip) {
+//    from 'build/classes/java/main', 'build/resources/main', 'build/libs/deps'
+//}
