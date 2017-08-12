@@ -1,2 +1,2 @@
 rootProject.name = 'shashkiBack'
-include 'wikiservice', 'boardservice'
+include 'sharedmodule', 'wikiservice', 'boardservice'
