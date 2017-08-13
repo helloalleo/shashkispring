@@ -1,7 +1,7 @@
 package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Draught;
@@ -20,12 +20,12 @@ public class MoveServiceTest extends BaseServiceTest {
 
   @Test
   public void doMove() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     Draught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught(draught);
     ISquare target = getSquareByVH(board, 4, 3);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
     List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
     List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());
@@ -37,4 +37,5 @@ public class MoveServiceTest extends BaseServiceTest {
 //    boolean queenMove = (boolean) move.get(queen.name());
 
   }
+
 }

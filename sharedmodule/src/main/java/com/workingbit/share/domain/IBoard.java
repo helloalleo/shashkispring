@@ -11,9 +11,9 @@ public interface IBoard {
 
   void setId(String id);
 
-  String getCurrentBoardId();
+  IBoardContainer getCurrentBoard();
 
-  void setCurrentBoardId(String boardId);
+  void setCurrentBoard(IBoardContainer board);
 
   boolean isBlack();
 

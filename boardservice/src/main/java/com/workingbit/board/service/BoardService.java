@@ -2,12 +2,10 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
+import com.workingbit.board.dao.BoardHistoryDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.IBoard;
-import com.workingbit.share.domain.IBoardContainer;
-import com.workingbit.share.domain.IDraught;
-import com.workingbit.share.domain.ISquare;
+import com.workingbit.share.domain.*;
 import com.workingbit.share.domain.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,14 +28,17 @@ import static com.workingbit.board.service.BoardUtils.mapList;
 public class BoardService {
 
   private final BoardDao boardDao;
+  private final BoardHistoryDao boardHistoryDao;
   private final BoardHistoryManagerService changeManagerService;
   private final ObjectMapper objectMapper;
 
   @Autowired
   public BoardService(BoardDao boardDao,
+                      BoardHistoryDao boardHistoryDao,
                       BoardHistoryManagerService changeManagerService,
                       ObjectMapper objectMapper) {
     this.boardDao = boardDao;
+    this.boardHistoryDao = boardHistoryDao;
     this.changeManagerService = changeManagerService;
     this.objectMapper = objectMapper;
   }
@@ -100,12 +101,12 @@ public class BoardService {
       }
     }
     IBoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
-    changeManagerService.addChangeable(boardChanger);
-    return new Board(boardChanger, black, rules, squareSize);
+    BoardHistory boardHistory = changeManagerService.addChangeable(boardChanger);
+    return new Board(boardHistory.getCurrentBoard().getBoard(), black, rules, squareSize);
   }
 
-  public void addDraught(IBoard board, IDraught draught) {
-    Optional<Square> draughtOnBoard = board.getCurrentBoard().getSquares()
+  public void addDraught(IBoardContainer board, IDraught draught) {
+    Optional<Square> draughtOnBoard = board.getSquares()
         .stream()
         // find square by coords of draught
         .filter(square -> square.getV() == draught.getV() && square.getH() == draught.getH())
@@ -120,7 +121,7 @@ public class BoardService {
     Square square = objectMapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
     return boardDao.findById(aBoardId).map(board -> {
       try {
-        HighlightMoveService highlightMoveService = HighlightMoveService.getService(board, square, board.getRules());
+        HighlightMoveService highlightMoveService = HighlightMoveService.getService(board.getCurrentBoard(), square, board.getRules());
         return highlightMoveService.findAllowedMoves();
       } catch (BoardServiceException e) {
         return null;
@@ -136,7 +137,7 @@ public class BoardService {
       List<ISquare> allowedMoves = mapList((List<ISquare>) moveTo.get(allowed.name()), objectMapper, Square.class, ISquare.class);
       List<IDraught> beatenMoves = mapList((List<IDraught>) moveTo.get(beaten.name()), objectMapper, Draught.class, IDraught.class);
       try {
-        MoveService moveService = MoveService.getService(board, selected, target, allowedMoves, beatenMoves);
+        MoveService moveService = MoveService.getService(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves);
         Map<String, Object> move = moveService.doMove();
         moveService.saveBoard(this);
         return move;
@@ -148,6 +149,6 @@ public class BoardService {
 
   public void save(IBoardContainer board) {
     changeManagerService.addChangeable(board);
-    boardDao.save(board);
+//    boardDao.save(board);
   }
 }

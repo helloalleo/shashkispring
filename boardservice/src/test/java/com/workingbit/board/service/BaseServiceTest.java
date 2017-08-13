@@ -3,9 +3,10 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AWSProperties;
 import com.workingbit.board.dao.BoardDao;
-import com.workingbit.board.history.BoardChangeManagerService;
+import com.workingbit.board.dao.BoardHistoryDao;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.NewBoardRequest;
@@ -22,9 +23,10 @@ class BaseServiceTest {
 
   private ObjectMapper objectMapper = new ObjectMapper();
 
-  IBoard getBoard() {
+  IBoardContainer getBoard() {
     BoardService boardService = getBoardService();
-    return boardService.createBoard(new NewBoardRequest(false,false, EnumRules.RUSSIAN, 60));
+    IBoard board = boardService.createBoard(new NewBoardRequest(false, false, EnumRules.RUSSIAN, 60));
+    return board.getCurrentBoard();
   }
 
   BoardService getBoardService() {
@@ -32,7 +34,8 @@ class BaseServiceTest {
     when(awsProperties.getRegion()).thenReturn("eu-central-1");
     when(awsProperties.isTest()).thenReturn(true);
     BoardDao boardDao = new BoardDao(awsProperties, objectMapper);
-    return new BoardService(boardDao, getChangeManagerService(), objectMapper);
+    BoardHistoryDao boardHistoryDao = new BoardHistoryDao(awsProperties, objectMapper);
+    return new BoardService(boardDao, boardHistoryDao, getChangeManagerService(), objectMapper);
   }
 
   private BoardHistoryManagerService getChangeManagerService() {
@@ -51,7 +54,11 @@ class BaseServiceTest {
     return new Draught(v, h, true);
   }
 
-  ISquare getSquareByVH(IBoard board, int v, int h) {
+  ISquare getSquareByVH(IBoardContainer board, int v, int h) {
     return findSquareByVH(board, v, h).get();
+  }
+
+  protected EnumRules getRules() {
+    return EnumRules.RUSSIAN;
   }
 }

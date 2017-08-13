@@ -23,6 +23,7 @@ public class BoardHistoryManagerService {
    */
   public BoardHistoryManagerService() {
     boardHistory = new BoardHistory();
+    boardHistory.setCurrentBoard(boardHistory.getParentBoard());
   }
 
   /**
@@ -47,12 +48,13 @@ public class BoardHistoryManagerService {
    *
    * @param changeable
    */
-  public void addChangeable(IBoardContainer changeable) {
+  public BoardHistory addChangeable(IBoardContainer changeable) {
     BoardHistoryNode node = new BoardHistoryNode(changeable);
     boardHistory.getCurrentBoard().setRight(node);
     node.setLeft(boardHistory.getCurrentBoard());
     boardHistory.setCurrentBoard(node);
     boardHistoryDao.save(boardHistory);
+    return boardHistory;
   }
 
   /**

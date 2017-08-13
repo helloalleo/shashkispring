@@ -22,5 +22,5 @@ public class BoardHistory implements IBoardHistory {
 
   @DynamoDBTypeConvertedJson(targetType = BoardHistoryNode.class)
   @DynamoDBAttribute(attributeName = "ParentBoard")
-  private BoardHistoryNode parentBoard;
+  private BoardHistoryNode parentBoard = new BoardHistoryNode();
 }

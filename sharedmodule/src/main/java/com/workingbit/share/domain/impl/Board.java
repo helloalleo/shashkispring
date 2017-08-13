@@ -4,6 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.workingbit.board.common.DBConstants;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class Board implements IBoard {
   private String id;
 
   @DynamoDBAttribute(attributeName = "CurrentBoard")
-  private String currentBoardId;
+  private IBoardContainer currentBoard;
 
   /**
    * Is player on the black side?
@@ -40,8 +41,8 @@ public class Board implements IBoard {
   @DynamoDBAttribute(attributeName = "SquareSize")
   private int squareSize;
 
-  public Board(String boardId, boolean black, EnumRules rules, int squareSize) {
-    this.currentBoardId = boardId;
+  public Board(IBoardContainer board, boolean black, EnumRules rules, int squareSize) {
+    this.currentBoard = board;
     this.black = black;
     this.rules = rules;
     this.squareSize = squareSize;

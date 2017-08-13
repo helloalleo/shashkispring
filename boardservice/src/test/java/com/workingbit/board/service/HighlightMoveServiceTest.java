@@ -2,7 +2,7 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.common.EnumSearch;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
@@ -25,10 +25,10 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
 
   @Test
   public void shouldWhiteDraughtMoveForwardOnOnePosition() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquare((Draught) draught, 5, 2);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(4,1)(4,3)", resultToString(allowedMoves, allowed));
@@ -36,10 +36,10 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
 
   @Test
   public void shouldBlackDraughtMoveBackwardOnOnePosition() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     Draught draught = getDraughtBlack(5, 2);
     ISquare square = getSquare(draught, 5, 2);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(6,1)(6,3)", resultToString(allowedMoves, allowed));
@@ -47,7 +47,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
 
   @Test
   public void shouldWhiteDraughtBeatForward() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     BoardService boardService = getBoardService();
     // add black draught
     boardService.addDraught(board, getDraughtBlack(4, 3));
@@ -56,7 +56,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     ISquare square = getSquareByVH(board, 5, 2);
     // set draught for square
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(3,4)", resultToString(allowedMoves, allowed));
@@ -65,14 +65,14 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
 
   @Test
   public void shouldWhiteDraughtBeatForwardTwice() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     BoardService boardService = getBoardService();
     boardService.addDraught(board, getDraughtBlack(4, 3));
     boardService.addDraught(board, getDraughtBlack(4, 1));
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(3,0)(3,4)", resultToString(allowedMoves, allowed));
@@ -81,13 +81,13 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
 
   @Test
   public void shouldWhiteDraughtBeatBackward() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     BoardService boardService = getBoardService();
     boardService.addDraught(board, getDraughtBlack(6, 1));
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(7,0)", resultToString(allowedMoves, allowed));
@@ -96,14 +96,14 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
 
   @Test
   public void shouldWhiteDraughtBeatBackwardTwice() throws Exception, BoardServiceException {
-    IBoard board = getBoard();
+    IBoardContainer board = getBoard();
     BoardService boardService = getBoardService();
     boardService.addDraught(board, getDraughtBlack(6, 1));
     boardService.addDraught(board, getDraughtBlack(6, 3));
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(7,0)(7,4)", resultToString(allowedMoves, allowed));

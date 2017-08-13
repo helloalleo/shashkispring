@@ -1,5 +1,7 @@
 package com.workingbit.share.common;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 /**
  * Created by Aleksey Popryaduhin on 12:01 12/08/2017.
  */
@@ -15,5 +17,9 @@ public class Utils {
       }
     }
     return true;
+  }
+
+  public static <T> T clone(T object) {
+    return ObjectUtils.clone(object);
   }
 }
