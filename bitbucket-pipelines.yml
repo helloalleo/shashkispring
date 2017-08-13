@@ -4,7 +4,7 @@ pipelines:
         caches:
           - gradle
         script:
-          - ./gradlew clean build copyRuntimeLibs batchZip --parallel
+          - ./gradlew clean build copyRuntimeLibs batchZip --parallel -x test
           - cd wikiservice
           - ./sls deploy
           - cd ../boardservice
