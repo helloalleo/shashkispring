@@ -2,10 +2,12 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
-import com.workingbit.board.dao.BoardHistoryDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.*;
+import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
+import com.workingbit.share.domain.IDraught;
+import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,17 +30,14 @@ import static com.workingbit.board.service.BoardUtils.mapList;
 public class BoardService {
 
   private final BoardDao boardDao;
-  private final BoardHistoryDao boardHistoryDao;
   private final BoardHistoryManagerService changeManagerService;
   private final ObjectMapper objectMapper;
 
   @Autowired
   public BoardService(BoardDao boardDao,
-                      BoardHistoryDao boardHistoryDao,
                       BoardHistoryManagerService changeManagerService,
                       ObjectMapper objectMapper) {
     this.boardDao = boardDao;
-    this.boardHistoryDao = boardHistoryDao;
     this.changeManagerService = changeManagerService;
     this.objectMapper = objectMapper;
   }
@@ -102,7 +101,7 @@ public class BoardService {
     }
     IBoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
     BoardHistory boardHistory = changeManagerService.addChangeable(boardChanger);
-    return new Board(boardHistory.getCurrentBoard().getBoard(), black, rules, squareSize);
+    return new Board(boardHistory.getLast().getBoard(), black, rules, squareSize);
   }
 
   public void addDraught(IBoardContainer board, IDraught draught) {

@@ -4,7 +4,6 @@ import com.workingbit.board.dao.BoardHistoryDao;
 import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.BoardHistory;
-import com.workingbit.share.domain.impl.BoardHistoryNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class BoardHistoryManagerService {
 
-  @Autowired
   private BoardHistoryDao boardHistoryDao;
   private BoardHistory boardHistory;
 
@@ -23,7 +21,7 @@ public class BoardHistoryManagerService {
    */
   public BoardHistoryManagerService() {
     boardHistory = new BoardHistory();
-    boardHistory.setCurrentBoard(boardHistory.getParentBoard());
+    boardHistory.setLast(boardHistory.getFirst());
   }
 
   /**
@@ -33,14 +31,19 @@ public class BoardHistoryManagerService {
    */
   public BoardHistoryManagerService(BoardHistoryManagerService manager) {
     this();
-    boardHistory.setCurrentBoard(manager.getBoardHistory().getCurrentBoard());
+    boardHistory.setLast(manager.getBoardHistory().getLast());
+  }
+
+  @Autowired
+  public void setBoardHistoryDao(BoardHistoryDao boardHistoryDao) {
+    this.boardHistoryDao = boardHistoryDao;
   }
 
   /**
    * Clears all Changables contained in this manager.
    */
   public void clear() {
-    boardHistory.setCurrentBoard(boardHistory.getParentBoard());
+    boardHistory.setLast(boardHistory.getFirst());
   }
 
   /**
@@ -49,10 +52,7 @@ public class BoardHistoryManagerService {
    * @param changeable
    */
   public BoardHistory addChangeable(IBoardContainer changeable) {
-    BoardHistoryNode node = new BoardHistoryNode(changeable);
-    boardHistory.getCurrentBoard().setRight(node);
-    node.setLeft(boardHistory.getCurrentBoard());
-    boardHistory.setCurrentBoard(node);
+    boardHistory.addLast(changeable);
     boardHistoryDao.save(boardHistory);
     return boardHistory;
   }
@@ -63,7 +63,7 @@ public class BoardHistoryManagerService {
    * @return
    */
   public boolean canUndo() {
-    return boardHistory.getCurrentBoard() != boardHistory.getParentBoard();
+    return boardHistory.getLast() != boardHistory.getFirst();
   }
 
   /**
@@ -72,7 +72,7 @@ public class BoardHistoryManagerService {
    * @return
    */
   public boolean canRedo() {
-    return boardHistory.getCurrentBoard().getRight() != null;
+    return boardHistory.getLast().getNext() != null;
   }
 
   /**
@@ -86,7 +86,7 @@ public class BoardHistoryManagerService {
       throw new IllegalStateException("Cannot undo. Index is out of range.");
     }
     //undo
-    IBoardContainer undo = boardHistory.getCurrentBoard().getBoard().undo();
+    IBoardContainer undo = boardHistory.getLast().getBoard().undo();
     //set index
     moveLeft();
     return undo;
@@ -98,10 +98,10 @@ public class BoardHistoryManagerService {
    * @throws IllegalStateException If the left index is null.
    */
   private void moveLeft() {
-    if (boardHistory.getCurrentBoard().getLeft() == null) {
+    if (boardHistory.getLast().getPrev() == null) {
       throw new IllegalStateException("Internal index set to null.");
     }
-    boardHistory.setCurrentBoard(boardHistory.getCurrentBoard().getLeft());
+    boardHistory.setLast(boardHistory.getLast().getPrev());
   }
 
   /**
@@ -110,10 +110,10 @@ public class BoardHistoryManagerService {
    * @throws IllegalStateException If the right index is null.
    */
   private void moveRight() {
-    if (boardHistory.getCurrentBoard().getRight() == null) {
+    if (boardHistory.getLast().getNext() == null) {
       throw new IllegalStateException("Internal index set to null.");
     }
-    boardHistory.setCurrentBoard(boardHistory.getCurrentBoard().getRight());
+    boardHistory.setLast(boardHistory.getLast().getNext());
   }
 
   /**
@@ -129,7 +129,7 @@ public class BoardHistoryManagerService {
     //reset index
     moveRight();
     //redo
-    return boardHistory.getCurrentBoard().getBoard().redo();
+    return boardHistory.getLast().getBoard().redo();
   }
 
   public BoardHistory getBoardHistory() {

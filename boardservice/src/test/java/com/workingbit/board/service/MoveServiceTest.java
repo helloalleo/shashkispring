@@ -6,6 +6,9 @@ import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Draught;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,8 @@ import static com.workingbit.board.common.EnumSearch.beaten;
 /**
  * Created by Aleksey Popryaduhin on 21:13 11/08/2017.
  */
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class MoveServiceTest extends BaseServiceTest {
 
   @Test
@@ -37,5 +42,4 @@ public class MoveServiceTest extends BaseServiceTest {
 //    boolean queenMove = (boolean) move.get(queen.name());
 
   }
-
 }

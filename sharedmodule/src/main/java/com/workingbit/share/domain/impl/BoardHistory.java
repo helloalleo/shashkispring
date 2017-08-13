@@ -2,8 +2,13 @@ package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.workingbit.board.common.DBConstants;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.IBoardHistory;
 import lombok.Data;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 /**
  * Created by Aleksey Popryaduhin on 10:02 13/08/2017.
@@ -18,9 +23,65 @@ public class BoardHistory implements IBoardHistory {
 
   @DynamoDBTypeConvertedJson(targetType = BoardHistoryNode.class)
   @DynamoDBAttribute(attributeName = "CurrentBoard")
-  private BoardHistoryNode currentBoard;
+  private BoardHistoryNode last;
 
   @DynamoDBTypeConvertedJson(targetType = BoardHistoryNode.class)
   @DynamoDBAttribute(attributeName = "ParentBoard")
-  private BoardHistoryNode parentBoard = new BoardHistoryNode();
+  private BoardHistoryNode first;
+
+  @DynamoDBAttribute(attributeName = "Size")
+  private int size;
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.defaultWriteObject();
+
+    // Write out size
+    out.writeInt(size);
+
+    for (BoardHistoryNode node = first; node != null; node = node.getNext()) {
+      out.writeObject(node.getBoard());
+    }
+  }
+
+  private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    in.defaultReadObject();
+    // Read in size
+    int size = in.readInt();
+
+    // Read in all elements in the proper order.
+    for (int i = 0; i < size; i++)
+      linkLast((IBoardContainer) in.readObject());
+  }
+
+  public void addFirst(IBoardContainer boardContainer) {
+    linkFirst(boardContainer);
+  }
+
+  public void addLast(IBoardContainer boardContainer) {
+    linkLast(boardContainer);
+  }
+
+  private void linkFirst(IBoardContainer e) {
+    final BoardHistoryNode f = first;
+    final BoardHistoryNode newNode = new BoardHistoryNode(null, e, f);
+    first = newNode;
+    if (f == null) {
+      last = newNode;
+    } else {
+      f.setPrev(newNode);
+    }
+    size++;
+  }
+
+  private void linkLast(IBoardContainer e) {
+    final BoardHistoryNode l = last;
+    final BoardHistoryNode newNode = new BoardHistoryNode(l, e, null);
+    last = newNode;
+    if (l == null) {
+      first = newNode;
+    } else {
+      l.setNext(newNode);
+    }
+    size++;
+  }
 }

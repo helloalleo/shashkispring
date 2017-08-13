@@ -6,7 +6,6 @@ import com.workingbit.share.domain.impl.NewBoardRequest;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,10 +21,7 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BoardServiceTest {
-
-  @Autowired
-  private BoardService boardService;
+public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void createBoard() throws Exception {

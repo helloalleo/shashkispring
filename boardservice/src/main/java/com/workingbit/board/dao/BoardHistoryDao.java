@@ -27,9 +27,9 @@ public class BoardHistoryDao extends BaseDao<BoardHistory, IBoardHistory> {
 //  public Optional<IBoard> findById(String entityId) {
 //    Optional<IBoard> boardOptional = super.findById(entityId);
 //    return boardOptional.map(iBoard -> {
-//      BoardChanger currentBoard = iBoard.getCurrentBoard();
-//      if (currentBoard != null) {
-//        currentBoard.mapBoard(objectMapper);
+//      BoardChanger last = iBoard.getLast();
+//      if (last != null) {
+//        last.mapBoard(objectMapper);
 //      }
 //      return iBoard;
 //    });
@@ -40,9 +40,9 @@ public class BoardHistoryDao extends BaseDao<BoardHistory, IBoardHistory> {
 //    return super.findAll()
 //        .stream()
 //        .peek(iBoard -> {
-//          BoardChanger currentBoard = iBoard.getCurrentBoard();
-//          if (currentBoard != null) {
-//            currentBoard.mapBoard(objectMapper);
+//          BoardChanger last = iBoard.getLast();
+//          if (last != null) {
+//            last.mapBoard(objectMapper);
 //          }
 //        })
 //        .collect(Collectors.toList());
