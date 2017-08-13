@@ -1,8 +1,11 @@
 package com.workingbit.history.service;
 
+import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.impl.BoardContainer;
+
+import java.util.Optional;
 
 /**
  * Created by Aleksey Popryaduhin on 19:52 12/08/2017.
@@ -17,7 +20,7 @@ public class BoardHistoryManager {
    */
   public BoardHistoryManager() {
     boardHistory = new BoardHistory();
-    boardHistory.setLast(boardHistory.getFirst());
+//    boardHistory.setLast(boardHistory.getFirst());
   }
 
   public static BoardHistoryManager getInstance() {
@@ -27,17 +30,17 @@ public class BoardHistoryManager {
   /**
    * Clears all Changables contained in this manager.
    */
-  public void clear() {
-    boardHistory.setLast(boardHistory.getFirst());
-  }
+//  public void clear() {
+//    boardHistory.setLast(boardHistory.getFirst());
+//  }
 
   /**
    * Adds a Changeable to manage.
    *
    * @param changeable
    */
-  public BoardHistory addChangeable(BoardContainer changeable) {
-    boardHistory.addLast(changeable);
+  public BoardHistory addBoard(BoardContainer changeable) {
+    boardHistory.addBoard(Optional.of(changeable));
     return boardHistory;
   }
 
@@ -47,7 +50,8 @@ public class BoardHistoryManager {
    * @return
    */
   public boolean canUndo() {
-    return boardHistory.getLast() != boardHistory.getFirst();
+    return boardHistory.canUndo();
+//    return boardHistory.getLast() != boardHistory.getFirst();
   }
 
   /**
@@ -56,7 +60,8 @@ public class BoardHistoryManager {
    * @return
    */
   public boolean canRedo() {
-    return boardHistory.getLast().getNext() != null;
+    return boardHistory.canRedo();
+//    return boardHistory.getLast().getNext() != null;
   }
 
   /**
@@ -64,40 +69,17 @@ public class BoardHistoryManager {
    *
    * @throws IllegalStateException if canUndo returns false.
    */
-  public IBoardContainer undo() {
+  public Optional<IBoardContainer> undo() {
     //validate
-    if (!canUndo()) {
+    if (!boardHistory.canUndo()) {
       throw new IllegalStateException("Cannot undo. Index is out of range.");
     }
-    //undo
-    IBoardContainer undo = boardHistory.getLast().getBoard().undo();
     //set index
-    moveLeft();
-    return undo;
-  }
-
-  /**
-   * Moves the internal pointer of the backed linked list to the left.
-   *
-   * @throws IllegalStateException If the left index is null.
-   */
-  private void moveLeft() {
-    if (boardHistory.getLast().getPrev() == null) {
-      throw new IllegalStateException("Internal index set to null.");
-    }
-    boardHistory.setLast(boardHistory.getLast().getPrev());
-  }
-
-  /**
-   * Moves the internal pointer of the backed linked list to the right.
-   *
-   * @throws IllegalStateException If the right index is null.
-   */
-  private void moveRight() {
-    if (boardHistory.getLast().getNext() == null) {
-      throw new IllegalStateException("Internal index set to null.");
-    }
-    boardHistory.setLast(boardHistory.getLast().getNext());
+    boardHistory.moveUp();
+    //undo
+    Optional<BoardContainer> boardContainerOptiona = boardHistory.getLast().getData();
+    return boardContainerOptiona
+        .map(BoardContainer::undo);
   }
 
   /**
@@ -105,18 +87,26 @@ public class BoardHistoryManager {
    *
    * @throws IllegalStateException if canRedo returns false.
    */
-  public BoardContainer redo() {
+  public Optional<BoardContainer> redo(Tree.Node<Optional<BoardContainer>> branch) {
     //validate
-    if (!canRedo()) {
+    if (!boardHistory.canRedo(branch)) {
       throw new IllegalStateException("Cannot redo. Index is out of range.");
     }
     //reset index
-    moveRight();
+    boardHistory.moveDown(branch);
     //redo
-    return boardHistory.getLast().getBoard().redo();
+    Optional<BoardContainer> boardContainerOptional = boardHistory.getLast().getData();
+    return boardContainerOptional
+        .map(BoardContainer::redo);
   }
 
-  public BoardHistory getBoardHistory() {
-    return boardHistory;
+  public Optional<BoardContainer> redo() {
+    if (!boardHistory.canRedo()) {
+      throw new IllegalStateException("Cannot redo. Index is out of range.");
+    }
+    boardHistory.moveDown();
+    Optional<BoardContainer> boardContainerOptional = boardHistory.getLast().getData();
+    return boardContainerOptional
+        .map(BoardContainer::redo);
   }
 }

@@ -101,7 +101,7 @@ public class BoardService {
       }
     }
     BoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
-    BoardHistory boardHistory = changeManagerService.addChangeable(boardChanger);
+    BoardHistory boardHistory = changeManagerService.addBoard(boardChanger);
     return new Board(boardHistory.getLast().getBoard(), black, rules, squareSize);
   }
 
@@ -148,7 +148,7 @@ public class BoardService {
   }
 
   public void save(BoardContainer board) {
-    changeManagerService.addChangeable(board);
+    changeManagerService.addBoard(board);
 //    boardDao.save(board);
   }
 }

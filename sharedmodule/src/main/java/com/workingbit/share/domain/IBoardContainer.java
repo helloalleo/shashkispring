@@ -10,9 +10,17 @@ import java.util.List;
  */
 public interface IBoardContainer extends Changeable {
 
+  String getId();
+
+  void setId(String id);
+
   List<Square> getSquares();
+
   List<Draught> getWhiteDraughts();
+
   List<Draught> getBlackDraughts();
+
   Draught getSelectedDraught();
+
   void setSelectedDraught(Draught selectedDraught);
 }
