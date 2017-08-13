@@ -12,9 +12,9 @@ import java.util.List;
  */
 public class BoardContainer implements IBoardContainer {
 
-  private List<Square> squares;
-  private List<Draught> whiteDraughts;
-  private List<Draught> blackDraughts;
+  private List<Square> squares = new ArrayList<>();
+  private List<Draught> whiteDraughts = new ArrayList<>();
+  private List<Draught> blackDraughts = new ArrayList<>();
   private Draught selectedDraught;
 
   public BoardContainer() {

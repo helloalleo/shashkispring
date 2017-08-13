@@ -4,6 +4,7 @@ import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
+import com.workingbit.share.domain.impl.BoardContainer;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class MoveService {
   }
 
   public void saveBoard(BoardService boardService) {
-    boardService.save(board);
+    boardService.save((BoardContainer) board);
   }
 
   private Map<String, Object> moveDraught() {

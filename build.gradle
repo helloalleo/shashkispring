@@ -80,6 +80,7 @@ project(':boardservice') {
 
     dependencies {
         compile project(':sharedmodule')
+        compile project(':historymodule')
     }
 
     task copyRuntimeLibs(type: Copy) {

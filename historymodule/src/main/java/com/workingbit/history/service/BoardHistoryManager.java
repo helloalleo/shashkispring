@@ -1,42 +1,27 @@
-package com.workingbit.board.service;
+package com.workingbit.history.service;
 
-import com.workingbit.board.dao.BoardHistoryDao;
+import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.impl.BoardContainer;
-import com.workingbit.share.domain.impl.BoardHistory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * Created by Aleksey Popryaduhin on 19:52 12/08/2017.
  */
-@Service
-public class BoardHistoryManagerService {
+public class BoardHistoryManager {
 
-  private BoardHistoryDao boardHistoryDao;
+  private static BoardHistoryManager INSTANCE = new BoardHistoryManager();
   private BoardHistory boardHistory;
 
   /**
    * Creates a new ChangeManager object which is initially empty.
    */
-  public BoardHistoryManagerService() {
+  public BoardHistoryManager() {
     boardHistory = new BoardHistory();
     boardHistory.setLast(boardHistory.getFirst());
   }
 
-  /**
-   * Creates a new ChangeManager which is a duplicate of the parameter in both contents and current index.
-   *
-   * @param manager
-   */
-  public BoardHistoryManagerService(BoardHistoryManagerService manager) {
-    this();
-    boardHistory.setLast(manager.getBoardHistory().getLast());
-  }
-
-  @Autowired
-  public void setBoardHistoryDao(BoardHistoryDao boardHistoryDao) {
-    this.boardHistoryDao = boardHistoryDao;
+  public static BoardHistoryManager getInstance() {
+    return INSTANCE;
   }
 
   /**
@@ -51,9 +36,8 @@ public class BoardHistoryManagerService {
    *
    * @param changeable
    */
-  public BoardHistory addChangeable(IBoardContainer changeable) {
+  public BoardHistory addChangeable(BoardContainer changeable) {
     boardHistory.addLast(changeable);
-    boardHistoryDao.save(boardHistory);
     return boardHistory;
   }
 

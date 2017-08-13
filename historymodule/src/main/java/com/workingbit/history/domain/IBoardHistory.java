@@ -1,6 +1,6 @@
-package com.workingbit.share.domain;
+package com.workingbit.history.domain;
 
-import com.workingbit.share.domain.impl.BoardHistoryNode;
+import com.workingbit.history.domain.impl.BoardHistoryNode;
 
 import java.io.Serializable;
 

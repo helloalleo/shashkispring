@@ -1,10 +1,10 @@
-package com.workingbit.board.dao;
+package com.workingbit.history.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.board.config.AWSProperties;
+import com.workingbit.history.config.AWSProperties;
+import com.workingbit.history.domain.impl.BoardHistory;
+import com.workingbit.history.domain.IBoardHistory;
 import com.workingbit.share.dao.BaseDao;
-import com.workingbit.share.domain.IBoardHistory;
-import com.workingbit.share.domain.impl.BoardHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

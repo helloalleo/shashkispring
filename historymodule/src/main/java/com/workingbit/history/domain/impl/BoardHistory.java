@@ -1,9 +1,9 @@
-package com.workingbit.share.domain.impl;
+package com.workingbit.history.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.workingbit.board.common.DBConstants;
-import com.workingbit.share.domain.IBoardContainer;
-import com.workingbit.share.domain.IBoardHistory;
+import com.workingbit.history.domain.IBoardHistory;
+import com.workingbit.share.domain.impl.BoardContainer;
 import lombok.Data;
 
 import java.io.IOException;
@@ -50,18 +50,18 @@ public class BoardHistory implements IBoardHistory {
 
     // Read in all elements in the proper order.
     for (int i = 0; i < size; i++)
-      linkLast((IBoardContainer) in.readObject());
+      linkLast((BoardContainer) in.readObject());
   }
 
-  public void addFirst(IBoardContainer boardContainer) {
+  public void addFirst(BoardContainer boardContainer) {
     linkFirst(boardContainer);
   }
 
-  public void addLast(IBoardContainer boardContainer) {
+  public void addLast(BoardContainer boardContainer) {
     linkLast(boardContainer);
   }
 
-  private void linkFirst(IBoardContainer e) {
+  private void linkFirst(BoardContainer e) {
     final BoardHistoryNode f = first;
     final BoardHistoryNode newNode = new BoardHistoryNode(null, e, f);
     first = newNode;
@@ -73,7 +73,7 @@ public class BoardHistory implements IBoardHistory {
     size++;
   }
 
-  private void linkLast(IBoardContainer e) {
+  private void linkLast(BoardContainer e) {
     final BoardHistoryNode l = last;
     final BoardHistoryNode newNode = new BoardHistoryNode(l, e, null);
     last = newNode;

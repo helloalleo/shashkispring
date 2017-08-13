@@ -34,10 +34,6 @@ public class BaseServiceTest {
     return board.getCurrentBoard();
   }
 
-  BoardHistoryManagerService getChangeManagerService() {
-    return new BoardHistoryManagerService();
-  }
-
   Draught getDraught(int v, int h) {
     return new Draught(v, h);
   }
@@ -61,8 +57,7 @@ public class BaseServiceTest {
   BoardService getBoardServiceMock() {
     AWSProperties awsProperties = mock(AWSProperties.class);
     when(awsProperties.getRegion()).thenReturn("eu-central-1");
-    when(awsProperties.isTest()).thenReturn(true);
     BoardDao boardDao = new BoardDao(awsProperties, objectMapper);
-    return new BoardService(boardDao, getChangeManagerService(), objectMapper);
+    return new BoardService(boardDao, objectMapper);
   }
 }

@@ -1,6 +1,6 @@
-package com.workingbit.share.domain.impl;
+package com.workingbit.history.domain.impl;
 
-import com.workingbit.share.domain.IBoardContainer;
+import com.workingbit.share.domain.impl.BoardContainer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ public class BoardHistoryNode {
   private BoardHistoryNode prev;
   @Getter
   @Setter
-  private IBoardContainer board;
+  private BoardContainer board;
   @Getter
   @Setter
   private BoardHistoryNode next;

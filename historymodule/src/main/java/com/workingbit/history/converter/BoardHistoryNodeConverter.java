@@ -1,9 +1,9 @@
-package com.workingbit.share.domain.converter;
+package com.workingbit.history.converter;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.share.domain.impl.BoardHistoryNode;
+import com.workingbit.history.domain.impl.BoardHistoryNode;
 
 /**
  * Created by Aleksey Popryaduhin on 12:21 13/08/2017.

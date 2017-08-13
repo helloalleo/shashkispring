@@ -3,6 +3,8 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.history.domain.impl.BoardHistory;
+import com.workingbit.history.service.BoardHistoryManager;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
 import com.workingbit.share.domain.IBoardContainer;
@@ -30,15 +32,14 @@ import static com.workingbit.board.service.BoardUtils.mapList;
 public class BoardService {
 
   private final BoardDao boardDao;
-  private final BoardHistoryManagerService changeManagerService;
+  private final BoardHistoryManager changeManagerService;
   private final ObjectMapper objectMapper;
 
   @Autowired
   public BoardService(BoardDao boardDao,
-                      BoardHistoryManagerService changeManagerService,
                       ObjectMapper objectMapper) {
     this.boardDao = boardDao;
-    this.changeManagerService = changeManagerService;
+    this.changeManagerService = BoardHistoryManager.getInstance();
     this.objectMapper = objectMapper;
   }
 
@@ -99,7 +100,7 @@ public class BoardService {
         squares.add(square);
       }
     }
-    IBoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
+    BoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
     BoardHistory boardHistory = changeManagerService.addChangeable(boardChanger);
     return new Board(boardHistory.getLast().getBoard(), black, rules, squareSize);
   }
@@ -146,7 +147,7 @@ public class BoardService {
     }).orElseThrow(getBoardServiceExceptionSupplier("Move not allowed"));
   }
 
-  public void save(IBoardContainer board) {
+  public void save(BoardContainer board) {
     changeManagerService.addChangeable(board);
 //    boardDao.save(board);
   }
