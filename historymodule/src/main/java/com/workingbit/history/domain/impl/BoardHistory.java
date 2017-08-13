@@ -19,10 +19,11 @@ public class BoardHistory implements IBoardHistory{
   private Tree.Node<Optional<BoardContainer>> current = Tree.node(Optional.empty());
 
   @Override
-  public void addBoard(Optional<BoardContainer> boardContainer) {
+  public Tree.Node<Optional<BoardContainer>> addBoard(Optional<BoardContainer> boardContainer) {
     Tree.Node<Optional<BoardContainer>> child = Tree.node(boardContainer);
     current.addChildNode(child);
     current = child;
+    return current;
   }
 
   @Override

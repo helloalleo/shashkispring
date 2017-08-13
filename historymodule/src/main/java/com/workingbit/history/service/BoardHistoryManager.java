@@ -2,7 +2,6 @@ package com.workingbit.history.service;
 
 import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.history.domain.impl.BoardHistory;
-import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.impl.BoardContainer;
 
 import java.util.Optional;
@@ -39,9 +38,8 @@ public class BoardHistoryManager {
    *
    * @param changeable
    */
-  public BoardHistory addBoard(BoardContainer changeable) {
-    boardHistory.addBoard(Optional.of(changeable));
-    return boardHistory;
+  public Tree.Node<Optional<BoardContainer>> addBoard(BoardContainer changeable) {
+    return boardHistory.addBoard(Optional.of(changeable));
   }
 
   /**
@@ -69,7 +67,7 @@ public class BoardHistoryManager {
    *
    * @throws IllegalStateException if canUndo returns false.
    */
-  public Optional<IBoardContainer> undo() {
+  public Optional<BoardContainer> undo() {
     //validate
     if (!boardHistory.canUndo()) {
       throw new IllegalStateException("Cannot undo. Index is out of range.");

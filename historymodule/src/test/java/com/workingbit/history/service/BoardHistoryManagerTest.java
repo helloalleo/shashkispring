@@ -1,9 +1,8 @@
 package com.workingbit.history.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.history.domain.impl.BoardHistory;
+import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.share.domain.IBoard;
-import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import org.junit.Before;
@@ -30,8 +29,8 @@ public class BoardHistoryManagerTest {
   @Test
   public void addChangeable() throws Exception {
     IBoard board = getBoard();
-    BoardHistory boardHistory = historyManagerService.addBoard(board.getCurrentBoard());
-    assertNotNull(board);
+    Tree.Node<Optional<BoardContainer>> node = historyManagerService.addBoard(board.getCurrentBoard());
+    assertNotNull(node);
   }
 
   @Test
@@ -51,7 +50,7 @@ public class BoardHistoryManagerTest {
     assertNotNull(board);
     boolean canUndo = historyManagerService.canUndo();
     assertTrue(canUndo);
-    Optional<IBoardContainer> undo = historyManagerService.undo();
+    Optional<BoardContainer> undo = historyManagerService.undo();
     assertTrue(undo.isPresent());
     assertTrue(historyManagerService.canRedo());
     Optional<BoardContainer> redo = historyManagerService.redo();
@@ -59,12 +58,12 @@ public class BoardHistoryManagerTest {
   }
 
   /**
-   *
    * 1
    * 2--
-   *    4-
-   *    5
+   * 4-
+   * 5
    * 3-
+   *
    * @throws Exception
    */
   @Test
@@ -74,7 +73,7 @@ public class BoardHistoryManagerTest {
     historyManagerService.addBoard(getBoard("3").getCurrentBoard());
     boolean canUndo = historyManagerService.canUndo();
     assertTrue(canUndo);
-    Optional<IBoardContainer> undo = historyManagerService.undo();
+    Optional<BoardContainer> undo = historyManagerService.undo();
     assertEquals(undo.get().getId(), "2");
     assertTrue(historyManagerService.canRedo());
     Optional<BoardContainer> redo = historyManagerService.redo();
@@ -90,8 +89,41 @@ public class BoardHistoryManagerTest {
     assertEquals(undo.get().getId(), "2");
     undo = historyManagerService.undo();
     assertEquals(undo.get().getId(), "1");
+    historyManagerService.undo();
+    try {
+      historyManagerService.undo();
+    } catch (IllegalStateException ignore) {
+      assertTrue(true);
+    }
+  }
+
+  @Test
+  public void redo_branch_custom() throws Exception {
+    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
+    historyManagerService.addBoard(getBoard("2").getCurrentBoard());
+    historyManagerService.addBoard(getBoard("3").getCurrentBoard());
+
+    Optional<BoardContainer> undo = historyManagerService.undo();
+    assertEquals(undo.get().getId(), "2");
+    Tree.Node<Optional<BoardContainer>> branch4 = historyManagerService.addBoard(getBoard("4").getCurrentBoard());
+    historyManagerService.addBoard(getBoard("44").getCurrentBoard());
+    historyManagerService.undo();
+    historyManagerService.undo();
+    assertEquals(undo.get().getId(), "2");
+    historyManagerService.addBoard(getBoard("5").getCurrentBoard());
     undo = historyManagerService.undo();
-    System.out.println(undo);
+    assertEquals(undo.get().getId(), "2");
+    undo = historyManagerService.redo(branch4);
+    assertEquals(undo.get().getId(), "4");
+    undo = historyManagerService.redo();
+    assertEquals(undo.get().getId(), "44");
+    boolean canRedo = historyManagerService.canRedo();
+    assertFalse(canRedo);
+    try {
+      historyManagerService.redo();
+    } catch (IllegalStateException ignore) {
+      assertTrue(true);
+    }
   }
 
   IBoard getBoard(String id) {
