@@ -11,7 +11,7 @@ import java.util.Optional;
  */
 public interface IBoardHistory extends Serializable {
 
-  Tree.Node<Optional<BoardContainer>> addBoard(Optional<BoardContainer> boardContainer);
+  Tree.Node<Optional<BoardContainer>> addBoard(BoardContainer boardContainer);
 
   boolean canUndo();
 
@@ -24,4 +24,6 @@ public interface IBoardHistory extends Serializable {
   void moveDown(Tree.Node<Optional<BoardContainer>> branch);
 
   void moveDown();
+
+  Tree<Tree.Node<BoardContainer>> toTree(Tree.Node<Optional<BoardContainer>> node);
 }

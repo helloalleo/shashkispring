@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 
@@ -135,6 +136,6 @@ public class BoardHistoryManagerTest {
   }
 
   IBoard getBoard() {
-    return new Board();
+    return getBoard(UUID.randomUUID().toString());
   }
 }

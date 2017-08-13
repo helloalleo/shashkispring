@@ -20,6 +20,7 @@ public class BoardContainer implements IBoardContainer {
   private List<Draught> whiteDraughts = new ArrayList<>();
   private List<Draught> blackDraughts = new ArrayList<>();
   private Draught selectedDraught;
+  private String json;
 
   public BoardContainer() {
   }
@@ -43,11 +44,13 @@ public class BoardContainer implements IBoardContainer {
 
   public BoardContainer undo() {
     Log.debug(id);
+    Log.debug(json);
     return this;
   }
 
   public BoardContainer redo() {
     Log.debug(id);
+    Log.debug(json);
     return this;
   }
 
@@ -58,5 +61,9 @@ public class BoardContainer implements IBoardContainer {
       mappedSquares.add(square);
     }
     squares = mappedSquares;
+  }
+
+  public void setJson(String json) {
+    this.json = json;
   }
 }

@@ -4,6 +4,7 @@ import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.domain.impl.BoardContainer;
 
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -38,8 +39,8 @@ public class BoardHistoryManager {
    *
    * @param changeable
    */
-  public Tree.Node<Optional<BoardContainer>> addBoard(BoardContainer changeable) {
-    return boardHistory.addBoard(Optional.of(changeable));
+  public Tree.Node<Optional<BoardContainer>> addBoard(@NotNull BoardContainer changeable) {
+    return boardHistory.addBoard(changeable);
   }
 
   /**

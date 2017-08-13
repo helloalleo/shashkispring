@@ -3,7 +3,6 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.service.BoardHistoryManager;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
@@ -101,8 +100,8 @@ public class BoardService {
       }
     }
     BoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
-    BoardHistory boardHistory = changeManagerService.addBoard(boardChanger);
-    return new Board(boardHistory.getLast().getBoard(), black, rules, squareSize);
+    changeManagerService.addBoard(boardChanger);
+    return new Board(boardChanger, black, rules, squareSize);
   }
 
   public void addDraught(IBoardContainer board, IDraught draught) {
