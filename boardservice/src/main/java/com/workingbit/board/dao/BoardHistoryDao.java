@@ -2,9 +2,9 @@ package com.workingbit.board.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AWSProperties;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.dao.BaseDao;
 import com.workingbit.share.domain.IBoardHistory;
-import com.workingbit.share.domain.impl.Board;
+import com.workingbit.share.domain.impl.BoardHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ public class BoardHistoryDao extends BaseDao<BoardHistory, IBoardHistory> {
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public BoardDao(AWSProperties awsProperties,
+  public BoardHistoryDao(AWSProperties awsProperties,
                   ObjectMapper objectMapper) {
     super(BoardHistory.class, IBoardHistory.class, awsProperties.getRegion());
     this.objectMapper = objectMapper;

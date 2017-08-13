@@ -5,6 +5,7 @@ import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.*;
@@ -29,12 +30,12 @@ import static com.workingbit.board.service.BoardUtils.mapList;
 public class BoardService {
 
   private final BoardDao boardDao;
-  private final BoardChangeManagerService changeManagerService;
+  private final BoardHistoryManagerService changeManagerService;
   private final ObjectMapper objectMapper;
 
   @Autowired
   public BoardService(BoardDao boardDao,
-                      BoardChangeManagerService changeManagerService,
+                      BoardHistoryManagerService changeManagerService,
                       ObjectMapper objectMapper) {
     this.boardDao = boardDao;
     this.changeManagerService = changeManagerService;
@@ -98,7 +99,7 @@ public class BoardService {
         squares.add(square);
       }
     }
-    BoardChanger boardChanger = new BoardChanger(squares, whiteDraughts, blackDraughts, null);
+    IBoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
     changeManagerService.addChangeable(boardChanger);
     return new Board(boardChanger, black, rules, squareSize);
   }
@@ -119,7 +120,7 @@ public class BoardService {
     Square square = objectMapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
     return boardDao.findById(aBoardId).map(board -> {
       try {
-        HighlightMoveService highlightMoveService = HighlightMoveService.getService(board, square);
+        HighlightMoveService highlightMoveService = HighlightMoveService.getService(board, square, board.getRules());
         return highlightMoveService.findAllowedMoves();
       } catch (BoardServiceException e) {
         return null;
@@ -145,9 +146,8 @@ public class BoardService {
     }).orElseThrow(getBoardServiceExceptionSupplier("Move not allowed"));
   }
 
-  public void save(IBoard board) {
-    BoardChanger newBoard = new BoardChanger(board.getCurrentBoard());
-    changeManagerService.addChangeable(newBoard);
+  public void save(IBoardContainer board) {
+    changeManagerService.addChangeable(board);
     boardDao.save(board);
   }
 }

@@ -1,7 +1,7 @@
 package com.workingbit.share.domain.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.share.domain.Changeable;
+import com.workingbit.share.domain.IBoardContainer;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
  */
-public class BoardContainer implements Changeable {
+public class BoardContainer implements IBoardContainer {
 
   private List<Square> squares;
   private List<Draught> whiteDraughts;
@@ -18,7 +18,6 @@ public class BoardContainer implements Changeable {
   private Draught selectedDraught;
 
   public BoardContainer() {
-    super();
   }
 
   public BoardContainer(List<Square> squares,
@@ -38,12 +37,10 @@ public class BoardContainer implements Changeable {
         currentBoard.getSelectedDraught());
   }
 
-  @Override
   public BoardContainer undo() {
     return this;
   }
 
-  @Override
   public BoardContainer redo() {
     return this;
   }

@@ -1,141 +1,136 @@
-package com.workingbit.board.history;
+package com.workingbit.board.service;
 
-import com.workingbit.share.domain.Changeable;
-import com.workingbit.share.domain.impl.BoardChanger;
+import com.workingbit.board.dao.BoardHistoryDao;
+import com.workingbit.share.domain.IBoardContainer;
+import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardHistory;
+import com.workingbit.share.domain.impl.BoardHistoryNode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by Aleksey Popryaduhin on 19:52 12/08/2017.
  */
 @Service
-public class BoardChangeManagerService {
-  //the current index node
-  private Node currentIndex = null;
+public class BoardHistoryManagerService {
 
-  //the parent node far left node.
-  private Node parentNode = new Node();
+  @Autowired
+  private BoardHistoryDao boardHistoryDao;
+  private BoardHistory boardHistory;
 
   /**
    * Creates a new ChangeManager object which is initially empty.
    */
-  public BoardChangeManagerService(){
-    currentIndex = parentNode;
+  public BoardHistoryManagerService() {
+    boardHistory = new BoardHistory();
   }
 
   /**
    * Creates a new ChangeManager which is a duplicate of the parameter in both contents and current index.
+   *
    * @param manager
    */
-  public BoardChangeManagerService(BoardChangeManagerService manager){
+  public BoardHistoryManagerService(BoardHistoryManagerService manager) {
     this();
-    currentIndex = manager.currentIndex;
+    boardHistory.setCurrentBoard(manager.getBoardHistory().getCurrentBoard());
   }
 
   /**
    * Clears all Changables contained in this manager.
    */
-  public void clear(){
-    currentIndex = parentNode;
+  public void clear() {
+    boardHistory.setCurrentBoard(boardHistory.getParentBoard());
   }
 
   /**
    * Adds a Changeable to manage.
+   *
    * @param changeable
    */
-  public void addChangeable(Changeable changeable){
-    Node node = new Node(changeable);
-    currentIndex.right = node;
-    node.left = currentIndex;
-    currentIndex = node;
+  public void addChangeable(IBoardContainer changeable) {
+    BoardHistoryNode node = new BoardHistoryNode(changeable);
+    boardHistory.getCurrentBoard().setRight(node);
+    node.setLeft(boardHistory.getCurrentBoard());
+    boardHistory.setCurrentBoard(node);
+    boardHistoryDao.save(boardHistory);
   }
 
   /**
    * Determines if an undo can be performed.
+   *
    * @return
    */
-  public boolean canUndo(){
-    return currentIndex != parentNode;
+  public boolean canUndo() {
+    return boardHistory.getCurrentBoard() != boardHistory.getParentBoard();
   }
 
   /**
    * Determines if a redo can be performed.
+   *
    * @return
    */
-  public boolean canRedo(){
-    return currentIndex.right != null;
+  public boolean canRedo() {
+    return boardHistory.getCurrentBoard().getRight() != null;
   }
 
   /**
    * Undoes the Changeable at the current index.
+   *
    * @throws IllegalStateException if canUndo returns false.
    */
-  public BoardChanger undo(){
+  public IBoardContainer undo() {
     //validate
-    if ( !canUndo() ){
+    if (!canUndo()) {
       throw new IllegalStateException("Cannot undo. Index is out of range.");
     }
     //undo
-    BoardChanger boardChanger = currentIndex.changeable.undo();
+    IBoardContainer undo = boardHistory.getCurrentBoard().getBoard().undo();
     //set index
     moveLeft();
-    return boardChanger;
+    return undo;
   }
 
   /**
    * Moves the internal pointer of the backed linked list to the left.
+   *
    * @throws IllegalStateException If the left index is null.
    */
-  private void moveLeft(){
-    if ( currentIndex.left == null ){
+  private void moveLeft() {
+    if (boardHistory.getCurrentBoard().getLeft() == null) {
       throw new IllegalStateException("Internal index set to null.");
     }
-    currentIndex = currentIndex.left;
+    boardHistory.setCurrentBoard(boardHistory.getCurrentBoard().getLeft());
   }
 
   /**
    * Moves the internal pointer of the backed linked list to the right.
+   *
    * @throws IllegalStateException If the right index is null.
    */
-  private void moveRight(){
-    if ( currentIndex.right == null ){
+  private void moveRight() {
+    if (boardHistory.getCurrentBoard().getRight() == null) {
       throw new IllegalStateException("Internal index set to null.");
     }
-    currentIndex = currentIndex.right;
+    boardHistory.setCurrentBoard(boardHistory.getCurrentBoard().getRight());
   }
 
   /**
    * Redoes the Changable at the current index.
+   *
    * @throws IllegalStateException if canRedo returns false.
    */
-  public BoardChanger redo(){
+  public BoardContainer redo() {
     //validate
-    if ( !canRedo() ){
+    if (!canRedo()) {
       throw new IllegalStateException("Cannot redo. Index is out of range.");
     }
     //reset index
     moveRight();
     //redo
-    return currentIndex.changeable.redo();
+    return boardHistory.getCurrentBoard().getBoard().redo();
   }
 
-  /**
-   * Inner class to implement a doubly linked list for our queue of Changeables.
-   * @author Greg Cope
-   *
-   */
-  private class Node {
-
-    private Node left = null;
-    private Node right = null;
-
-    private final Changeable changeable;
-
-    public Node(Changeable c){
-      changeable = c;
-    }
-
-    public Node(){
-      changeable = null;
-    }
+  public BoardHistory getBoardHistory() {
+    return boardHistory;
   }
 }

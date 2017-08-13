@@ -28,7 +28,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     IBoard board = getBoard();
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquare((Draught) draught, 5, 2);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(4,1)(4,3)", resultToString(allowedMoves, allowed));
@@ -39,7 +39,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     IBoard board = getBoard();
     Draught draught = getDraughtBlack(5, 2);
     ISquare square = getSquare(draught, 5, 2);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(6,1)(6,3)", resultToString(allowedMoves, allowed));
@@ -56,7 +56,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     ISquare square = getSquareByVH(board, 5, 2);
     // set draught for square
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(3,4)", resultToString(allowedMoves, allowed));
@@ -72,7 +72,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(3,0)(3,4)", resultToString(allowedMoves, allowed));
@@ -87,7 +87,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(7,0)", resultToString(allowedMoves, allowed));
@@ -103,7 +103,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     IDraught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(7,0)(7,4)", resultToString(allowedMoves, allowed));

@@ -25,7 +25,7 @@ public class MoveServiceTest extends BaseServiceTest {
     ISquare square = getSquareByVH(board, 5, 2);
     square.setDraught(draught);
     ISquare target = getSquareByVH(board, 4, 3);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square);
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, this.rules = rules);
     Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
     List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
     List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());

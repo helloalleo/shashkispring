@@ -2,7 +2,7 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.ISquare;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -17,12 +17,18 @@ import java.util.function.Supplier;
  */
 class BoardUtils {
 
-  static Optional<ISquare> findSquareLink(IBoard board, ISquare square) {
+  /**
+   * Find variable link to square from board
+   * @param board
+   * @param square
+   * @return
+   */
+  static Optional<ISquare> findSquareLink(IBoardContainer board, ISquare square) {
     return findSquareByVH(board, square.getV(), square.getH());
   }
 
-  static Optional<ISquare> findSquareByVH(IBoard board, int v, int h) {
-    for (ISquare square : board.getCurrentBoard().getSquares()) {
+  static Optional<ISquare> findSquareByVH(IBoardContainer board, int v, int h) {
+    for (ISquare square : board.getSquares()) {
       if (square.getH() == h && square.getV() == v) {
         return Optional.of(square);
       }

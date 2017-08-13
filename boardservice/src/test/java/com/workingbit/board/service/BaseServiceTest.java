@@ -35,8 +35,8 @@ class BaseServiceTest {
     return new BoardService(boardDao, getChangeManagerService(), objectMapper);
   }
 
-  private BoardChangeManagerService getChangeManagerService() {
-    return new BoardChangeManagerService();
+  private BoardHistoryManagerService getChangeManagerService() {
+    return new BoardHistoryManagerService();
   }
 
   Draught getDraught(int v, int h) {

@@ -1,7 +1,7 @@
 package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,13 +18,13 @@ import static com.workingbit.board.service.BoardUtils.getDistanceVH;
  * Created by Aleksey Popryaduhin on 20:14 11/08/2017.
  */
 public class MoveService {
-  private final IBoard board;
+  private final IBoardContainer board;
   private final List<ISquare> allowedMoves;
   private final List<IDraught> beatenMoves;
   private final ISquare sourceSquare;
   private final ISquare targetSquare;
 
-  MoveService(IBoard board, ISquare sourceSquare, ISquare targetSquare, List<ISquare> allowedMoves, List<IDraught> beatenMoves) throws BoardServiceException {
+  MoveService(IBoardContainer board, ISquare sourceSquare, ISquare targetSquare, List<ISquare> allowedMoves, List<IDraught> beatenMoves) throws BoardServiceException {
     /*
      */
     if (!allowedMoves.contains(targetSquare)) {
@@ -37,7 +37,7 @@ public class MoveService {
     this.beatenMoves = beatenMoves;
   }
 
-  public static MoveService getService(IBoard board, ISquare sourceSquare, ISquare targetSquare, List<ISquare> allowedMoves, List<IDraught> beatenMoves) throws BoardServiceException {
+  public static MoveService getService(IBoardContainer board, ISquare sourceSquare, ISquare targetSquare, List<ISquare> allowedMoves, List<IDraught> beatenMoves) throws BoardServiceException {
     return new MoveService(board, sourceSquare, targetSquare, allowedMoves, beatenMoves);
   }
 

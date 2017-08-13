@@ -2,7 +2,8 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.function.TrinaryFunction;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Draught;
@@ -28,17 +29,18 @@ public class HighlightMoveService {
    * possible directions of moving
    */
   private final List<Pair<Integer, Integer>> dirs;
-  private IBoard board;
+  private IBoardContainer board;
   private ISquare selectedSquare;
   private HashMap<Pair<Integer, Integer>, TrinaryFunction<Integer>> diagonal;
+  private EnumRules rules;
 
-  HighlightMoveService(IBoard board, ISquare selectedSquare) throws BoardServiceException {
+  HighlightMoveService(IBoardContainer board, ISquare selectedSquare, EnumRules rules) throws BoardServiceException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
     selectedSquare.setPointDraught(selectedSquare.getDraught());
     selectedSquare.getDraught().setHighlighted(true);
-    board.getCurrentBoard().setSelectedDraught(selectedSquare.getDraught());
+    board.setSelectedDraught(selectedSquare.getDraught());
 
     this.diagonal = new HashMap<>();
     this.diagonal.put(Pair.of(-1, -1), HighlightMoveService::mainDiagonal);
@@ -52,11 +54,12 @@ public class HighlightMoveService {
         Pair.of(1, -1),
         Pair.of(-1, 1));
     this.board = board;
+    this.rules = rules;
     this.selectedSquare = selectedSquare;
   }
 
-  public static HighlightMoveService getService(IBoard board, Square selectedSquare) throws BoardServiceException {
-      return new HighlightMoveService(board, selectedSquare);
+  public static HighlightMoveService getService(IBoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
+      return new HighlightMoveService(board, selectedSquare, rules);
   }
 
   public Map<String, Object> findAllowedMoves() throws BoardServiceException {
@@ -76,7 +79,7 @@ public class HighlightMoveService {
     int dimension = getBoardDimension();
     int mainDiagonal = selectedSquare.getV() - selectedSquare.getH();
     int subDiagonal = dimension - selectedSquare.getV() - selectedSquare.getH();
-    List<Square> squares = board.getCurrentBoard().getSquares();
+    List<Square> squares = board.getSquares();
     // split board's square list on rows
     Stream<List<Square>> iterateRows = getRows(dimension, squares);
     Iterator<List<Square>> rowsIterator = iterateRows.parallel().iterator();
@@ -151,7 +154,7 @@ public class HighlightMoveService {
   }
 
   private int getBoardDimension() {
-    return abs(board.getRules().getDimension());
+    return abs(rules.getDimension());
   }
 
   private boolean isSquareOnSubDiagonal(int dimension, int subDiagonal, ISquare square) {
@@ -243,7 +246,7 @@ public class HighlightMoveService {
 //    return beat;
 //  }
 
-  private static Optional<ISquare> nextSquareByDir(IBoard board, ISquare source, Pair<Integer, Integer> dir) {
+  private static Optional<ISquare> nextSquareByDir(IBoardContainer board, ISquare source, Pair<Integer, Integer> dir) {
     return findSquareByVH(board, source.getV() + dir.getLeft(), source.getH() + dir.getRight());
   }
 
