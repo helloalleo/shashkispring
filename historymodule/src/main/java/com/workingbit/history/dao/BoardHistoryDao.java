@@ -1,9 +1,8 @@
 package com.workingbit.history.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.history.config.AWSProperties;
-import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.domain.IBoardHistory;
+import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.dao.BaseDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,13 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoardHistoryDao extends BaseDao<BoardHistory, IBoardHistory> {
 
-  private final ObjectMapper objectMapper;
-
   @Autowired
-  public BoardHistoryDao(AWSProperties awsProperties,
-                  ObjectMapper objectMapper) {
-    super(BoardHistory.class, IBoardHistory.class, awsProperties.getRegion());
-    this.objectMapper = objectMapper;
+  public BoardHistoryDao(AWSProperties awsProperties) {
+    super(BoardHistory.class, IBoardHistory.class, awsProperties.getRegion(), awsProperties.getEndpoint(), awsProperties.isTest());
   }
 
 //  @Override

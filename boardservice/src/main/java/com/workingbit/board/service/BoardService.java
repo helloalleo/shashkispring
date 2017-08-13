@@ -33,14 +33,14 @@ public class BoardService {
 
   private final BoardDao boardDao;
   private final BoardHistoryManager changeManagerService;
-  private final ObjectMapper objectMapper;
+  private final ObjectMapper mapper;
 
   @Autowired
   public BoardService(BoardDao boardDao,
-                      ObjectMapper objectMapper) {
+                      ObjectMapper mapper) {
     this.boardDao = boardDao;
     this.changeManagerService = BoardHistoryManager.getInstance();
-    this.objectMapper = objectMapper;
+    this.mapper = mapper;
   }
 
   public IBoard createBoard(NewBoardRequest newBoardRequest) {
@@ -118,7 +118,7 @@ public class BoardService {
 
   public Map<String, Object> highlight(Map<String, Object> highlightFor) throws BoardServiceException {
     String aBoardId = (String) highlightFor.get(boardId.name());
-    Square square = objectMapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
+    Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
     return boardDao.findById(aBoardId).map(board -> {
       try {
         HighlightMoveService highlightMoveService = HighlightMoveService.getService(board.getCurrentBoard(), square, board.getRules());
@@ -132,10 +132,10 @@ public class BoardService {
   public Map<String, Object> move(Map<String, Object> moveTo) throws BoardServiceException {
     Optional<IBoard> boardOptional = findById((String) moveTo.get(boardId.name()));
     return boardOptional.map(board -> {
-      Square selected = objectMapper.convertValue(moveTo.get(selectedSquare.name()), Square.class);
-      Square target = objectMapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
-      List<ISquare> allowedMoves = mapList((List<ISquare>) moveTo.get(allowed.name()), objectMapper, Square.class, ISquare.class);
-      List<IDraught> beatenMoves = mapList((List<IDraught>) moveTo.get(beaten.name()), objectMapper, Draught.class, IDraught.class);
+      Square selected = mapper.convertValue(moveTo.get(selectedSquare.name()), Square.class);
+      Square target = mapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
+      List<ISquare> allowedMoves = mapList((List<ISquare>) moveTo.get(allowed.name()), mapper, Square.class, ISquare.class);
+      List<IDraught> beatenMoves = mapList((List<IDraught>) moveTo.get(beaten.name()), mapper, Draught.class, IDraught.class);
       try {
         MoveService moveService = MoveService.getService(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves);
         Map<String, Object> move = moveService.doMove();

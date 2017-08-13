@@ -1,8 +1,6 @@
 package com.workingbit.board.config;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -19,5 +17,13 @@ public class AWSProperties {
 
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
+  }
+
+  public boolean isTest() {
+    return Boolean.parseBoolean(env.getProperty("TEST", "false"));
+  }
+
+  public String getEndpoint() {
+    return env.getProperty("ENDPOINT", "http://localhost:8000");
   }
 }

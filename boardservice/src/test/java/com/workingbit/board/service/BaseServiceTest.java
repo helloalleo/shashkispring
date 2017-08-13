@@ -57,7 +57,7 @@ public class BaseServiceTest {
   BoardService getBoardServiceMock() {
     AWSProperties awsProperties = mock(AWSProperties.class);
     when(awsProperties.getRegion()).thenReturn("eu-central-1");
-    BoardDao boardDao = new BoardDao(awsProperties, objectMapper);
+    BoardDao boardDao = new BoardDao(awsProperties);
     return new BoardService(boardDao, objectMapper);
   }
 }

@@ -1,6 +1,5 @@
 package com.workingbit.board.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AWSProperties;
 import com.workingbit.share.dao.BaseDao;
 import com.workingbit.share.domain.IBoard;
@@ -14,12 +13,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class BoardDao extends BaseDao<Board, IBoard> {
 
-  private final ObjectMapper objectMapper;
-
   @Autowired
-  public BoardDao(AWSProperties awsProperties,
-                  ObjectMapper objectMapper) {
-    super(Board.class, IBoard.class, awsProperties.getRegion());
-    this.objectMapper = objectMapper;
+  public BoardDao(AWSProperties awsProperties) {
+    super(Board.class, IBoard.class, awsProperties.getRegion(), awsProperties.getEndpoint(), awsProperties.isTest());
   }
 }
