@@ -88,7 +88,7 @@ project(':boardservice') {
     }
 
     task batchZip(type: Zip) {
-        from "$buildDir/classes/java/main", "$buildDir/resources/main", "$buildDir/libs/deps"
+        from sourceSets.main.output, "$buildDir/libs/deps"
     }
 }
 
@@ -130,7 +130,7 @@ project(':wikiservice') {
     }
 
     task batchZip(type: Zip) {
-        from "$buildDir/classes/java/main", "$buildDir/resources/main", "$buildDir/libs/deps"
+        from sourceSets.main.output, "$buildDir/libs/deps"
     }
 }
 
