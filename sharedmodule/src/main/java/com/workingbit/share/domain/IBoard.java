@@ -12,9 +12,9 @@ public interface IBoard {
 
   void setId(String id);
 
-  BoardChanger getCurrentBoard();
+  String getCurrentBoardId();
 
-  void setCurrentBoard(BoardChanger squares);
+  void setCurrentBoardId(String boardId);
 
   boolean isBlack();
 

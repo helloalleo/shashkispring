@@ -3,7 +3,6 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.history.BoardChangeManagerService;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
 import com.workingbit.share.domain.IDraught;
@@ -147,6 +146,8 @@ public class BoardService {
   }
 
   public void save(IBoard board) {
+    BoardChanger newBoard = new BoardChanger(board.getCurrentBoard());
+    changeManagerService.addChangeable(newBoard);
     boardDao.save(board);
   }
 }

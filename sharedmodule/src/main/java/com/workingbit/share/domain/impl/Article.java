@@ -1,6 +1,7 @@
 package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.workingbit.board.common.DBConstants;
 import com.workingbit.share.domain.IArticle;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.Set;
 /**
  * Created by Aleksey Popryaduhin on 18:31 09/08/2017.
  */
-@DynamoDBTable(tableName = "Article")
+@DynamoDBTable(tableName = DBConstants.ARTICLE_TABLE)
 @Data
 @NoArgsConstructor
 public class Article implements IArticle {

@@ -112,6 +112,19 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    DynamoDbTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: BoardHistory
+        AttributeDefinitions:
+          - AttributeName: Id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     DynamoDBIamPolicy:
       Type: AWS::IAM::Policy
       DependsOn: DynamoDbTable
@@ -128,5 +141,13 @@ resources:
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
               Resource: arn:aws:dynamodb:*:*:table/Board
+            - Effect: Allow
+              Action:
+                - dynamodb:DescribeTable
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+                - dynamodb:UpdateItem
+                - dynamodb:Scan
+              Resource: arn:aws:dynamodb:*:*:table/BoardHistory
         Roles:
           - Ref: IamRoleLambdaExecution

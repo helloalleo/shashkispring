@@ -27,29 +27,4 @@ public class BoardDao extends BaseDao<Board, IBoard> {
     super(Board.class, IBoard.class, awsProperties.getRegion());
     this.objectMapper = objectMapper;
   }
-
-  @Override
-  public Optional<IBoard> findById(String entityId) {
-    Optional<IBoard> boardOptional = super.findById(entityId);
-    return boardOptional.map(iBoard -> {
-      BoardChanger currentBoard = iBoard.getCurrentBoard();
-      if (currentBoard != null) {
-        currentBoard.mapBoard(objectMapper);
-      }
-      return iBoard;
-    });
-  }
-
-  @Override
-  public List<IBoard> findAll() {
-    return super.findAll()
-        .stream()
-        .peek(iBoard -> {
-          BoardChanger currentBoard = iBoard.getCurrentBoard();
-          if (currentBoard != null) {
-            currentBoard.mapBoard(objectMapper);
-          }
-        })
-        .collect(Collectors.toList());
-  }
 }

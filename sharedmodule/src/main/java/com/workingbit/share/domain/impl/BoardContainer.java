@@ -2,6 +2,7 @@ package com.workingbit.share.domain.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.share.domain.Changeable;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,35 +10,41 @@ import java.util.List;
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
  */
-public class BoardChanger implements Changeable {
+public class BoardContainer implements Changeable {
 
   private List<Square> squares;
   private List<Draught> whiteDraughts;
   private List<Draught> blackDraughts;
   private Draught selectedDraught;
 
-  public BoardChanger() {
+  public BoardContainer() {
     super();
   }
 
-  public BoardChanger(List<Square> squares,
+  public BoardContainer(List<Square> squares,
                       List<Draught> whiteDraughts,
                       List<Draught> blackDraughts,
                       Draught selectedDraught) {
-    super();
-    this.squares = squares;
-    this.whiteDraughts = whiteDraughts;
-    this.blackDraughts = blackDraughts;
-    this.selectedDraught = selectedDraught;
+    this.squares = ObjectUtils.clone(squares);
+    this.whiteDraughts = ObjectUtils.clone(whiteDraughts);
+    this.blackDraughts = ObjectUtils.clone(blackDraughts);
+    this.selectedDraught = ObjectUtils.clone(selectedDraught);
+  }
+
+  public BoardContainer(BoardContainer currentBoard) {
+    this(currentBoard.getSquares(),
+        currentBoard.getWhiteDraughts(),
+        currentBoard.getBlackDraughts(),
+        currentBoard.getSelectedDraught());
   }
 
   @Override
-  public BoardChanger undo() {
+  public BoardContainer undo() {
     return this;
   }
 
   @Override
-  public BoardChanger redo() {
+  public BoardContainer redo() {
     return this;
   }
 
