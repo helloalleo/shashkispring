@@ -21,22 +21,22 @@ import static com.workingbit.wiki.common.EnumArticleKeys.*;
  * Created by Aleksey Popryaduhin on 18:16 09/08/2017.
  */
 @Component
-public class ArticleDao extends BaseDao<Article, IArticle> {
+public class ArticleDao extends BaseDao<Article> {
 
   private final AWSProperties awsProperties;
 
   @Autowired
   public ArticleDao(AWSProperties awsProperties) {
-    super(Article.class, IArticle.class, awsProperties.getRegion());
+    super(Article.class, awsProperties.getRegion(), awsProperties.getEndpoint(), awsProperties.isTest());
     this.awsProperties = awsProperties;
   }
 
   @Override
-  public void save(IArticle entity) {
+  public void save(Article entity) {
     super.save(entity);
   }
 
-  public void publishArticle(IArticle article) {
+  public void publishArticle(Article article) {
     article.setNewAdded(false);
     article.setBanned(false);
     article.setPublished(true);

@@ -24,4 +24,8 @@ public class AWSProperties {
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
   }
+
+  public String getEndpoint() {
+    return env.getProperty("ENDPOINT", "http://localhost:8000");
+  }
 }

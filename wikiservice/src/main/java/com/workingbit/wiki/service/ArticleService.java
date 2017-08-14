@@ -66,16 +66,16 @@ public class ArticleService {
    * @param article
    * @return
    */
-  public void addBoard(IArticle article, String boardId) {
+  public void addBoard(Article article, String boardId) {
     article.getBoardIds().add(boardId);
     articleDao.save(article);
   }
 
-  public List<IArticle> findAll() {
+  public List<Article> findAll() {
     return articleDao.findAll();
   }
 
-  public Optional<IArticle> findById(String articleId) {
+  public Optional<Article> findById(String articleId) {
     return articleDao.findById(articleId);
   }
 
@@ -89,7 +89,7 @@ public class ArticleService {
    * @param article
    * @return was it published
    */
-  public boolean publishArticle(IArticle article) {
+  public boolean publishArticle(Article article) {
     if (article.isBanned()
         || article.isPublished()
         || !article.isNewAdded()

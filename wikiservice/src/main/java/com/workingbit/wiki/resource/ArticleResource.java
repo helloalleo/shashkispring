@@ -1,6 +1,7 @@
 package com.workingbit.wiki.resource;
 
 import com.workingbit.share.domain.IArticle;
+import com.workingbit.share.domain.impl.Article;
 import com.workingbit.wiki.common.ResourceConstants;
 import com.workingbit.wiki.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class ArticleResource {
 
   @GetMapping()
   public Map<String, Object> findAll() {
-    List<IArticle> articles = articleService.findAll();
+    List<Article> articles = articleService.findAll();
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), articles);
@@ -38,7 +39,7 @@ public class ArticleResource {
 
   @GetMapping(path = "/{id}")
   public Map<String, Object> findById(@PathVariable("id") String articleId) {
-    Optional<IArticle> articleOptional = articleService.findById(articleId);
+    Optional<Article> articleOptional = articleService.findById(articleId);
     return articleOptional.<Map<String, Object>>map(iArticle -> new HashMap<String, Object>() {{
         put(ok.name(), true);
         put(data.name(), iArticle);
@@ -59,7 +60,7 @@ public class ArticleResource {
   }
 
   @PostMapping("/addBoard/{boardId}")
-  public Map<String, Object> addBoard(@RequestBody IArticle request, @PathVariable("boardId") String boardId) {
+  public Map<String, Object> addBoard(@RequestBody Article request, @PathVariable("boardId") String boardId) {
     articleService.addBoard(request, boardId);
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
@@ -75,7 +76,7 @@ public class ArticleResource {
   }
 
   @PutMapping(path = "/publish")
-  public Map<String, Object> publishArticle(@RequestBody IArticle request) {
+  public Map<String, Object> publishArticle(@RequestBody Article request) {
     boolean published = articleService.publishArticle(request);
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
