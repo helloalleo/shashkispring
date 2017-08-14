@@ -1,5 +1,6 @@
 package com.workingbit.board.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
@@ -44,15 +45,15 @@ public class BoardService {
 
   public IBoard createBoard(NewBoardRequest newBoardRequest) {
     IBoard board = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
-    boardDao.save(board);
+    boardDao.save((Board) board);
     return board;
   }
 
-  public List<IBoard> findAll() {
+  public PaginatedScanList<Board> findAll() {
     return boardDao.findAll();
   }
 
-  public Optional<IBoard> findById(String boardId) {
+  public Optional<Board> findById(String boardId) {
     return boardDao.findById(boardId);
   }
 
@@ -130,18 +131,17 @@ public class BoardService {
   }
 
   public Map<String, Object> move(Map<String, Object> moveTo) throws BoardServiceException {
-    Optional<IBoard> boardOptional = findById((String) moveTo.get(boardId.name()));
+    Optional<Board> boardOptional = findById((String) moveTo.get(boardId.name()));
     return boardOptional.map(board -> {
       Square selected = mapper.convertValue(moveTo.get(selectedSquare.name()), Square.class);
       Square target = mapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
       List<ISquare> allowedMoves = mapList((List<ISquare>) moveTo.get(allowed.name()), mapper, Square.class, ISquare.class);
       List<IDraught> beatenMoves = mapList((List<IDraught>) moveTo.get(beaten.name()), mapper, Draught.class, IDraught.class);
       try {
-        MoveService moveService = MoveService.getService(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves);
-        Map<String, Object> move = moveService.doMove();
-
-        BoardContainer newBoard = moveService.getBoard();
-        board.setCurrentBoard(newBoard);
+        // create move service
+        MoveService moveService = MoveService.getService(board, selected, target, allowedMoves, beatenMoves);
+        // do move should update board
+        Map<String, Object> move = moveService.doMoveAndUpdateBoard();
         boardHistoryService.addBoardAndSave(board);
         return move;
       } catch (BoardServiceException e) {

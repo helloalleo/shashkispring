@@ -34,13 +34,13 @@ public class HighlightMoveService {
   private HashMap<Pair<Integer, Integer>, TrinaryFunction<Integer>> diagonal;
   private EnumRules rules;
 
-  HighlightMoveService(IBoardContainer board, ISquare selectedSquare, EnumRules rules) throws BoardServiceException {
+  HighlightMoveService(IBoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
     selectedSquare.setPointDraught(selectedSquare.getDraught());
     selectedSquare.getDraught().setHighlighted(true);
-    board.setSelectedDraught(selectedSquare.getDraught());
+    board.setSelectedSquare(selectedSquare);
 
     this.diagonal = new HashMap<>();
     this.diagonal.put(Pair.of(-1, -1), HighlightMoveService::mainDiagonal);

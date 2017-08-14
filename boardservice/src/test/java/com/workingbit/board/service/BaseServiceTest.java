@@ -7,6 +7,7 @@ import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
 import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.ISquare;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import com.workingbit.share.domain.impl.Square;
@@ -28,10 +29,13 @@ public class BaseServiceTest {
   @Autowired
   BoardService boardService;
 
-  IBoardContainer getBoard() {
+  @Autowired
+  BoardHistoryService boardHistoryService;
+
+  Board getBoard() {
     assert boardService != null;
     IBoard board = boardService.createBoard(new NewBoardRequest(false, false, EnumRules.RUSSIAN, 60));
-    return board.getCurrentBoard();
+    return (Board) board;
   }
 
   Draught getDraught(int v, int h) {

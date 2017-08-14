@@ -1,15 +1,16 @@
 package com.workingbit.board.resource;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class BoardResource {
 
   @GetMapping()
   public Map<String, Object> findAll() {
-    List<IBoard> boards = boardService.findAll();
+    PaginatedScanList<Board> boards = boardService.findAll();
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), boards);
@@ -40,7 +41,7 @@ public class BoardResource {
 
   @GetMapping(path = "/{id}")
   public Map<String, Object> findById(@PathVariable("id") String articleId) {
-    Optional<IBoard> boardOptional = boardService.findById(articleId);
+    Optional<Board> boardOptional = boardService.findById(articleId);
     return boardOptional.<Map<String, Object>>map(iBoard -> new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), iBoard);

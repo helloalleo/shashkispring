@@ -12,7 +12,7 @@ import java.util.*;
  * Created by Aleksey Popryaduhin on 08:40 14/08/2017.
  */
 @Data
-@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+@JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
 public class BoardTreeNode implements IBoardTreeNode {
   private BoardContainer data;
   private BoardTreeNode parent;
@@ -23,6 +23,7 @@ public class BoardTreeNode implements IBoardTreeNode {
   }
 
   public void addChild(BoardTreeNode child) {
+    child.setParent(this);
     children.add(child);
   }
 

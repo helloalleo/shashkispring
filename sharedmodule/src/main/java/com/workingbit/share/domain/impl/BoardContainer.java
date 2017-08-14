@@ -20,7 +20,7 @@ public class BoardContainer implements IBoardContainer {
   private List<Square> squares = new ArrayList<>();
   private List<Draught> whiteDraughts = new ArrayList<>();
   private List<Draught> blackDraughts = new ArrayList<>();
-  private Draught selectedDraught;
+  private Square selectedSquare;
 
   public BoardContainer() {
   }
@@ -28,18 +28,18 @@ public class BoardContainer implements IBoardContainer {
   public BoardContainer(List<Square> squares,
                       List<Draught> whiteDraughts,
                       List<Draught> blackDraughts,
-                      Draught selectedDraught) {
+                      Square selectedSquare) {
     this.squares = ObjectUtils.clone(squares);
     this.whiteDraughts = ObjectUtils.clone(whiteDraughts);
     this.blackDraughts = ObjectUtils.clone(blackDraughts);
-    this.selectedDraught = ObjectUtils.clone(selectedDraught);
+    this.selectedSquare = ObjectUtils.clone(selectedSquare);
   }
 
   public BoardContainer(BoardContainer currentBoard) {
     this(currentBoard.getSquares(),
         currentBoard.getWhiteDraughts(),
         currentBoard.getBlackDraughts(),
-        currentBoard.getSelectedDraught());
+        currentBoard.getSelectedSquare());
   }
 
   public BoardContainer undo() {

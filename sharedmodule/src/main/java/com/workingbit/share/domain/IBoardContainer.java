@@ -20,7 +20,7 @@ public interface IBoardContainer extends Changeable {
 
   List<Draught> getBlackDraughts();
 
-  Draught getSelectedDraught();
+  Square getSelectedSquare();
 
-  void setSelectedDraught(Draught selectedDraught);
+  void setSelectedSquare(Square selectedSquare);
 }

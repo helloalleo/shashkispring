@@ -21,6 +21,7 @@ public class Board implements IBoard {
   @DynamoDBHashKey(attributeName = "id")
   private String id;
 
+  @DynamoDBTypeConvertedJson(targetType = BoardContainer.class)
   @DynamoDBAttribute(attributeName = "currentBoard")
   private BoardContainer currentBoard;
 

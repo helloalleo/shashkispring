@@ -1,18 +1,26 @@
 package com.workingbit.board.service;
 
+import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.IDraught;
+import com.workingbit.share.domain.ISquare;
+import com.workingbit.share.domain.impl.Board;
+import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.NewBoardRequest;
+import com.workingbit.share.domain.impl.Square;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+import static com.workingbit.board.common.EnumBaseKeys.*;
+import static com.workingbit.board.common.EnumSearch.allowed;
+import static com.workingbit.board.common.EnumSearch.beaten;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -35,7 +43,7 @@ public class BoardServiceTest extends BaseServiceTest {
     IBoard board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
-    List<IBoard> all = boardService.findAll();
+    List<Board> all = boardService.findAll();
     assertTrue(all.contains(board));
   }
 
@@ -44,7 +52,7 @@ public class BoardServiceTest extends BaseServiceTest {
     IBoard board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
-    Optional<IBoard> byId = boardService.findById(board.getId());
+    Optional<Board> byId = boardService.findById(board.getId());
     assertNotNull(byId.get());
   }
 
@@ -54,8 +62,48 @@ public class BoardServiceTest extends BaseServiceTest {
     String boardId = board.getId();
     assertNotNull(boardId);
     boardService.delete(boardId);
-    Optional<IBoard> byId = boardService.findById(boardId);
+    Optional<Board> byId = boardService.findById(boardId);
     assertTrue(!byId.isPresent());
+  }
+
+  @Test
+  public void should_save_move_history() throws BoardServiceException {
+    IBoard board = getNewBoard();
+    Draught draught = getDraught(5, 2);
+    ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
+    square.setDraught(draught);
+    ISquare target = getSquareByVH(board.getCurrentBoard(), 4, 3);
+
+    // find allowed and beaten
+    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
+    List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
+    List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());
+
+    // create moveTo action
+    Map<String, Object> moveTo = new HashMap<String, Object>() {{
+      put(selectedSquare.name(), square);
+      put(targetSquare.name(), target);
+      put(allowed.name(), allowedMoves);
+      put(beaten.name(), beatenMoves);
+    }};
+
+    // move draught and save
+    Map<String, Object> newMoveCoords = boardService.move(moveTo);
+
+    // find saved and check if it's selected square is equals to target
+    board = boardService.findById(board.getId()).get();
+    Square newSelectedDraught = board.getCurrentBoard().getSelectedSquare();
+    assertEquals(target, newSelectedDraught);
+
+    assertEquals(newMoveCoords.get(v.name()), -60); // v - up
+    assertEquals(newMoveCoords.get(h.name()), 60); // h - right
+
+    // undo and get new board with new board container
+    Optional<Board> undoneBoard = boardHistoryService.undo(board.getId());
+    assertTrue(undoneBoard.isPresent());
+    Square oldSelectedDraught = undoneBoard.get().getCurrentBoard().getSelectedSquare();
+    assertEquals(square, oldSelectedDraught);
   }
 
   @After

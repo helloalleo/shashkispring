@@ -112,7 +112,7 @@ resources:
       Properties:
         TableName: Article
         AttributeDefinitions:
-          - AttributeName: Id
+          - AttributeName: id
             AttributeType: S
         KeySchema:
           - AttributeName: Id

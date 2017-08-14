@@ -1,16 +1,10 @@
 package com.workingbit.history.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.domain.impl.BoardTreeNode;
-import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.BoardContainer;
 
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.Optional;
 
 /**
@@ -18,10 +12,22 @@ import java.util.Optional;
  */
 public class BoardHistoryManager {
 
-  private ObjectMapper mapper = new ObjectMapper();
-  private BoardTreeNode current = new BoardTreeNode();
+  private final BoardHistory boardHistory;
+  //  private ObjectMapper mapper = new ObjectMapper();
+  private BoardTreeNode current = new BoardTreeNode(null);
 
-  public void setBoardTree(BoardHistory boardHistory) {
+//  public void setBoardTree(BoardHistory boardHistory) {
+//  }
+
+  public BoardHistoryManager(BoardHistory boardHistory) {
+    this.boardHistory = boardHistory;
+    current = boardHistory.getCurrent();
+  }
+
+  public BoardHistory getBoardHistory() {
+    boardHistory.setRoot(current.getRootOfTree());
+    boardHistory.setCurrent(getLast());
+    return boardHistory;
   }
 
   /**
@@ -65,33 +71,33 @@ public class BoardHistoryManager {
     return current;
   }
 
-  private BoardTreeNode getBoardTreeNodeFromJson(String json) {
-    Log.debug("Read object from json " + json);
-    try {
-      return mapper.readValue(json, BoardTreeNode.class);
-    } catch (IOException e) {
-      return null;
-    }
-  }
+//  private BoardTreeNode getBoardTreeNodeFromJson(String json) {
+//    Log.debug("Read object from json " + json);
+//    try {
+//      return mapper.readValue(json, BoardTreeNode.class);
+//    } catch (IOException e) {
+//      return null;
+//    }
+//  }
 
-  private BoardTreeNode getBoardTreeNode() {
-    return current.getRootOfTree();
-  }
+//  BoardTreeNode getBoardTreeNode() {
+//    return current.getRootOfTree();
+//  }
 
-  private Tree<Tree.Node<BoardContainer>> getTree(Tree.Node<Optional<BoardContainer>> node) {
-    return node.asTree()
-        .mapAsNodes(optionalNode -> Tree.node(optionalNode.getData().orElse(null)))
-        .deepClone(boardContainerNode -> boardContainerNode);
-  }
+//  private Tree<Tree.Node<BoardContainer>> getTree(Tree.Node<Optional<BoardContainer>> node) {
+//    return node.asTree()
+//        .mapAsNodes(optionalNode -> Tree.node(optionalNode.getData().orElse(null)))
+//        .deepClone(boardContainerNode -> boardContainerNode);
+//  }
 
-  private String serializeToJsonBoardTreeNode() {
-    try {
-      BoardTreeNode boardTree = getBoardTreeNode();
-      return mapper.writeValueAsString(boardTree);
-    } catch (JsonProcessingException e) {
-      return "";
-    }
-  }
+//  private String serializeToJsonBoardTreeNode() {
+//    try {
+//      BoardTreeNode boardTree = getBoardTreeNode();
+//      return mapper.writeValueAsString(boardTree);
+//    } catch (JsonProcessingException e) {
+//      return "";
+//    }
+//  }
 
   /**
    * Undoes the Changeable at the current index.
@@ -139,15 +145,14 @@ public class BoardHistoryManager {
     return Optional.of(boardContainer);
   }
 
-  public BoardHistory getHistory(String id) {
-    BoardHistory boardHistory = new BoardHistory();
-    String history = serializeToJsonBoardTreeNode();
-    boardHistory.setHistory(history);
-    boardHistory.setBoardId(id);
-    return boardHistory;
-  }
+//  public BoardHistory getHistoryByBoardId(String id) {
+//    BoardHistory boardHistory = new BoardHistory();
+//    boardHistory.setHistory(history);
+//    boardHistory.setBoardId(id);
+//    return boardHistory;
+//  }
 
-  private BoardTreeNode createFromJson(String json) {
-    return getBoardTreeNodeFromJson(json);
-  }
+//  public BoardTreeNode createFromJson(String json) {
+//    return getBoardTreeNodeFromJson(json);
+//  }
 }

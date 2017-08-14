@@ -1,7 +1,7 @@
 package com.workingbit.history.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.rutledgepaulv.prune.Tree;
+import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.domain.impl.BoardTreeNode;
 import com.workingbit.share.domain.IBoard;
 import com.workingbit.share.domain.impl.Board;
@@ -25,13 +25,13 @@ public class BoardHistoryManagerTest {
 
   @Before
   public void setUp() {
-    this.historyManagerService = BoardHistoryManager.getInstance();
+    this.historyManagerService = new BoardHistoryManager(new BoardHistory(UUID.randomUUID().toString(), "", new BoardTreeNode(null), new BoardTreeNode(null)));
   }
 
   @Test
   public void addChangeable() throws Exception {
     IBoard board = getBoard();
-    Tree.Node<Optional<BoardContainer>> node = historyManagerService.addBoard(board.getCurrentBoard());
+    BoardTreeNode node = historyManagerService.addBoard(board.getCurrentBoard());
     assertNotNull(node);
   }
 
@@ -84,11 +84,7 @@ public class BoardHistoryManagerTest {
     undo = historyManagerService.undo();
     assertEquals(undo.get().getId(), "1");
     historyManagerService.undo();
-    try {
-      historyManagerService.undo();
-    } catch (IllegalStateException ignore) {
-      assertTrue(true);
-    }
+      assertFalse(historyManagerService.undo().isPresent());
   }
 
   @Test
@@ -99,7 +95,7 @@ public class BoardHistoryManagerTest {
 
     Optional<BoardContainer> undo = historyManagerService.undo();
     assertEquals(undo.get().getId(), "2");
-    Tree.Node<Optional<BoardContainer>> branch4 = historyManagerService.addBoard(getBoard("4").getCurrentBoard());
+    BoardTreeNode branch4 = historyManagerService.addBoard(getBoard("4").getCurrentBoard());
     historyManagerService.addBoard(getBoard("44").getCurrentBoard());
     historyManagerService.undo();
     historyManagerService.undo();
@@ -111,59 +107,85 @@ public class BoardHistoryManagerTest {
     assertEquals(undo.get().getId(), "4");
     undo = historyManagerService.redo();
     assertEquals(undo.get().getId(), "44");
-    try {
-      historyManagerService.redo();
-    } catch (IllegalStateException ignore) {
-      assertTrue(true);
-    }
+    assertFalse(historyManagerService.redo().isPresent());
   }
 
   @Test
-  public void should_return_history_json() {
+  public void undo_redo_with_recreated_history_manager() throws Exception {
     historyManagerService.addBoard(getBoard("1").getCurrentBoard());
     historyManagerService.addBoard(getBoard("2").getCurrentBoard());
     historyManagerService.addBoard(getBoard("3").getCurrentBoard());
 
-    String history = historyManagerService.getHistory();
-    assertTrue(history.startsWith("["));
-    assertTrue(history.length() > 10);
-  }
-
-  @Test
-  public void should_deserialize_from_json() {
-    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
-    historyManagerService.addBoard(getBoard("2").getCurrentBoard());
-    historyManagerService.addBoard(getBoard("3").getCurrentBoard());
-
-    String history = historyManagerService.getHistory();
-    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTreeNode();
-    BoardTreeNode boardTreeNode = historyManagerService.createFromJson(history);
-    assertNotNull(boardTreeNode);
-    assertEquals(boardTreeNodeOrig, boardTreeNode);
-  }
-
-  @Test
-  public void should_deserialize_from_json_tree() {
-    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
-    historyManagerService.addBoard(getBoard("2").getCurrentBoard());
-    historyManagerService.addBoard(getBoard("3").getCurrentBoard());
-
-    historyManagerService.undo();
-    Tree.Node<Optional<BoardContainer>> branch4 = historyManagerService.addBoard(getBoard("4").getCurrentBoard());
+    Optional<BoardContainer> undo = historyManagerService.undo();
+    assertEquals(undo.get().getId(), "2");
+    historyManagerService.addBoard(getBoard("4").getCurrentBoard());
     historyManagerService.addBoard(getBoard("44").getCurrentBoard());
+    BoardHistory boardHistory = historyManagerService.getBoardHistory();
     historyManagerService.undo();
     historyManagerService.undo();
+    assertEquals(undo.get().getId(), "2");
     historyManagerService.addBoard(getBoard("5").getCurrentBoard());
-    historyManagerService.undo();
-    historyManagerService.redo(branch4);
-    historyManagerService.redo();
+    undo = historyManagerService.undo();
+    assertEquals(undo.get().getId(), "2");
 
-    String history = historyManagerService.getHistory();
-    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTreeNode();
-    BoardTreeNode boardTreeNode = historyManagerService.createFromJson(history);
-    assertNotNull(boardTreeNode);
-    assertEquals(boardTreeNodeOrig, boardTreeNode);
+    // should start from 44
+    BoardHistoryManager boardHistoryManager = new BoardHistoryManager(boardHistory);
+    undo = boardHistoryManager.redo();
+    assertFalse(undo.isPresent());
+    undo = boardHistoryManager.undo();
+    assertEquals(undo.get().getId(), "4");
+    undo = boardHistoryManager.undo();
+    assertEquals(undo.get().getId(), "2");
+    undo = boardHistoryManager.undo();
+    assertEquals(undo.get().getId(), "1");
   }
+
+//  @Test
+//  public void should_return_history_json() {
+//    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("2").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("3").getCurrentBoard());
+//
+//    BoardHistory history = historyManagerService.getHistoryByBoardId("");
+//    assertTrue(history.getHistory().startsWith("["));
+//    assertTrue(history.getHistory().length() > 10);
+//  }
+
+//  @Test
+//  public void should_deserialize_from_json() {
+//    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("2").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("3").getCurrentBoard());
+//
+//    BoardHistory history = historyManagerService.getHistoryByBoardId("");
+//    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTreeNode();
+//    BoardTreeNode boardTreeNode = historyManagerService.createFromJson(history.getHistory());
+//    assertNotNull(boardTreeNode);
+//    assertEquals(boardTreeNodeOrig, boardTreeNode);
+//  }
+
+//  @Test
+//  public void should_deserialize_from_json_tree() {
+//    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("2").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("3").getCurrentBoard());
+//
+//    historyManagerService.undo();
+//    BoardTreeNode branch4 = historyManagerService.addBoard(getBoard("4").getCurrentBoard());
+//    historyManagerService.addBoard(getBoard("44").getCurrentBoard());
+//    historyManagerService.undo();
+//    historyManagerService.undo();
+//    historyManagerService.addBoard(getBoard("5").getCurrentBoard());
+//    historyManagerService.undo();
+//    historyManagerService.redo(branch4);
+//    historyManagerService.redo();
+//
+//    BoardHistory history = historyManagerService.getHistoryByBoardId("");
+//    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTreeNode();
+//    BoardTreeNode boardTreeNode = historyManagerService.createFromJson(history.getHistory());
+//    assertNotNull(boardTreeNode);
+//    assertEquals(boardTreeNodeOrig, boardTreeNode);
+//  }
 
   IBoard getBoard(String id) {
     Board board = new Board();

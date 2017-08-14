@@ -15,7 +15,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,18 +23,16 @@ import static com.workingbit.share.common.Utils.isBlank;
 /**
  * Created by Aleksey Popryaduhin on 18:56 09/08/2017.
  */
-public class BaseDao<T, I> {
+public class BaseDao<T> {
 
   private final Class<T> clazz;
-  private final Class<I> iclazz;
   private final DynamoDBMapper dynamoDBMapper;
   private final ObjectMapper mapper;
   private final boolean test;
   private String dbDir = "~/dbDir";
 
-  protected BaseDao(Class<T> clazz, Class<I> iclazz, String region, String endpoint, boolean test) {
+  protected BaseDao(Class<T> clazz, String region, String endpoint, boolean test) {
     this.clazz = clazz;
-    this.iclazz = iclazz;
 
     AmazonDynamoDB ddb;
     if (test) {
@@ -58,7 +55,7 @@ public class BaseDao<T, I> {
     return dynamoDBMapper;
   }
 
-  public void save(final I entity) {
+  public void save(final T entity) {
     if (test) {
       try {
         Method setId = entity.getClass().getMethod("setId", String.class);
@@ -76,20 +73,18 @@ public class BaseDao<T, I> {
     dynamoDBMapper.save(entity);
   }
 
-  public List<I> findAll() {
+  public PaginatedScanList<T> findAll() {
     DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression();
-    PaginatedScanList<I> scan = ((PaginatedScanList<I>) dynamoDBMapper.scan(clazz, dynamoDBQueryExpression));
-    scan.loadAllResults();
-    return scan;
+    return dynamoDBMapper.scan(clazz, dynamoDBQueryExpression);
   }
 
-  public Optional<I> findById(String entityId) {
+  public Optional<T> findById(String entityId) {
     if (isBlank(entityId)) {
       return Optional.empty();
     }
     T entity = dynamoDBMapper.load(clazz, entityId);
     if (entity != null) {
-      return Optional.of(iclazz.cast(entity));
+      return Optional.of(entity);
     }
     return Optional.empty();
   }
