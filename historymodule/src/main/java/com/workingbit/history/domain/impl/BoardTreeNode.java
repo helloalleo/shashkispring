@@ -6,9 +6,7 @@ import com.workingbit.history.domain.IBoardTreeNode;
 import com.workingbit.share.domain.impl.BoardContainer;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Aleksey Popryaduhin on 08:40 14/08/2017.
@@ -19,6 +17,35 @@ public class BoardTreeNode implements IBoardTreeNode {
   private BoardContainer data;
   private BoardTreeNode parent;
   private List<BoardTreeNode> children = new ArrayList<>();
+
+  public final BoardTreeNode getRootOfTree() {
+    BoardTreeNode parent = getParent();
+    if (parent.getParent() == null) {
+      return parent;
+    }
+    return parent.getRootOfTree();
+  }
+
+  public Iterator<BoardTreeNode> breadthFirstIter() {
+    final List<BoardTreeNode> queue = new LinkedList<>();
+    BoardTreeNode root = getRootOfTree();
+    queue.add(root);
+
+    return new Iterator<BoardTreeNode>() {
+      @Override
+      public boolean hasNext() {
+        return !queue.isEmpty();
+      }
+
+      @Override
+      public BoardTreeNode next() {
+        BoardTreeNode node = queue.remove(0);
+        queue.addAll(node.getChildren());
+        return node;
+      }
+    };
+  }
+
 
   @Override
   public String toString() {

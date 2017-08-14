@@ -136,7 +136,7 @@ public class BoardHistoryManagerTest {
     historyManagerService.addBoard(getBoard("3").getCurrentBoard());
 
     String history = historyManagerService.getHistory();
-    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTree();
+    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTreeNode();
     BoardTreeNode boardTreeNode = historyManagerService.createFromJson(history);
     assertNotNull(boardTreeNode);
     assertEquals(boardTreeNodeOrig, boardTreeNode);
@@ -159,7 +159,7 @@ public class BoardHistoryManagerTest {
     historyManagerService.redo();
 
     String history = historyManagerService.getHistory();
-    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTree();
+    BoardTreeNode boardTreeNodeOrig = historyManagerService.getBoardTreeNode();
     BoardTreeNode boardTreeNode = historyManagerService.createFromJson(history);
     assertNotNull(boardTreeNode);
     assertEquals(boardTreeNodeOrig, boardTreeNode);
