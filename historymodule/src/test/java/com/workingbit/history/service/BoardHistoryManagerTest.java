@@ -3,7 +3,6 @@ package com.workingbit.history.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.domain.impl.BoardTreeNode;
-import com.workingbit.share.domain.Board;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import org.junit.Before;
