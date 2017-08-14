@@ -18,8 +18,6 @@ import static org.junit.Assert.*;
  */
 public class BoardHistoryManagerTest {
 
-  ObjectMapper mapper = new ObjectMapper();
-
   private BoardHistoryManager historyManagerService;
 
   @Before
