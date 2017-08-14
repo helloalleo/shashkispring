@@ -8,6 +8,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -20,7 +21,6 @@ public class BoardContainer implements IBoardContainer {
   private List<Draught> whiteDraughts = new ArrayList<>();
   private List<Draught> blackDraughts = new ArrayList<>();
   private Draught selectedDraught;
-  private String json;
 
   public BoardContainer() {
   }
@@ -44,13 +44,11 @@ public class BoardContainer implements IBoardContainer {
 
   public BoardContainer undo() {
     Log.debug(id);
-    Log.debug(json);
     return this;
   }
 
   public BoardContainer redo() {
     Log.debug(id);
-    Log.debug(json);
     return this;
   }
 
@@ -63,7 +61,17 @@ public class BoardContainer implements IBoardContainer {
     squares = mappedSquares;
   }
 
-  public void setJson(String json) {
-    this.json = json;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+//    if (!super.equals(o)) return false;
+    BoardContainer that = (BoardContainer) o;
+    return Objects.equals(id, that.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), id);
   }
 }

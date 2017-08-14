@@ -1,6 +1,7 @@
 package com.workingbit.history.domain;
 
 import com.github.rutledgepaulv.prune.Tree;
+import com.workingbit.history.domain.impl.BoardTreeNode;
 import com.workingbit.share.domain.impl.BoardContainer;
 
 import java.io.Serializable;
@@ -25,5 +26,11 @@ public interface IBoardHistory extends Serializable {
 
   void moveDown();
 
-  Tree<Tree.Node<BoardContainer>> toTree(Tree.Node<Optional<BoardContainer>> node);
+  Tree.Node<Optional<BoardContainer>> getLast();
+
+  Tree<Tree.Node<BoardContainer>> getTree();
+
+  String getJson();
+
+  BoardTreeNode fromJson(String json);
 }

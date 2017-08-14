@@ -2,6 +2,7 @@ package com.workingbit.history.service;
 
 import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.history.domain.impl.BoardHistory;
+import com.workingbit.history.domain.impl.BoardTreeNode;
 import com.workingbit.share.domain.impl.BoardContainer;
 
 import javax.validation.constraints.NotNull;
@@ -20,19 +21,11 @@ public class BoardHistoryManager {
    */
   public BoardHistoryManager() {
     boardHistory = new BoardHistory();
-//    boardHistory.setLast(boardHistory.getFirst());
   }
 
   public static BoardHistoryManager getInstance() {
     return INSTANCE;
   }
-
-  /**
-   * Clears all Changables contained in this manager.
-   */
-//  public void clear() {
-//    boardHistory.setLast(boardHistory.getFirst());
-//  }
 
   /**
    * Adds a Changeable to manage.
@@ -41,26 +34,6 @@ public class BoardHistoryManager {
    */
   public Tree.Node<Optional<BoardContainer>> addBoard(@NotNull BoardContainer changeable) {
     return boardHistory.addBoard(changeable);
-  }
-
-  /**
-   * Determines if an undo can be performed.
-   *
-   * @return
-   */
-  public boolean canUndo() {
-    return boardHistory.canUndo();
-//    return boardHistory.getLast() != boardHistory.getFirst();
-  }
-
-  /**
-   * Determines if a redo can be performed.
-   *
-   * @return
-   */
-  public boolean canRedo() {
-    return boardHistory.canRedo();
-//    return boardHistory.getLast().getNext() != null;
   }
 
   /**
@@ -107,5 +80,17 @@ public class BoardHistoryManager {
     Optional<BoardContainer> boardContainerOptional = boardHistory.getLast().getData();
     return boardContainerOptional
         .map(BoardContainer::redo);
+  }
+
+  public String getHistory() {
+    return boardHistory.getJson();
+  }
+
+  public BoardTreeNode createFromJson(String json) {
+    return boardHistory.fromJson(json);
+  }
+
+  public BoardTreeNode getBoardTree() {
+    return boardHistory.getBoardTree();
   }
 }
