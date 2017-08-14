@@ -22,12 +22,6 @@ public class BoardHistoryManager {
   private BoardTreeNode current = new BoardTreeNode();
 
   public void setBoardTree(BoardHistory boardHistory) {
-
-    Tree<BoardContainer> newTree = Tree.empty();
-    BoardTreeNode boardTreeNode = getBoardTreeNodeFromJson(boardHistory.getHistory());
-    Iterator<BoardTreeNode> boardTreeNodeIterator = boardTreeNode.breadthFirstIter();
-    while (boardTreeNodeIterator.hasNext()) {
-    }
   }
 
   /**
@@ -35,18 +29,18 @@ public class BoardHistoryManager {
    *
    * @param boardContainer
    */
-  public Tree.Node<Optional<BoardContainer>> addBoard(@NotNull BoardContainer boardContainer) {
-    Tree.Node<Optional<BoardContainer>> child = Tree.node(Optional.of(boardContainer));
-    current.addChildNode(child);
+  public BoardTreeNode addBoard(@NotNull BoardContainer boardContainer) {
+    BoardTreeNode child = new BoardTreeNode(boardContainer);
+    current.addChild(child);
     current = child;
     return current;
   }
 
   private void moveUp() {
-    current = current.getParent().orElseGet(null);
+    current = current.getParent();
   }
 
-  private void moveDown(Tree.Node<Optional<BoardContainer>> branch) {
+  private void moveDown(BoardTreeNode branch) {
     current = branch;
   }
 
@@ -56,7 +50,6 @@ public class BoardHistoryManager {
 
   private boolean canUndo() {
     return current.getParent()
-        .orElseThrow(() -> new IllegalStateException("Can't undo"))
         .getData() != null;
   }
 
@@ -64,11 +57,11 @@ public class BoardHistoryManager {
     return !current.getChildren().isEmpty();
   }
 
-  private boolean canRedo(Tree.Node<Optional<BoardContainer>> branch) {
+  private boolean canRedo(BoardTreeNode branch) {
     return current.getChildren().contains(branch);
   }
 
-  private Tree.Node<Optional<BoardContainer>> getLast() {
+  private BoardTreeNode getLast() {
     return current;
   }
 
@@ -82,18 +75,7 @@ public class BoardHistoryManager {
   }
 
   private BoardTreeNode getBoardTreeNode() {
-    Tree.Node<Optional<BoardContainer>> rootOfTree = current.getRootOfTree();
-    final BoardTreeNode[] indexNode = {new BoardTreeNode()};
-    rootOfTree.asTree().breadthFirstVisit(optionalNode -> {
-      BoardTreeNode current = new BoardTreeNode();
-      BoardContainer data = optionalNode.orElse(null);
-      current.setData(data);
-      current.setParent(indexNode[0]);
-      indexNode[0].getChildren().add(current);
-      indexNode[0] = current;
-      return true;
-    });
-    return indexNode[0];
+    return current.getRootOfTree();
   }
 
   private Tree<Tree.Node<BoardContainer>> getTree(Tree.Node<Optional<BoardContainer>> node) {
@@ -124,9 +106,9 @@ public class BoardHistoryManager {
     //set index
     moveUp();
     //undo
-    Optional<BoardContainer> boardContainerOptiona = getLast().getData();
-    return boardContainerOptiona
-        .map(BoardContainer::undo);
+    BoardContainer boardContainerOptional = getLast().getData();
+    boardContainerOptional.undo();
+    return Optional.of(boardContainerOptional);
   }
 
   /**
@@ -134,7 +116,7 @@ public class BoardHistoryManager {
    *
    * @throws IllegalStateException if canRedo returns false.
    */
-  public Optional<BoardContainer> redo(Tree.Node<Optional<BoardContainer>> branch) {
+  public Optional<BoardContainer> redo(BoardTreeNode branch) {
     //validate
     if (!canRedo(branch)) {
       return Optional.empty();
@@ -142,9 +124,9 @@ public class BoardHistoryManager {
     //reset index
     moveDown(branch);
     //redo
-    Optional<BoardContainer> boardContainerOptional = getLast().getData();
-    return boardContainerOptional
-        .map(BoardContainer::redo);
+    BoardContainer boardContainer = getLast().getData();
+    boardContainer.redo();
+    return Optional.of(boardContainer);
   }
 
   public Optional<BoardContainer> redo() {
@@ -152,9 +134,9 @@ public class BoardHistoryManager {
       return Optional.empty();
     }
     moveDown();
-    Optional<BoardContainer> boardContainerOptional = getLast().getData();
-    return boardContainerOptional
-        .map(BoardContainer::redo);
+    BoardContainer boardContainer = getLast().getData();
+    boardContainer.redo();
+    return Optional.of(boardContainer);
   }
 
   public BoardHistory getHistory(String id) {

@@ -18,6 +18,14 @@ public class BoardTreeNode implements IBoardTreeNode {
   private BoardTreeNode parent;
   private List<BoardTreeNode> children = new ArrayList<>();
 
+  public BoardTreeNode(BoardContainer data) {
+    this.data = data;
+  }
+
+  public void addChild(BoardTreeNode child) {
+    children.add(child);
+  }
+
   public final BoardTreeNode getRootOfTree() {
     BoardTreeNode parent = getParent();
     if (parent.getParent() == null) {
