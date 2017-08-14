@@ -92,7 +92,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/boardservice/dev/1502563472847-2017-08-12T18:44:32.847Z/boardservice-1.0-SNAPSHOT.zip"
+          "S3Key": "serverless/boardservice/dev/1502728776306-2017-08-14T16:39:36.306Z/boardservice-1.0-SNAPSHOT.zip"
         },
         "FunctionName": "boardservice-dev-board",
         "Handler": "com.workingbit.board.LambdaHandler::handleRequest",
@@ -116,14 +116,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "BoardLambdaVersionVE8BBbitHde15P37S4Wln6AYMsPW4uiXXyLLQGnwkQI": {
+    "BoardLambdaVersionyEaUmGoqptejqz6mmIlNi5qHKJHQpsULemsKvy4rA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "BoardLambdaFunction"
         },
-        "CodeSha256": "VE8BBbitHde15P37S4Wln6AYMsPW4uiXXyLLQGnwkQI="
+        "CodeSha256": "yEaUmGoqptejqz6mmIlNi/5qHKJHQpsULems/Kvy4rA="
       }
     },
     "ApiGatewayRestApi": {
@@ -475,7 +475,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1502563473087": {
+    "ApiGatewayDeployment1502728776548": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -527,19 +527,19 @@
         }
       }
     },
-    "DynamoDbTable": {
+    "DynamoDbTableBoard": {
       "Type": "AWS::DynamoDB::Table",
       "Properties": {
         "TableName": "Board",
         "AttributeDefinitions": [
           {
-            "AttributeName": "Id",
+            "AttributeName": "id",
             "AttributeType": "S"
           }
         ],
         "KeySchema": [
           {
-            "AttributeName": "Id",
+            "AttributeName": "id",
             "KeyType": "HASH"
           }
         ],
@@ -549,9 +549,31 @@
         }
       }
     },
-    "DynamoDBIamPolicy": {
+    "DynamoDbTableBoardHistory": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "BoardHistory",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        }
+      }
+    },
+    "DynamoDBIamPolicyBoard": {
       "Type": "AWS::IAM::Policy",
-      "DependsOn": "DynamoDbTable",
+      "DependsOn": "DynamoDbTableBoard",
       "Properties": {
         "PolicyName": "lambda-dynamodb",
         "PolicyDocument": {
@@ -576,6 +598,34 @@
           }
         ]
       }
+    },
+    "DynamoDBIamPolicyBoardHistory": {
+      "Type": "AWS::IAM::Policy",
+      "DependsOn": "DynamoDbTableBoardHistory",
+      "Properties": {
+        "PolicyName": "lambda-dynamodb",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:DescribeTable",
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:Scan"
+              ],
+              "Resource": "arn:aws:dynamodb:*:*:table/BoardHistory"
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "IamRoleLambdaExecution"
+          }
+        ]
+      }
     }
   },
   "Outputs": {
@@ -587,7 +637,7 @@
     "BoardLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "BoardLambdaVersionVE8BBbitHde15P37S4Wln6AYMsPW4uiXXyLLQGnwkQI"
+        "Ref": "BoardLambdaVersionyEaUmGoqptejqz6mmIlNi5qHKJHQpsULemsKvy4rA"
       }
     },
     "ServiceEndpoint": {

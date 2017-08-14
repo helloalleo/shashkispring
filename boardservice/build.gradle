@@ -1,2 +1,19 @@
 group 'com.workingbit.board'
 version '1.0-SNAPSHOT'
+
+apply plugin: 'application'
+
+//bootRepackage {
+//    mainClass = 'com.workingbit.board.LocalBoardApplication'
+//}
+
+//springBoot {
+//    mainClass = 'com.workingbit.board.LocalBoardApplication'
+//    executable = true
+//    buildInfo()
+//}
+//
+//bootRun {
+//    addResources = false
+//}
+

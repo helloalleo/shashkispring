@@ -2,9 +2,6 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.Board;
-import com.workingbit.share.domain.IDraught;
-import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.NewBoardRequest;
@@ -70,18 +67,20 @@ public class BoardServiceTest extends BaseServiceTest {
   public void should_save_move_history() throws BoardServiceException {
     Board board = getNewBoard();
     Draught draught = getDraught(5, 2);
-    ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
+    Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught(draught);
-    ISquare target = getSquareByVH(board.getCurrentBoard(), 4, 3);
+    Square target = getSquareByVH(board.getCurrentBoard(), 4, 3);
 
     // find allowed and beaten
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
     Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
-    List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
-    List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());
+    List<Square> allowedMoves = (List<Square>) allowedMovesMap.get(allowed.name());
+    List<Draught> beatenMoves = (List<Draught>) allowedMovesMap.get(beaten.name());
 
     // create moveTo action
+    Board finalBoard = board;
     Map<String, Object> moveTo = new HashMap<String, Object>() {{
+      put(boardId.name(), finalBoard.getId());
       put(selectedSquare.name(), square);
       put(targetSquare.name(), target);
       put(allowed.name(), allowedMoves);

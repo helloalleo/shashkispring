@@ -31,7 +31,7 @@ public class BoardHistoryService {
     BoardContainer currentBoard = newBoard.getCurrentBoard();
 
     // find board history
-    Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findById(newBoard.getId());
+    Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findByBoardId(newBoard.getId());
     boardHistoryOptional.ifPresent(boardHistory -> {
       BoardHistoryManager boardHistoryManager = new BoardHistoryManager(boardHistory);
       boardHistoryManager.addBoard(currentBoard);

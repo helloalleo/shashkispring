@@ -3,8 +3,10 @@ pipelines:
     - step:
         caches:
           - gradle
+          - node
         script:
           - ./gradlew clean build copyRuntimeLibs batchZip --parallel -x test
+          - npm i
           - cd wikiservice
           - ./sls deploy
           - cd ../boardservice

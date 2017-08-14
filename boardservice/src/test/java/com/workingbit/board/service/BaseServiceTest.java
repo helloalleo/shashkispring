@@ -4,13 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AWSProperties;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.Board;
-import com.workingbit.share.domain.IBoardContainer;
-import com.workingbit.share.domain.ISquare;
-import com.workingbit.share.domain.impl.Board;
-import com.workingbit.share.domain.impl.Draught;
-import com.workingbit.share.domain.impl.NewBoardRequest;
-import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.domain.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -42,7 +36,7 @@ public class BaseServiceTest {
     return new Draught(v, h);
   }
 
-  ISquare getSquare(Draught draught, int v, int h) {
+  Square getSquare(Draught draught, int v, int h) {
     return new Square(v, h, true, 60, draught);
   }
 
@@ -50,7 +44,7 @@ public class BaseServiceTest {
     return new Draught(v, h, true);
   }
 
-  ISquare getSquareByVH(IBoardContainer board, int v, int h) {
+  Square getSquareByVH(BoardContainer board, int v, int h) {
     return findSquareByVH(board, v, h).get();
   }
 

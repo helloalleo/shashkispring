@@ -99,7 +99,7 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
-    DynamoDbTable:
+    DynamoDbTableBoard:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: Board
@@ -112,7 +112,7 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    DynamoDbTable:
+    DynamoDbTableBoardHistory:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: BoardHistory
@@ -125,9 +125,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    DynamoDBIamPolicy:
+    DynamoDBIamPolicyBoard:
       Type: AWS::IAM::Policy
-      DependsOn: DynamoDbTable
+      DependsOn: DynamoDbTableBoard
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -141,6 +141,16 @@ resources:
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
               Resource: arn:aws:dynamodb:*:*:table/Board
+        Roles:
+          - Ref: IamRoleLambdaExecution
+    DynamoDBIamPolicyBoardHistory:
+      Type: AWS::IAM::Policy
+      DependsOn: DynamoDbTableBoardHistory
+      Properties:
+        PolicyName: lambda-dynamodb
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
             - Effect: Allow
               Action:
                 - dynamodb:DescribeTable
@@ -151,3 +161,16 @@ resources:
               Resource: arn:aws:dynamodb:*:*:table/BoardHistory
         Roles:
           - Ref: IamRoleLambdaExecution
+
+plugins:
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    start:
+      port: 8002
+      inMemory: true
+      migrate: true
+      seed: true
+    # Uncomment only if you already have a DynamoDB running locally
+    # noStart: true

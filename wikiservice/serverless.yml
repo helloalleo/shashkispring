@@ -138,3 +138,16 @@ resources:
               Resource: arn:aws:dynamodb:*:*:table/Article
         Roles:
           - Ref: IamRoleLambdaExecution
+
+plugins:
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    start:
+      port: 8001
+      inMemory: true
+      migrate: true
+      seed: true
+    # Uncomment only if you already have a DynamoDB running locally
+    # noStart: true

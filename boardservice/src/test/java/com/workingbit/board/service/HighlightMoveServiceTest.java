@@ -3,8 +3,6 @@ package com.workingbit.board.service;
 import com.workingbit.board.common.EnumSearch;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.domain.ICoordinates;
-import com.workingbit.share.domain.IDraught;
-import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -32,8 +30,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
   @Test
   public void shouldWhiteDraughtMoveForwardOnOnePosition() throws Exception, BoardServiceException {
     Board board = getBoard();
-    IDraught draught = getDraught(5, 2);
-    ISquare square = getSquare((Draught) draught, 5, 2);
+    Draught draught = getDraught(5, 2);
+    Square square = getSquare((Draught) draught, 5, 2);
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
@@ -44,7 +42,7 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
   public void shouldBlackDraughtMoveBackwardOnOnePosition() throws Exception, BoardServiceException {
     Board board = getBoard();
     Draught draught = getDraughtBlack(5, 2);
-    ISquare square = getSquare(draught, 5, 2);
+    Square square = getSquare(draught, 5, 2);
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
@@ -57,9 +55,9 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     BoardService boardService = getBoardService();
     // add black draught
     boardService.addDraught(board.getCurrentBoard(), getDraughtBlack(4, 3));
-    IDraught draught = getDraught(5, 2);
+    Draught draught = getDraught(5, 2);
     // find square on board
-    ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
+    Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     // set draught for square
     square.setDraught((Draught) draught);
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
@@ -75,8 +73,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     BoardService boardService = getBoardService();
     boardService.addDraught(board.getCurrentBoard(), getDraughtBlack(4, 3));
     boardService.addDraught(board.getCurrentBoard(), getDraughtBlack(4, 1));
-    IDraught draught = getDraught(5, 2);
-    ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
+    Draught draught = getDraught(5, 2);
+    Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught((Draught) draught);
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
@@ -90,8 +88,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     Board board = getBoard();
     BoardService boardService = getBoardService();
     boardService.addDraught(board.getCurrentBoard(), getDraughtBlack(6, 1));
-    IDraught draught = getDraught(5, 2);
-    ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
+    Draught draught = getDraught(5, 2);
+    Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught((Draught) draught);
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
@@ -106,8 +104,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     BoardService boardService = getBoardService();
     boardService.addDraught(board.getCurrentBoard(), getDraughtBlack(6, 1));
     boardService.addDraught(board.getCurrentBoard(), getDraughtBlack(6, 3));
-    IDraught draught = getDraught(5, 2);
-    ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
+    Draught draught = getDraught(5, 2);
+    Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught((Draught) draught);
     HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
     Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
