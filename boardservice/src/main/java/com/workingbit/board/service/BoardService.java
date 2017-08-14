@@ -5,10 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.IBoard;
-import com.workingbit.share.domain.IBoardContainer;
-import com.workingbit.share.domain.IDraught;
-import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,9 +39,9 @@ public class BoardService {
     this.boardHistoryService = boardHistoryService;
   }
 
-  public IBoard createBoard(NewBoardRequest newBoardRequest) {
-    IBoard board = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
-    boardDao.save((Board) board);
+  public Board createBoard(NewBoardRequest newBoardRequest) {
+    Board board = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
+    boardDao.save(board);
     return board;
   }
 
@@ -70,7 +66,7 @@ public class BoardService {
    * @param squareSize size of one square
    * @return
    */
-  private IBoard initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
+  private Board initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
     List<Square> squares = new ArrayList<>();
     List<Draught> whiteDraughts = new ArrayList<>();
     List<Draught> blackDraughts = new ArrayList<>();
@@ -106,7 +102,7 @@ public class BoardService {
     return board;
   }
 
-  public void addDraught(IBoardContainer board, IDraught draught) {
+  public void addDraught(BoardContainer board, Draught draught) {
     Optional<Square> draughtOnBoard = board.getSquares()
         .stream()
         // find square by coords of draught
@@ -135,8 +131,8 @@ public class BoardService {
     return boardOptional.map(board -> {
       Square selected = mapper.convertValue(moveTo.get(selectedSquare.name()), Square.class);
       Square target = mapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
-      List<ISquare> allowedMoves = mapList((List<ISquare>) moveTo.get(allowed.name()), mapper, Square.class, ISquare.class);
-      List<IDraught> beatenMoves = mapList((List<IDraught>) moveTo.get(beaten.name()), mapper, Draught.class, IDraught.class);
+      List<Square> allowedMoves = mapList((List<Square>) moveTo.get(allowed.name()), mapper, Square.class, Square.class);
+      List<Draught> beatenMoves = mapList((List<Draught>) moveTo.get(beaten.name()), mapper, Draught.class, Draught.class);
       try {
         // create move service
         MoveService moveService = MoveService.getService(board, selected, target, allowedMoves, beatenMoves);

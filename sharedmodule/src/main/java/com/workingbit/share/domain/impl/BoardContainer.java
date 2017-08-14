@@ -2,7 +2,6 @@ package com.workingbit.share.domain.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.share.common.Log;
-import com.workingbit.share.domain.IBoardContainer;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -14,7 +13,7 @@ import java.util.Objects;
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
  */
 @Data
-public class BoardContainer implements IBoardContainer {
+public class BoardContainer {
 
   private String id;
   private List<Square> squares = new ArrayList<>();

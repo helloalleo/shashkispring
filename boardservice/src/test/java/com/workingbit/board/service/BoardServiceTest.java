@@ -2,7 +2,7 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.Board;
 import com.workingbit.share.domain.IDraught;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Board;
@@ -33,14 +33,14 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void createBoard() throws Exception {
-    IBoard board = getNewBoard();
+    Board board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
   }
 
   @Test
   public void findAll() throws Exception {
-    IBoard board = getNewBoard();
+    Board board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
     List<Board> all = boardService.findAll();
@@ -49,7 +49,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void findById() throws Exception {
-    IBoard board = getNewBoard();
+    Board board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
     Optional<Board> byId = boardService.findById(board.getId());
@@ -58,7 +58,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void delete() throws Exception {
-    IBoard board = getNewBoard();
+    Board board = getNewBoard();
     String boardId = board.getId();
     assertNotNull(boardId);
     boardService.delete(boardId);
@@ -68,7 +68,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void should_save_move_history() throws BoardServiceException {
-    IBoard board = getNewBoard();
+    Board board = getNewBoard();
     Draught draught = getDraught(5, 2);
     ISquare square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught(draught);
@@ -111,13 +111,13 @@ public class BoardServiceTest extends BaseServiceTest {
     boards.forEach(board -> boardService.delete(board.getId()));
   }
 
-  private List<IBoard> boards = new ArrayList<>();
+  private List<Board> boards = new ArrayList<>();
 
-  private void toDelete(IBoard board) {
+  private void toDelete(Board board) {
     boards.add(board);
   }
 
-  private IBoard getNewBoard() {
+  private Board getNewBoard() {
     NewBoardRequest newBoardRequest = new NewBoardRequest(true,false, EnumRules.RUSSIAN, 40);
     return boardService.createBoard(newBoardRequest);
   }

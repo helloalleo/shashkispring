@@ -2,7 +2,6 @@ package com.workingbit.share.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.domain.ICoordinates;
-import com.workingbit.share.domain.ISquare;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"v", "h"})
-public class Square implements ICoordinates, ISquare {
+public class Square implements ICoordinates{
 
   /**
    * row

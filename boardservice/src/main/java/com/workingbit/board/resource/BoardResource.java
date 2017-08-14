@@ -4,7 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
-import com.workingbit.share.domain.IBoard;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,7 @@ public class BoardResource {
 
   @PostMapping()
   public Map<String, Object> create(@RequestBody NewBoardRequest newBoardRequest) {
-    IBoard board = boardService.createBoard(newBoardRequest);
+    Board board = boardService.createBoard(newBoardRequest);
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), board);

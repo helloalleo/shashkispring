@@ -4,7 +4,6 @@ import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.dao.BoardHistoryDao;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.service.BoardHistoryManager;
-import com.workingbit.share.domain.IBoard;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class BoardHistoryService {
     this.boardDao = boardDao;
   }
 
-  public void addBoardAndSave(IBoard newBoard) {
+  public void addBoardAndSave(Board newBoard) {
     BoardContainer currentBoard = newBoard.getCurrentBoard();
 
     // find board history

@@ -2,8 +2,8 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.IBoardContainer;
-import com.workingbit.share.domain.ISquare;
+import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Square;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -23,12 +23,12 @@ class BoardUtils {
    * @param square
    * @return
    */
-  static Optional<ISquare> findSquareLink(IBoardContainer board, ISquare square) {
+  static Optional<Square> findSquareLink(BoardContainer board, Square square) {
     return findSquareByVH(board, square.getV(), square.getH());
   }
 
-  static Optional<ISquare> findSquareByVH(IBoardContainer board, int v, int h) {
-    for (ISquare square : board.getSquares()) {
+  static Optional<Square> findSquareByVH(BoardContainer board, int v, int h) {
+    for (Square square : board.getSquares()) {
       if (square.getH() == h && square.getV() == v) {
         return Optional.of(square);
       }
@@ -43,7 +43,7 @@ class BoardUtils {
    * @param target
    * @return
    */
-  static Pair<Integer, Integer> getDistanceVH(ISquare source, ISquare target) {
+  static Pair<Integer, Integer> getDistanceVH(Square source, Square target) {
     int vDist = target.getV() - source.getV();
     int hDist = target.getH() - source.getH();
     return Pair.of(vDist, hDist);

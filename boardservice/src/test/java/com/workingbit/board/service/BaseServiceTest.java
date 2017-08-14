@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AWSProperties;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.Board;
 import com.workingbit.share.domain.IBoardContainer;
 import com.workingbit.share.domain.ISquare;
 import com.workingbit.share.domain.impl.Board;
@@ -34,7 +34,7 @@ public class BaseServiceTest {
 
   Board getBoard() {
     assert boardService != null;
-    IBoard board = boardService.createBoard(new NewBoardRequest(false, false, EnumRules.RUSSIAN, 60));
+    Board board = boardService.createBoard(new NewBoardRequest(false, false, EnumRules.RUSSIAN, 60));
     return (Board) board;
   }
 

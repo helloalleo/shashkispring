@@ -1,6 +1,5 @@
 package com.workingbit.wiki.resource;
 
-import com.workingbit.share.domain.IArticle;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.wiki.common.ResourceConstants;
 import com.workingbit.wiki.service.ArticleService;
@@ -86,7 +85,7 @@ public class ArticleResource {
 
   @GetMapping(path = "/published")
   public Map<String, Object> findPublishedArticles() {
-    List<IArticle> publishedArticles = articleService.findPublishedArticles();
+    List<Article> publishedArticles = articleService.findPublishedArticles();
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), publishedArticles);

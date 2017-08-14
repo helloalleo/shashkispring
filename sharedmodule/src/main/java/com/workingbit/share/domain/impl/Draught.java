@@ -1,7 +1,6 @@
 package com.workingbit.share.domain.impl;
 
 import com.workingbit.share.domain.ICoordinates;
-import com.workingbit.share.domain.IDraught;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Draught implements ICoordinates, IDraught {
+public class Draught implements ICoordinates {
   /**
    * row
    */

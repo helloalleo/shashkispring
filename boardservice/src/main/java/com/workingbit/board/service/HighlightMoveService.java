@@ -3,9 +3,7 @@ package com.workingbit.board.service;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.function.TrinaryFunction;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.IBoardContainer;
-import com.workingbit.share.domain.IDraught;
-import com.workingbit.share.domain.ISquare;
+import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,12 +27,12 @@ public class HighlightMoveService {
    * possible directions of moving
    */
   private final List<Pair<Integer, Integer>> dirs;
-  private IBoardContainer board;
-  private ISquare selectedSquare;
+  private BoardContainer board;
+  private Square selectedSquare;
   private HashMap<Pair<Integer, Integer>, TrinaryFunction<Integer>> diagonal;
   private EnumRules rules;
 
-  HighlightMoveService(IBoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
+  HighlightMoveService(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
@@ -58,7 +56,7 @@ public class HighlightMoveService {
     this.selectedSquare = selectedSquare;
   }
 
-  public static HighlightMoveService getService(IBoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
+  public static HighlightMoveService getService(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
       return new HighlightMoveService(board, selectedSquare, rules);
   }
 
@@ -73,9 +71,9 @@ public class HighlightMoveService {
    * @param deep           how deep in recursion
    * @return {allow, beaten}
    */
-  private Map<String, Object> walk(ISquare selectedSquare, int deep) throws BoardServiceException {
-    List<ISquare> allowedMoves = new ArrayList<>();
-    List<IDraught> beatenMoves = new ArrayList<>();
+  private Map<String, Object> walk(Square selectedSquare, int deep) throws BoardServiceException {
+    List<Square> allowedMoves = new ArrayList<>();
+    List<Draught> beatenMoves = new ArrayList<>();
     int dimension = getBoardDimension();
     int mainDiagonal = selectedSquare.getV() - selectedSquare.getH();
     int subDiagonal = dimension - selectedSquare.getV() - selectedSquare.getH();
@@ -86,7 +84,7 @@ public class HighlightMoveService {
     while (rowsIterator.hasNext()) {
       // get next row
       List<Square> next = rowsIterator.next();
-      for (ISquare currentSquare : next) {
+      for (Square currentSquare : next) {
         Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, currentSquare);
         // if selected draught is not queen and we near of it other words not far then 2 squares then go next else skip this square
         if (!currentSquare.isMain() // if we on the main black square
@@ -98,7 +96,7 @@ public class HighlightMoveService {
         if (isSquareOnMainDiagonal(mainDiagonal, currentSquare) || isSquareOnSubDiagonal(dimension, subDiagonal, currentSquare)) {
           List<Pair<Integer, Integer>> forwardDirs = getForwardDirs(selectedSquare, currentSquare);
           for (Pair<Integer, Integer> curDir : forwardDirs) {
-            Optional<ISquare> nextSquare = mustBeat(selectedSquare.getPointDraught().isBlack(), curDir, currentSquare, selectedSquare);
+            Optional<Square> nextSquare = mustBeat(selectedSquare.getPointDraught().isBlack(), curDir, currentSquare, selectedSquare);
             if (nextSquare.isPresent()) {
               Map<String, Object> walk = walk(nextSquare.get(), deep);
               allowedMoves.add(nextSquare.get());
@@ -112,18 +110,18 @@ public class HighlightMoveService {
         }
       }
     }
-    List<ISquare> allowedAfterBeat = allowedMoves
+    List<Square> allowedAfterBeat = allowedMoves
         .stream()
         .filter(square -> square.getPointDraught() != null)
         .collect(Collectors.toList());
     return new HashMap<String, Object>() {{
-      List<ISquare> completeAllowed = allowedAfterBeat.isEmpty() ? allowedMoves : allowedAfterBeat;
+      List<Square> completeAllowed = allowedAfterBeat.isEmpty() ? allowedMoves : allowedAfterBeat;
       put(allowed.name(), completeAllowed);
       put(beaten.name(), beatenMoves);
     }};
   }
 
-  private List<Pair<Integer, Integer>> getForwardDirs(ISquare selectedSquare, ISquare currentSquare) {
+  private List<Pair<Integer, Integer>> getForwardDirs(Square selectedSquare, Square currentSquare) {
     Pair<Integer, Integer> dirVH = getDirVH(selectedSquare, currentSquare);
     List<Pair<Integer, Integer>> forwardDirs = new ArrayList<>();
     if (currentSquare.isOccupied() || selectedSquare.getPointDraught().isQueen()) {
@@ -136,7 +134,7 @@ public class HighlightMoveService {
     return forwardDirs;
   }
 
-  private static Pair<Integer, Integer> getDirVH(ISquare selectedSquare, ISquare currentSquare) {
+  private static Pair<Integer, Integer> getDirVH(Square selectedSquare, Square currentSquare) {
     Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, currentSquare);
     return Pair.of(distanceVH.getLeft() / abs(distanceVH.getLeft()),
         distanceVH.getRight() / abs(distanceVH.getRight()));
@@ -157,15 +155,15 @@ public class HighlightMoveService {
     return abs(rules.getDimension());
   }
 
-  private boolean isSquareOnSubDiagonal(int dimension, int subDiagonal, ISquare square) {
+  private boolean isSquareOnSubDiagonal(int dimension, int subDiagonal, Square square) {
     return dimension - square.getV() - square.getH() == subDiagonal;
   }
 
-  private boolean isSquareOnMainDiagonal(int mainDiagonal, ISquare square) {
+  private boolean isSquareOnMainDiagonal(int mainDiagonal, Square square) {
     return square.getV() - square.getH() == mainDiagonal;
   }
 
-  private boolean canMove(ISquare selectedSquare, ISquare currentSquare) {
+  private boolean canMove(Square selectedSquare, Square currentSquare) {
     boolean black = selectedSquare.getPointDraught().isBlack();
     boolean queen = selectedSquare.getPointDraught().isQueen();
     boolean beaten = selectedSquare.getPointDraught().isBeaten();
@@ -246,7 +244,7 @@ public class HighlightMoveService {
 //    return beat;
 //  }
 
-  private static Optional<ISquare> nextSquareByDir(IBoardContainer board, ISquare source, Pair<Integer, Integer> dir) {
+  private static Optional<Square> nextSquareByDir(BoardContainer board, Square source, Pair<Integer, Integer> dir) {
     return findSquareByVH(board, source.getV() + dir.getLeft(), source.getH() + dir.getRight());
   }
 
@@ -258,10 +256,10 @@ public class HighlightMoveService {
    * @param selectedSquare
    * @return
    */
-  private Optional<ISquare> mustBeat(boolean black, Pair<Integer, Integer> dir, ISquare currentSquare, ISquare selectedSquare) throws BoardServiceException {
-    Optional<ISquare> nextSquareOpt = nextSquareByDir(board, currentSquare, dir);
+  private Optional<Square> mustBeat(boolean black, Pair<Integer, Integer> dir, Square currentSquare, Square selectedSquare) throws BoardServiceException {
+    Optional<Square> nextSquareOpt = nextSquareByDir(board, currentSquare, dir);
     return nextSquareOpt.map(nextSquare -> {
-      IDraught currentDraught = currentSquare.getDraught();
+      Draught currentDraught = currentSquare.getDraught();
       int dimension = getBoardDimension();
       int mainDiagonal = selectedSquare.getV() - selectedSquare.getH();
       int subDiagonal = dimension - selectedSquare.getV() - selectedSquare.getH();

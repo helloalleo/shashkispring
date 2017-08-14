@@ -4,7 +4,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.workingbit.share.dao.BaseDao;
-import com.workingbit.share.domain.IArticle;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.wiki.config.AWSProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class ArticleDao extends BaseDao<Article> {
     save(article);
   }
 
-  public List<IArticle> findPublished() {
+  public List<Article> findPublished() {
     DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
     Map<String, AttributeValue> eav = new HashMap<>();
     eav.put(":trueVal", new AttributeValue().withN("1"));
@@ -54,7 +53,7 @@ public class ArticleDao extends BaseDao<Article> {
     scanExpression.withFilterExpression(filterExpression).withExpressionAttributeValues(eav);
     PaginatedScanList<Article> scanArticle = getDynamoDBMapper().scan(Article.class, scanExpression);
     scanArticle.loadAllResults();
-    List<IArticle> articles = new ArrayList<>(scanArticle.size());
+    List<Article> articles = new ArrayList<>(scanArticle.size());
     articles.addAll(scanArticle);
     return articles;
   }

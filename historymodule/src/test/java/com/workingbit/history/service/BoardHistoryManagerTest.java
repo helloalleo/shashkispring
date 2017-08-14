@@ -3,7 +3,7 @@ package com.workingbit.history.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.domain.impl.BoardTreeNode;
-import com.workingbit.share.domain.IBoard;
+import com.workingbit.share.domain.Board;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import org.junit.Before;
@@ -30,21 +30,21 @@ public class BoardHistoryManagerTest {
 
   @Test
   public void addChangeable() throws Exception {
-    IBoard board = getBoard();
+    Board board = getBoard();
     BoardTreeNode node = historyManagerService.addBoard(board.getCurrentBoard());
     assertNotNull(node);
   }
 
   @Test
   public void undo() throws Exception {
-    IBoard board = getBoard();
+    Board board = getBoard();
     historyManagerService.addBoard(board.getCurrentBoard());
     assertNotNull(board);
   }
 
   @Test
   public void redo() throws Exception {
-    IBoard board = getBoard();
+    Board board = getBoard();
     historyManagerService.addBoard(board.getCurrentBoard());
     historyManagerService.addBoard(board.getCurrentBoard());
     assertNotNull(board);
@@ -187,7 +187,7 @@ public class BoardHistoryManagerTest {
 //    assertEquals(boardTreeNodeOrig, boardTreeNode);
 //  }
 
-  IBoard getBoard(String id) {
+  Board getBoard(String id) {
     Board board = new Board();
     BoardContainer currentBoard = new BoardContainer();
     currentBoard.setId(id);
@@ -195,7 +195,7 @@ public class BoardHistoryManagerTest {
     return board;
   }
 
-  IBoard getBoard() {
+  Board getBoard() {
     return getBoard(UUID.randomUUID().toString());
   }
 }
