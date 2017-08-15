@@ -137,6 +137,14 @@ public class BoardService {
     }).orElseThrow(getBoardServiceExceptionSupplier("Unable to find allowed moves"));
   }
 
+  /**
+   * @param moveTo map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
+   * @return Move info:
+   *        {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
+   *        h - distance for move horizontal (minus left), targetSquare is a new square with
+   *        moved draught, queen is a draught has become the queen
+   * @throws BoardServiceException
+   */
   public Map<String, Object> move(Map<String, Object> moveTo) throws BoardServiceException {
     Optional<Board> boardOptional = findById((String) moveTo.get(boardId.name()));
     return boardOptional.map(board -> {

@@ -1,5 +1,6 @@
 package com.workingbit.board.service;
 
+import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -45,8 +46,14 @@ public class MoveUtil {
     return board;
   }
 
+  /**
+   * Moves draught to new target and set board's selected square
+   * @return Pair of updated board and date:
+   *        {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
+   *        h - distance for move horizontal (minus left), targetSquare is a new square with
+   *        moved draught, queen is a draught has become the queen
+   */
   public Pair<BoardContainer, Map<String, Object>> moveAndUpdateBoard() {
-    getBoardContainer().setSelectedSquare(targetSquare);
     return Pair.of(getBoardContainer(), moveDraught());
   }
 
@@ -60,9 +67,11 @@ public class MoveUtil {
     Pair<Integer, Integer> distanceVH = getDistanceVH(sourceSquare, targetSquare);
     int vMove = distanceVH.getLeft() * sourceSquare.getSize();
     int hMove = distanceVH.getRight() * sourceSquare.getSize();
+    getBoardContainer().setSelectedSquare(targetSquare);
     return new HashMap<String, Object>() {{
       put(v.name(), vMove);
       put(h.name(), hMove);
+      put(EnumBaseKeys.targetSquare.name(), targetSquare);
       put(queen.name(), targetSquare.getDraught().isQueen());
     }};
   }

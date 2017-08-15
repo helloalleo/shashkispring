@@ -1,5 +1,6 @@
 package com.workingbit.board.service;
 
+import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.Board;
@@ -120,23 +121,46 @@ public class BoardServiceTest extends BaseServiceTest {
     List<Draught> beatenMoves = (List<Draught>) highlight.get(beaten.name());
 
     // create moveTo action
-    Board finalBoard = board;
-    Map<String, Object> moveTo = new HashMap<String, Object>() {{
-      put(boardId.name(), finalBoard.getId());
-      put(selectedSquare.name(), square);
-      put(targetSquare.name(), target);
-      put(allowed.name(), allowedMoves);
-      put(beaten.name(), beatenMoves);
-    }};
+    Map<String, Object> moveTo = getMoveTo(board, square, target, allowedMoves, beatenMoves);
     MapUtils.debugPrint(System.out, "PREP MOVE", moveTo);
 
     // move draught and save
     Map<String, Object> newMoveCoords = boardService.move(moveTo);
     MapUtils.debugPrint(System.out, "MOVE", newMoveCoords);
 
+    // next move
+    Object newSource = newMoveCoords.get(EnumBaseKeys.targetSquare.name());
+    hl = new HashMap<String, Object>() {{
+      put(selectedSquare.name(), newSource);
+      put(boardId.name(), board.getId());
+    }};
+    highlight = boardService.highlight(hl);
+    // find allowed and beaten
+    allowedMoves = (List<Square>) highlight.get(allowed.name());
+    beatenMoves = (List<Draught>) highlight.get(beaten.name());
+
+    Square nextTarget = BoardUtils.findSquareByVH(board.getCurrentBoard(), 3,4).get();
+    // create moveTo action
+    moveTo = getMoveTo(board, target, nextTarget, allowedMoves, beatenMoves);
+    MapUtils.debugPrint(System.out, "PREP MOVE", moveTo);
+
+    // move draught and save
+    newMoveCoords = boardService.move(moveTo);
+    MapUtils.debugPrint(System.out, "MOVE", newMoveCoords);
+
     // при проверке возмоных значения выбирать шашку и сохранять ее
     Map<String, Object> undo = boardHistoryService.undo(board.getId());
     MapUtils.debugPrint(System.out, "UNDO", undo);
+  }
+
+  private HashMap<String, Object> getMoveTo(Board board, Square square, Square target, List<Square> allowedMoves, List<Draught> beatenMoves) {
+    return new HashMap<String, Object>() {{
+      put(boardId.name(), board.getId());
+      put(selectedSquare.name(), square);
+      put(targetSquare.name(), target);
+      put(allowed.name(), allowedMoves);
+      put(beaten.name(), beatenMoves);
+    }};
   }
 
   @After
