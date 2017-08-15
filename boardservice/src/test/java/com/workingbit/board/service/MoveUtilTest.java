@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MoveServiceTest extends BaseServiceTest {
+public class MoveUtilTest extends BaseServiceTest {
 
   @Test
   public void doMove() throws Exception, BoardServiceException {
@@ -22,12 +22,12 @@ public class MoveServiceTest extends BaseServiceTest {
 //    ISquare square = getSquareByVH(board, 5, 2);
 //    square.setDraught(draught);
 //    ISquare target = getSquareByVH(board, 4, 3);
-//    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
+//    HighlightMoveUtil highlightMoveService = new HighlightMoveUtil(board, square, getRules());
 //    Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
 //    List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
 //    List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());
-//    MoveService moveService = MoveService.getService(board, square, target, allowedMoves, beatenMoves);
-//    Map<String, Object> move = moveService.doMoveAndUpdateBoard();
+//    MoveUtil moveService = MoveUtil.getService(board, square, target, allowedMoves, beatenMoves);
+//    Map<String, Object> move = moveService.move();
 //    MapUtils.debugPrint(System.out, "Move", move);
 //    int vMove = (int) move.get(v.name());
 //    int hMove = (int) move.get(h.name());

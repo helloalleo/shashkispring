@@ -1,7 +1,6 @@
 package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -18,14 +17,14 @@ import static com.workingbit.board.service.BoardUtils.getDistanceVH;
 /**
  * Created by Aleksey Popryaduhin on 20:14 11/08/2017.
  */
-public class MoveService {
-  private final Board board;
+public class MoveUtil {
+  private final BoardContainer board;
   private final List<Square> allowedMoves;
   private final List<Draught> beatenMoves;
   private final Square sourceSquare;
   private final Square targetSquare;
 
-  MoveService(Board board, Square sourceSquare, Square targetSquare, List<Square> allowedMoves, List<Draught> beatenMoves) throws BoardServiceException {
+  MoveUtil(BoardContainer board, Square sourceSquare, Square targetSquare, List<Square> allowedMoves, List<Draught> beatenMoves) throws BoardServiceException {
     /*
      */
     if (!allowedMoves.contains(targetSquare)) {
@@ -38,16 +37,17 @@ public class MoveService {
     this.beatenMoves = beatenMoves;
   }
 
-  public static MoveService getService(Board board, Square sourceSquare, Square targetSquare, List<Square> allowedMoves, List<Draught> beatenMoves) throws BoardServiceException {
-    return new MoveService(board, sourceSquare, targetSquare, allowedMoves, beatenMoves);
+  public static MoveUtil getService(BoardContainer board, Square sourceSquare, Square targetSquare, List<Square> allowedMoves, List<Draught> beatenMoves) throws BoardServiceException {
+    return new MoveUtil(board, sourceSquare, targetSquare, allowedMoves, beatenMoves);
   }
 
   public BoardContainer getBoardContainer() {
-    return board.getCurrentBoard();
+    return board;
   }
 
-  public Map<String, Object> doMoveAndUpdateBoard() {
-    return moveDraught();
+  public Pair<BoardContainer, Map<String, Object>> moveAndUpdateBoard() {
+    getBoardContainer().setSelectedSquare(targetSquare);
+    return Pair.of(getBoardContainer(), moveDraught());
   }
 
   private Map<String, Object> moveDraught() {

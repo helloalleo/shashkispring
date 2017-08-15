@@ -25,15 +25,15 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class HighlightMoveServiceTest extends BaseServiceTest {
+public class HighlightMoveUtilTest extends BaseServiceTest {
 
   @Test
   public void shouldWhiteDraughtMoveForwardOnOnePosition() throws Exception, BoardServiceException {
     Board board = getBoard();
     Draught draught = getDraught(5, 2);
     Square square = getSquare((Draught) draught, 5, 2);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
-    Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
+    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMoves = highlightMoveUtil.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(4,1)(4,3)", resultToString(allowedMoves, allowed));
   }
@@ -43,8 +43,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     Board board = getBoard();
     Draught draught = getDraughtBlack(5, 2);
     Square square = getSquare(draught, 5, 2);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
-    Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
+    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMoves = highlightMoveUtil.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(6,1)(6,3)", resultToString(allowedMoves, allowed));
   }
@@ -60,8 +60,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     // set draught for square
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
-    Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
+    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMoves = highlightMoveUtil.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(3,4)", resultToString(allowedMoves, allowed));
     assertEquals("(4,3)", resultToString(allowedMoves, beaten));
@@ -76,8 +76,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     Draught draught = getDraught(5, 2);
     Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
-    Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
+    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMoves = highlightMoveUtil.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(3,0)(3,4)", resultToString(allowedMoves, allowed));
     assertEquals("(4,1)(4,3)", resultToString(allowedMoves, beaten));
@@ -91,8 +91,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     Draught draught = getDraught(5, 2);
     Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
-    Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
+    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMoves = highlightMoveUtil.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(7,0)", resultToString(allowedMoves, allowed));
     assertEquals("(6,1)", resultToString(allowedMoves, beaten));
@@ -107,8 +107,8 @@ public class HighlightMoveServiceTest extends BaseServiceTest {
     Draught draught = getDraught(5, 2);
     Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
     square.setDraught((Draught) draught);
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board.getCurrentBoard(), (Square) square, getRules());
-    Map<String, Object> allowedMoves = highlightMoveService.findAllowedMoves();
+    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), (Square) square, getRules());
+    Map<String, Object> allowedMoves = highlightMoveUtil.findAllowedMoves();
     assertTrue(allowedMoves.size() > 0);
     assertEquals("(7,0)(7,4)", resultToString(allowedMoves, allowed));
     assertEquals("(6,1)(6,3)", resultToString(allowedMoves, beaten));

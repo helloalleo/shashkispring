@@ -1,8 +1,8 @@
 package com.workingbit.board.service;
 
+import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.domain.impl.Board;
-import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,27 +24,26 @@ public class BoardHistoryServiceTest extends BaseServiceTest {
   private BoardHistoryService boardHistoryService;
 
   @Test
-  public void addBoardAndSave() throws Exception {
+  public void should_save_history() throws Exception, BoardServiceException {
     Board board = getBoard();
-    assertNotNull(board.getId());
+    boardHistoryService.addBoardAndSave(board);
+    Optional<BoardHistory> boardHistory = boardHistoryService.getHistory(board.getId());
+    assertTrue(boardHistory.isPresent());
+    assertEquals(boardHistory.get().getCurrent().getData(), board.getCurrentBoard());
+  }
+
+  @Test
+  public void should_save_two_history() throws Exception, BoardServiceException {
+    Board board = getBoard();
     boardHistoryService.addBoardAndSave(board);
     Optional<BoardHistory> boardHistory = boardHistoryService.getHistory(board.getId());
     assertTrue(boardHistory.isPresent());
     assertEquals(boardHistory.get().getCurrent().getData(), board.getCurrentBoard());
 
-    // change board
-    Board board1 = ObjectUtils.clone(board);
-    board1.getCurrentBoard().getSquares().get(0).setHighlighted(true);
-
-    boardHistoryService.addBoardAndSave(board1);
+    boardHistoryService.addBoardAndSave(board);
     boardHistory = boardHistoryService.getHistory(board.getId());
     assertTrue(boardHistory.isPresent());
-    assertEquals(boardHistory.get().getCurrent().getData(), board1.getCurrentBoard());
-
-    boardHistoryService.addBoardAndSave(board1);
-    Optional<Board> undo = boardHistoryService.undo(board1.getId());
-    assertTrue(undo.isPresent());
-    assertEquals(undo.get(), board);
+    assertEquals(boardHistory.get().getCurrent().getData(), board.getCurrentBoard());
   }
 
   @Test

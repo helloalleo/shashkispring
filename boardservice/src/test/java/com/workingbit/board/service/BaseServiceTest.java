@@ -8,6 +8,8 @@ import com.workingbit.share.domain.impl.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Optional;
+
 import static com.workingbit.board.service.BoardUtils.findSquareByVH;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,10 +28,20 @@ public class BaseServiceTest {
   @Autowired
   BoardHistoryService boardHistoryService;
 
+  @Autowired
+  BoardDao boardDao;
+
   Board getBoard() {
     assert boardService != null;
     Board board = boardService.createBoard(new NewBoardRequest(false, false, EnumRules.RUSSIAN, 60));
-    return (Board) board;
+    assert board.getId() != null;
+    BoardContainer currentBoard = board.getCurrentBoard();
+    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
+    Square selectedSquare = squareByVH.get();
+    Draught draught = new Draught(5, 2);
+    selectedSquare.setDraught(draught);
+    currentBoard.setSelectedSquare(selectedSquare);
+    return board;
   }
 
   Draught getDraught(int v, int h) {

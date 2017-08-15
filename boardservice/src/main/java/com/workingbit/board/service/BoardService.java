@@ -6,6 +6,7 @@ import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.*;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -113,13 +114,23 @@ public class BoardService {
     });
   }
 
+  /**
+   *
+   * @param highlightFor map of {boardId, selectedSquare}
+   * @return map of {allowed, beaten}
+   * @throws BoardServiceException
+   */
   public Map<String, Object> highlight(Map<String, Object> highlightFor) throws BoardServiceException {
     String aBoardId = (String) highlightFor.get(boardId.name());
-    Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
     return boardDao.findById(aBoardId).map(board -> {
       try {
-        HighlightMoveService highlightMoveService = HighlightMoveService.getService(board.getCurrentBoard(), square, board.getRules());
-        return highlightMoveService.findAllowedMoves();
+        Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
+        // remember selected square
+        board.getCurrentBoard().setSelectedSquare(square);
+        boardDao.save(board);
+        // highlight moves for the selected square
+        HighlightMoveUtil highlightMoveUtil = HighlightMoveUtil.getService(board.getCurrentBoard(), square, board.getRules());
+        return highlightMoveUtil.findAllowedMoves();
       } catch (BoardServiceException e) {
         return null;
       }
@@ -135,15 +146,22 @@ public class BoardService {
       List<Draught> beatenMoves = mapList((List<Draught>) moveTo.get(beaten.name()), mapper, Draught.class, Draught.class);
       try {
         // create move service
-        MoveService moveService = MoveService.getService(board, selected, target, allowedMoves, beatenMoves);
+        MoveUtil moveUtil = MoveUtil.getService(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves);
         // do move should update board
-        Map<String, Object> move = moveService.doMoveAndUpdateBoard();
+        Pair<BoardContainer, Map<String, Object>> move = moveUtil.moveAndUpdateBoard();
+        board.setCurrentBoard(move.getLeft());
         boardHistoryService.addBoardAndSave(board);
-        return move;
+        boardDao.save(board);
+        return move.getRight();
       } catch (BoardServiceException e) {
         return null;
       }
     }).orElseThrow(getBoardServiceExceptionSupplier("Move not allowed"));
+  }
+
+  public Map<String, Object> undo(String boardId) throws BoardServiceException {
+    Map<String, Object> undoMove = boardHistoryService.undo(boardId);
+    return move(undoMove);
   }
 
   public void save(Board board) {

@@ -21,7 +21,7 @@ import static java.lang.Math.abs;
 /**
  * Created by Aleksey Popryaduhin on 19:39 10/08/2017.
  */
-public class HighlightMoveService {
+public class HighlightMoveUtil {
 
   /**
    * possible directions of moving
@@ -32,7 +32,7 @@ public class HighlightMoveService {
   private HashMap<Pair<Integer, Integer>, TrinaryFunction<Integer>> diagonal;
   private EnumRules rules;
 
-  HighlightMoveService(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
+  HighlightMoveUtil(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
@@ -41,10 +41,10 @@ public class HighlightMoveService {
     board.setSelectedSquare(selectedSquare);
 
     this.diagonal = new HashMap<>();
-    this.diagonal.put(Pair.of(-1, -1), HighlightMoveService::mainDiagonal);
-    this.diagonal.put(Pair.of(1, 1), HighlightMoveService::mainDiagonal);
-    this.diagonal.put(Pair.of(1, -1), HighlightMoveService::subDiagonal);
-    this.diagonal.put(Pair.of(-1, 1), HighlightMoveService::subDiagonal);
+    this.diagonal.put(Pair.of(-1, -1), HighlightMoveUtil::mainDiagonal);
+    this.diagonal.put(Pair.of(1, 1), HighlightMoveUtil::mainDiagonal);
+    this.diagonal.put(Pair.of(1, -1), HighlightMoveUtil::subDiagonal);
+    this.diagonal.put(Pair.of(-1, 1), HighlightMoveUtil::subDiagonal);
 
     this.dirs = Arrays.asList(
         Pair.of(-1, -1),
@@ -56,8 +56,8 @@ public class HighlightMoveService {
     this.selectedSquare = selectedSquare;
   }
 
-  public static HighlightMoveService getService(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
-      return new HighlightMoveService(board, selectedSquare, rules);
+  public static HighlightMoveUtil getService(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
+      return new HighlightMoveUtil(board, selectedSquare, rules);
   }
 
   public Map<String, Object> findAllowedMoves() throws BoardServiceException {
