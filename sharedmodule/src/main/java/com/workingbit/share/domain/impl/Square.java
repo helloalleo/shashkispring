@@ -1,10 +1,12 @@
 package com.workingbit.share.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 /**
  * Created by Aleksey Popryaduhin on 09:26 10/08/2017.
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"v", "h"})
-public class Square implements ICoordinates{
+public class Square implements ICoordinates, BaseDomain {
 
   /**
    * row
@@ -51,5 +53,10 @@ public class Square implements ICoordinates{
   @JsonIgnore
   public boolean isOccupied() {
     return draught != null;
+  }
+
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    return new Square(v, h, main, size, ObjectUtils.clone(draught));
   }
 }

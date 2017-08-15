@@ -1,5 +1,6 @@
 package com.workingbit.share.domain.impl;
 
+import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Draught implements ICoordinates {
+public class Draught implements ICoordinates, BaseDomain {
   /**
    * row
    */
@@ -34,5 +35,10 @@ public class Draught implements ICoordinates {
     this.v = v;
     this.h = h;
     this.black = black;
+  }
+
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    return new Draught(v, h, black, queen, beaten, highlighted);
   }
 }

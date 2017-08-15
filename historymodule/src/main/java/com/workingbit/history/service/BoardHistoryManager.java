@@ -1,7 +1,10 @@
 package com.workingbit.history.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.history.domain.impl.BoardTreeNode;
+import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.BoardContainer;
 
 import javax.validation.constraints.NotNull;
@@ -13,11 +16,16 @@ import java.util.Optional;
 public class BoardHistoryManager {
 
   private final BoardHistory boardHistory;
-  //  private ObjectMapper mapper = new ObjectMapper();
+    private ObjectMapper mapper = new ObjectMapper();
   private BoardTreeNode current = new BoardTreeNode(null);
 
 //  public void setBoardTree(BoardHistory boardHistory) {
 //  }
+
+
+  public BoardHistoryManager(String boardId) {
+    boardHistory = new BoardHistory(boardId);
+  }
 
   public BoardHistoryManager(BoardHistory boardHistory) {
     this.boardHistory = boardHistory;
@@ -25,8 +33,13 @@ public class BoardHistoryManager {
   }
 
   public BoardHistory getBoardHistory() {
-    boardHistory.setRoot(current.getRootOfTree());
-    boardHistory.setCurrent(getLast());
+    boardHistory.setRoot(getCurrent().getRootOfTree());
+    boardHistory.setCurrent(getCurrent());
+    try {
+      Log.debug("Board History " + mapper.writeValueAsString(boardHistory));
+    } catch (JsonProcessingException e) {
+      Log.error(e.getMessage());
+    }
     return boardHistory;
   }
 
@@ -67,7 +80,7 @@ public class BoardHistoryManager {
     return current.getChildren().contains(branch);
   }
 
-  private BoardTreeNode getLast() {
+  private BoardTreeNode getCurrent() {
     return current;
   }
 
@@ -90,14 +103,14 @@ public class BoardHistoryManager {
 //        .deepClone(boardContainerNode -> boardContainerNode);
 //  }
 
-//  private String serializeToJsonBoardTreeNode() {
-//    try {
-//      BoardTreeNode boardTree = getBoardTreeNode();
-//      return mapper.writeValueAsString(boardTree);
-//    } catch (JsonProcessingException e) {
-//      return "";
-//    }
-//  }
+  public String serializeToJsonBoardTreeNode() {
+    try {
+      BoardTreeNode boardTree = getCurrent();
+      return mapper.writeValueAsString(boardTree);
+    } catch (JsonProcessingException e) {
+      return "";
+    }
+  }
 
   /**
    * Undoes the Changeable at the current index.
@@ -112,7 +125,7 @@ public class BoardHistoryManager {
     //set index
     moveUp();
     //undo
-    BoardContainer boardContainerOptional = getLast().getData();
+    BoardContainer boardContainerOptional = getCurrent().getData();
     boardContainerOptional.undo();
     return Optional.of(boardContainerOptional);
   }
@@ -130,7 +143,7 @@ public class BoardHistoryManager {
     //reset index
     moveDown(branch);
     //redo
-    BoardContainer boardContainer = getLast().getData();
+    BoardContainer boardContainer = getCurrent().getData();
     boardContainer.redo();
     return Optional.of(boardContainer);
   }
@@ -140,7 +153,7 @@ public class BoardHistoryManager {
       return Optional.empty();
     }
     moveDown();
-    BoardContainer boardContainer = getLast().getData();
+    BoardContainer boardContainer = getCurrent().getData();
     boardContainer.redo();
     return Optional.of(boardContainer);
   }

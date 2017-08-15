@@ -5,5 +5,5 @@ package com.workingbit.board.common;
  */
 public enum EnumBoardKeys {
 
-  Published, NewAdded, Banned
+  published, newAdded, banned
 }

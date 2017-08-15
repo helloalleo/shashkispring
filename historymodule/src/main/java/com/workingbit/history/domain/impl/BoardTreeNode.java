@@ -1,8 +1,8 @@
 package com.workingbit.history.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.workingbit.history.domain.IBoardTreeNode;
 import com.workingbit.share.domain.impl.BoardContainer;
 import lombok.Data;
 
@@ -13,10 +13,13 @@ import java.util.*;
  */
 @Data
 @JsonIdentityInfo(generator=ObjectIdGenerators.IntSequenceGenerator.class)
-public class BoardTreeNode implements IBoardTreeNode {
+public class BoardTreeNode {
   private BoardContainer data;
   private BoardTreeNode parent;
   private List<BoardTreeNode> children = new ArrayList<>();
+
+  public BoardTreeNode() {
+  }
 
   public BoardTreeNode(BoardContainer data) {
     this.data = data;
@@ -27,6 +30,7 @@ public class BoardTreeNode implements IBoardTreeNode {
     children.add(child);
   }
 
+  @JsonIgnore
   public final BoardTreeNode getRootOfTree() {
     BoardTreeNode parent = getParent();
     if (parent.getParent() == null) {

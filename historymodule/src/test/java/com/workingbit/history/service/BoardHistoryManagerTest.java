@@ -8,6 +8,7 @@ import com.workingbit.share.domain.impl.BoardContainer;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
 public class BoardHistoryManagerTest {
 
   private BoardHistoryManager historyManagerService;
+  private ObjectMapper mapper = new ObjectMapper();
 
   @Before
   public void setUp() {
@@ -137,6 +139,15 @@ public class BoardHistoryManagerTest {
     assertEquals(undo.get().getId(), "1");
   }
 
+  @Test
+  public void should_serialize_deserialize() throws IOException {
+    historyManagerService.addBoard(getBoard("1").getCurrentBoard());
+    BoardHistory boardHistory = historyManagerService.getBoardHistory();
+    String s = mapper.writeValueAsString(boardHistory);
+    assertFalse(s.isEmpty());
+    BoardHistory boardHistory1 = mapper.readValue(s, BoardHistory.class);
+    assertNotNull(boardHistory1);
+  }
 //  @Test
 //  public void should_return_history_json() {
 //    historyManagerService.addBoard(getBoard("1").getCurrentBoard());

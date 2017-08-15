@@ -1,19 +1,69 @@
 group 'com.workingbit.board'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'application'
-
-//bootRepackage {
-//    mainClass = 'com.workingbit.board.LocalBoardApplication'
-//}
-
-//springBoot {
-//    mainClass = 'com.workingbit.board.LocalBoardApplication'
-//    executable = true
-//    buildInfo()
-//}
+//apply plugin: 'java'
+//apply plugin: 'eclipse'
+//apply plugin: 'application'
 //
-//bootRun {
-//    addResources = false
+//mainClassName = 'com.workingbit.board.LocalBoardApplication'
+
+// tag::repositories[]
+//repositories {
+//    mavenCentral()
+//}
+// end::repositories[]
+//project(':boardservice') {
+//    apply plugin: 'application'
+//
+//    bootRepackage {
+//        mainClass = 'com.workingbit.board.LocalBoardApplication'
+//    }
+//
+//    springBoot {
+//        mainClass = 'com.workingbit.board.LocalBoardApplication'
+//        executable = true
+//        buildInfo()
+//    }
+//
+//    bootRun {
+//        addResources = false
+//    }
+//
+//    task stage(dependsOn: 'bootRepackage') {
+//    }
+//
+//    dependencies {
+//        compile project(':sharedmodule')
+//        compile project(':historymodule')
+//    }
+//
+//    task copyRuntimeLibs(type: Copy) {
+//        into "$buildDir/libs/deps/lib"
+//        from configurations.runtime
+//    }
+//
+//    task batchZip(type: Zip) {
+//        from sourceSets.main.output, "$buildDir/libs/deps"
+//    }
 //}
 
+// tag::jar[]
+//jar {
+//    baseName = 'boardservice'
+//    version = '0.1.0'
+//}
+// end::jar[]
+
+// tag::dependencies[]
+//sourceCompatibility = 1.8
+//targetCompatibility = 1.8
+//
+//dependencies {
+//    compile rootProject
+//
+//    testCompile rootProject
+//}
+// end::dependencies[]
+
+// tag::wrapper[]
+// end::wrapper[]

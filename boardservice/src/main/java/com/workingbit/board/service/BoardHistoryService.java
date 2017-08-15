@@ -30,17 +30,19 @@ public class BoardHistoryService {
   public void addBoardAndSave(Board newBoard) {
     BoardContainer currentBoard = newBoard.getCurrentBoard();
 
+    System.out.println(boardHistoryDao.findAll());
     // find board history
-    Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findByBoardId(newBoard.getId());
-    boardHistoryOptional.ifPresent(boardHistory -> {
-      BoardHistoryManager boardHistoryManager = new BoardHistoryManager(boardHistory);
-      boardHistoryManager.addBoard(currentBoard);
-      boardHistoryDao.save(boardHistoryManager.getBoardHistory());
-    });
+    Optional<BoardHistory> boardHistoryOptional = getHistory(newBoard.getId());
+    BoardHistoryManager boardHistoryManager = new BoardHistoryManager(newBoard.getId());
+    if (boardHistoryOptional.isPresent()) {
+      boardHistoryManager = new BoardHistoryManager(boardHistoryOptional.get());
+    }
+    boardHistoryManager.addBoard(currentBoard);
+    boardHistoryDao.save(boardHistoryManager.getBoardHistory());
   }
 
   public Optional<Board> undo(String boardId) {
-    Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findById(boardId);
+    Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findByBoardId(boardId);
     if (boardHistoryOptional.isPresent()) {
       BoardHistoryManager boardHistoryManager = new BoardHistoryManager(boardHistoryOptional.get());
       Optional<BoardContainer> undo = boardHistoryManager.undo();
@@ -56,5 +58,9 @@ public class BoardHistoryService {
       }
     }
     return Optional.empty();
+  }
+
+  public Optional<BoardHistory> getHistory(String boardId) {
+    return boardHistoryDao.findByBoardId(boardId);
   }
 }

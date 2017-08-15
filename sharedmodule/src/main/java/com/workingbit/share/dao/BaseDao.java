@@ -7,16 +7,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.share.common.Log;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.workingbit.share.common.Utils.isBlank;
 
@@ -56,20 +48,6 @@ public class BaseDao<T> {
   }
 
   public void save(final T entity) {
-    if (test) {
-      try {
-        Method setId = entity.getClass().getMethod("setId", String.class);
-        setId.invoke(entity, UUID.randomUUID().toString());
-        if (!Files.exists(Paths.get(dbDir))) {
-          Files.createDirectory(Paths.get(dbDir));
-        }
-        Files.write(Paths.get(dbDir + "/" + entity.getClass().getSimpleName()), mapper.writeValueAsBytes(entity), StandardOpenOption.APPEND);
-      } catch (IOException e) {
-        Log.error(e.getMessage());
-      } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-        e.printStackTrace();
-      }
-    }
     dynamoDBMapper.save(entity);
   }
 

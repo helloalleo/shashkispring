@@ -3,6 +3,7 @@ package com.workingbit.board.dao;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.config.AWSProperties;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.dao.BaseDao;
@@ -33,11 +34,11 @@ public class BoardHistoryDao extends BaseDao<BoardHistory> {
     DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
     Map<String, AttributeValue> eav = new HashMap<>();
     eav.put(":boardId", new AttributeValue().withS(boardId));
-    String filterExpression = boardId + " = :boardId";
+    String filterExpression = EnumBaseKeys.boardId.name() + " = :boardId";
     scanExpression.withFilterExpression(filterExpression).withExpressionAttributeValues(eav);
 
     PaginatedScanList<BoardHistory> entity = getDynamoDBMapper().scan(BoardHistory.class, scanExpression);
-    if (entity != null) {
+    if (!entity.isEmpty()) {
       return Optional.of(entity.get(0));
     }
     return Optional.empty();
