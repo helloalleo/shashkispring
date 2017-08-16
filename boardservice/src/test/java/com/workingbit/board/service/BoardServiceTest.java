@@ -148,7 +148,6 @@ public class BoardServiceTest extends BaseServiceTest {
     newMoveCoords = boardService.move(moveTo);
     MapUtils.debugPrint(System.out, "MOVE", newMoveCoords);
 
-    // при проверке возмоных значения выбирать шашку и сохранять ее
     Map<String, Object> undo = boardHistoryService.undo(board.getId());
     MapUtils.debugPrint(System.out, "UNDO", undo);
   }
