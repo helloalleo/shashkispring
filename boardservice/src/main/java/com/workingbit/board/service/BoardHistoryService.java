@@ -59,9 +59,10 @@ public class BoardHistoryService {
         BoardContainer newBoardContainer = undo.get();
 
         Map<String, Object> moveTo = new HashMap<String, Object>() {{
-          put(EnumBaseKeys.boardId.name(), newBoardContainer.getId());
+          put(EnumBaseKeys.boardId.name(), boardId);
           put(selectedSquare.name(), oldBoardContainer.getSelectedSquare());
           put(targetSquare.name(), newBoardContainer.getSelectedSquare());
+          put(EnumBaseKeys.undoMove.name(), true);
 //          put(allowed.name(), allowedMoves);
 //          put(beaten.name(), beatenMoves);
         }};

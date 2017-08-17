@@ -1,7 +1,7 @@
 package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.board.config.AWSProperties;
+import com.workingbit.board.config.AppProperties;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.*;
@@ -65,9 +65,9 @@ public class BaseServiceTest {
   }
 
   BoardService getBoardServiceMock() {
-    AWSProperties awsProperties = mock(AWSProperties.class);
-    when(awsProperties.getRegion()).thenReturn("eu-central-1");
-    BoardDao boardDao = new BoardDao(awsProperties);
+    AppProperties appProperties = mock(AppProperties.class);
+    when(appProperties.getRegion()).thenReturn("eu-central-1");
+    BoardDao boardDao = new BoardDao(appProperties);
     return new BoardService(boardDao, objectMapper, boardHistoryService);
   }
 }

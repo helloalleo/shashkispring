@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.workingbit.board.common.EnumBaseKeys;
-import com.workingbit.board.config.AWSProperties;
+import com.workingbit.board.config.AppProperties;
 import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.dao.BaseDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,8 @@ import static com.workingbit.share.common.Utils.isBlank;
 public class BoardHistoryDao extends BaseDao<BoardHistory> {
 
   @Autowired
-  public BoardHistoryDao(AWSProperties awsProperties) {
-    super(BoardHistory.class, awsProperties.getRegion(), awsProperties.getEndpoint(), awsProperties.isTest());
+  public BoardHistoryDao(AppProperties appProperties) {
+    super(BoardHistory.class, appProperties.getRegion(), appProperties.getEndpoint(), appProperties.isTest());
   }
 
   public Optional<BoardHistory> findByBoardId(String boardId) {

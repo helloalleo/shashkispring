@@ -50,7 +50,6 @@ public class Square implements ICoordinates, BaseDomain {
     this.draught = draught;
   }
 
-  @JsonIgnore
   public boolean isOccupied() {
     return draught != null;
   }

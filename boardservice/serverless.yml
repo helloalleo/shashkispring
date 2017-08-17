@@ -123,8 +123,8 @@ resources:
           - AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
     DynamoDBIamPolicyBoard:
       Type: AWS::IAM::Policy
       DependsOn: DynamoDbTableBoard
@@ -168,7 +168,7 @@ plugins:
 custom:
   dynamodb:
     start:
-      port: 8002
+      port: 8082
       inMemory: true
       migrate: true
       seed: true

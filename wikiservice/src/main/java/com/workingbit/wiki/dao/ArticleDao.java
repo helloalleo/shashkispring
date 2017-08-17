@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.workingbit.share.dao.BaseDao;
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.wiki.config.AWSProperties;
+import com.workingbit.wiki.config.AppProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +22,12 @@ import static com.workingbit.wiki.common.EnumArticleKeys.*;
 @Component
 public class ArticleDao extends BaseDao<Article> {
 
-  private final AWSProperties awsProperties;
+  private final AppProperties appProperties;
 
   @Autowired
-  public ArticleDao(AWSProperties awsProperties) {
-    super(Article.class, awsProperties.getRegion(), awsProperties.getEndpoint(), awsProperties.isTest());
-    this.awsProperties = awsProperties;
+  public ArticleDao(AppProperties appProperties) {
+    super(Article.class, appProperties.getRegion(), appProperties.getEndpoint(), appProperties.isTest());
+    this.appProperties = appProperties;
   }
 
   @Override

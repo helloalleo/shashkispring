@@ -152,9 +152,10 @@ public class BoardService {
       Square target = mapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
       List<Square> allowedMoves = mapList((List<Square>) moveTo.get(allowed.name()), mapper, Square.class, Square.class);
       List<Draught> beatenMoves = mapList((List<Draught>) moveTo.get(beaten.name()), mapper, Draught.class, Draught.class);
+      boolean isUndo = (boolean) moveTo.getOrDefault(undoMove.name(), false);
       try {
         // create move service
-        MoveUtil moveUtil = MoveUtil.getService(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves);
+        MoveUtil moveUtil = new MoveUtil(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves, isUndo);
         // do move should update board
         Pair<BoardContainer, Map<String, Object>> move = moveUtil.moveAndUpdateBoard();
         board.setCurrentBoard(move.getLeft());

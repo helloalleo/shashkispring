@@ -1,6 +1,6 @@
 package com.workingbit.board.dao;
 
-import com.workingbit.board.config.AWSProperties;
+import com.workingbit.board.config.AppProperties;
 import com.workingbit.share.dao.BaseDao;
 import com.workingbit.share.domain.impl.Board;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class BoardDao extends BaseDao<Board> {
 
   @Autowired
-  public BoardDao(AWSProperties awsProperties) {
-    super(Board.class, awsProperties.getRegion(), awsProperties.getEndpoint(), awsProperties.isTest());
+  public BoardDao(AppProperties appProperties) {
+    super(Board.class, appProperties.getRegion(), appProperties.getEndpoint(), appProperties.isTest());
   }
 }

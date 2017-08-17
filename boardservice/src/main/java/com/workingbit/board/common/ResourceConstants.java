@@ -7,4 +7,5 @@ public class ResourceConstants {
   public static final String BOARD = "/board";
   public static final String HIGHLIGHT = "/highlight";
   public static final String MOVE = "/move";
+  public static final String UNDO = "/undo";
 }

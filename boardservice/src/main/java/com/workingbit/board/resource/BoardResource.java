@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.workingbit.board.common.EnumBaseKeys.boardId;
 import static com.workingbit.board.common.EnumResponse.*;
 
 /**
@@ -44,10 +45,7 @@ public class BoardResource {
     return boardOptional.<Map<String, Object>>map(iBoard -> new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), iBoard);
-    }}).orElseGet(() -> new HashMap<String, Object>() {{
-      put(ok.name(), false);
-      put(message.name(), "Board not found");
-    }});
+    }}).orElseGet(() -> getErrorResponse("Board not found"));
   }
 
   @PostMapping()
@@ -76,10 +74,7 @@ public class BoardResource {
         put(data.name(), highlighted);
       }};
     } catch (BoardServiceException e) {
-      return new HashMap<String, Object>() {{
-        put(ok.name(), false);
-        put(message.name(), e.getMessage());
-      }};
+      return getErrorResponse(e);
     }
   }
 
@@ -92,10 +87,34 @@ public class BoardResource {
         put(data.name(), move);
       }};
     } catch (BoardServiceException e) {
-      return new HashMap<String, Object>() {{
-        put(ok.name(), false);
-        put(message.name(), e.getMessage());
-      }};
+      return getErrorResponse(e);
     }
+  }
+
+  @PostMapping(ResourceConstants.UNDO)
+  public Map<String, Object> undo(@RequestBody Map<String, Object> undoInfo) {
+    try {
+      String boardIdStr = (String) undoInfo.get(boardId.name());
+      Map<String, Object> undo = boardService.undo(boardIdStr);
+      return new HashMap<String, Object>() {{
+        put(ok.name(), true);
+        put(data.name(), undo);
+      }};
+    } catch (BoardServiceException e) {
+      return getErrorResponse(e);
+    }
+  }
+
+
+  // TOD Move to shared
+  private Map<String, Object> getErrorResponse(String msg) {
+    return new HashMap<String, Object>() {{
+      put(ok.name(), false);
+      put(message.name(), msg);
+    }};
+  }
+
+  private Map<String, Object> getErrorResponse(BoardServiceException e) {
+    return getErrorResponse(e.getMessage());
   }
 }
