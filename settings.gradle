@@ -1,8 +1,5 @@
 rootProject.name = 'shashkiBack'
-include 'sharedmodule'
+include 'coremodule'
 include 'wikiservice'
 include 'boardservice'
-include 'historymodule'
 include 'boardmodule'
-include 'coremodule'
-

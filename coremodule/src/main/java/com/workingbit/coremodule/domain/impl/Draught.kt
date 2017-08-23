@@ -8,14 +8,14 @@ data class Draught(private val map: HashMap<String, Any?>) {
     /**
      * row
      */
-    private val v: Int by map
+    var v: Int by map
     /**
      * col
      */
-    private val h: Int by map
+    var h: Int by map
 
-    private val black: Boolean by map
-    private val queen: Boolean by map
-    private val beaten: Boolean by map
-    private val highlighted: Boolean by map
+    var black: Boolean by map
+    var queen: Boolean by map
+    var beaten: Boolean by map
+    var highlighted: Boolean by map
 }

@@ -5,9 +5,9 @@ import com.workingbit.coremodule.domain.impl.Board
 import com.workingbit.coremodule.domain.impl.BoardContainer
 import com.workingbit.coremodule.domain.impl.BoardHistory
 import com.workingbit.coremodule.domain.impl.TreeNode
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.junit.Assert.*
 import java.io.IOException
 import java.util.*
 

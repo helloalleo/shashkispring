@@ -10,26 +10,29 @@ data class Square(private val map: HashMap<String, Any?>) {
     /**
      * row
      */
-    private val v: Int by map
+    var v: Int by map
     /**
      * col
      */
-    private val h: Int by map
+    var h: Int by map
     /**
      * on the main part where we have the draughts
      */
-    private val main: Boolean by map
+    val main: Boolean by map
     /**
      * if square highlighted for allowing to move
      */
-    private val highlighted: Boolean  by map
-    private val size by map
+    var highlighted: Boolean  by map
+    val size by map
 
-    private val draught: Draught? by map
+    var draught: Draught? by map
 
     /**
      * Selected draught is point for new recursion
      */
-    private val pointDraught: Draught? by map
+    var pointDraught: Draught? by map
         @JsonIgnore get
+
+    val occupied: Boolean
+        get() = draught != null
 }
