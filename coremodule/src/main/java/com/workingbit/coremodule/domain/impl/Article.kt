@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor
  * Created by Aleksey Popryaduhin on 18:31 09/08/2017.
  */
 @DynamoDBTable(tableName = DbConstants.ARTICLE_TABLE)
-@Data
-@NoArgsConstructor
 public class Article(map: HashMap<String, Any?>) {
 
     private val id: String by map

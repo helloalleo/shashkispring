@@ -9,6 +9,7 @@ class DbConstants {
         const val BOARD_TABLE: String = "Board"
         const val BOARD_HISTORY_TABLE: String = "BoardHistory"
         const val ARTICLE_TABLE: String = "Article"
+        const val AUTHOR_TABLE: String = "Author"
 
         const val ID: String = "id"
     }
