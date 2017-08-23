@@ -3,3 +3,5 @@ include 'sharedmodule'
 include 'wikiservice'
 include 'boardservice'
 include 'historymodule'
+include 'boardmodule'
+

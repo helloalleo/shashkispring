@@ -168,7 +168,7 @@ plugins:
 custom:
   dynamodb:
     start:
-      port: 8082
+      port: 8083
       inMemory: true
       migrate: true
       seed: true
