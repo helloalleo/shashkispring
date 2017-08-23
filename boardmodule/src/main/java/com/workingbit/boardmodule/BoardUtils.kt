@@ -3,7 +3,6 @@ package com.workingbit.boardmodule
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.workingbit.coremodule.domain.impl.BoardContainer
 import com.workingbit.coremodule.domain.impl.Square
-import org.apache.commons.lang3.tuple.Pair
 import java.util.*
 
 /**
@@ -40,7 +39,7 @@ internal object BoardUtils {
     fun getDistanceVH(source: Square, target: Square): Pair<Int, Int> {
         val vDist = target.v - source.v
         val hDist = target.h - source.h
-        return Pair.of(vDist, hDist)
+        return Pair(vDist, hDist)
     }
 
     fun <T, I> mapList(squares: List<I>?, objectMapper: ObjectMapper, clazz: Class<T>, iclazz: Class<I>): List<I> {

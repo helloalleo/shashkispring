@@ -69,7 +69,7 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
                 val distanceVH = BoardUtils.getDistanceVH(selectedSquare, currentSquare)
                 // if selected draught is not queen and we near of it other words not far then 2 squares then go next else skip this square
                 if (!currentSquare.main // if we on the main black square
-                        || !selectedSquare.pointDraught?.queen!! && (abs(distanceVH.getLeft()) > 1 || abs(distanceVH.getRight()) > 1)
+                        || !selectedSquare.pointDraught?.queen!! && (abs(distanceVH.first) > 1 || abs(distanceVH.second) > 1)
                         || currentSquare.equals(selectedSquare)) {
                     continue
                 }
@@ -147,14 +147,14 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
                 !currentSquare.occupied &&
                 (
                         // rule for white draughts, they can go only up
-                        !black!! && (dist.getLeft() === -1 && dist.getRight() === -1 || dist.getLeft() === -1 && dist.getRight() === 1) || // rule for black draughts, they can go only down
-                                black && (dist.getLeft() === 1 && dist.getRight() === -1 || dist.getLeft() === 1 && dist.getRight() === 1))//        (
+                        !black!! && (dist.first == -1 && dist.second === -1 || dist.first === -1 && dist.second === 1) || // rule for black draughts, they can go only down
+                                black && (dist.first === 1 && dist.second === -1 || dist.first === 1 && dist.second === 1))//        (
         // rules for queen
         //        selectedSquare.isOccupied()
         //            && selectedSquare.getDraught().isQueen()
         //            && selectedSquare != currentSquare
         //            || !selectedSquare.getDraught().isQueen()
-        //            && (dir.getLeft() == -1 && dir.getRight() == -1 || dir.getLeft() == 1 && dir.getRight() == -1))
+        //            && (dir.first == -1 && dir.second == -1 || dir.first == 1 && dir.second == -1))
     }
 
     /**
@@ -197,8 +197,8 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
 
         private fun getDirVH(selectedSquare: Square, currentSquare: Square): Pair<Int, Int> {
             val distanceVH = getDistanceVH(selectedSquare, currentSquare)
-            return Pair(distanceVH.left / abs(distanceVH.left),
-                    distanceVH.right / abs(distanceVH.right))
+            return Pair(distanceVH.first / abs(distanceVH.first),
+                    distanceVH.second / abs(distanceVH.second))
         }
 
         /**
@@ -226,7 +226,7 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
         //    List<Square> items;
         //    for (Square currentSquare : this.board.getSquares()) {
         //      // go left
-        //      Pair<Integer, Integer> left = mustache.get(dir).getLeft();
+        //      Pair<Integer, Integer> left = mustache.get(dir).first;
         //      Map<String, Object> walkLeft = this.walk(currentSquare, deep);
         //      allow.addAll((Collection<? extends Square>) walkLeft.get(allowed.name()));
         //      items = (List<Square>) walkLeft.get(beaten.name());
@@ -245,8 +245,8 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
         //          beat.add(currentSquare);
         //        }
         //      }
-        //      v += dir.getRight();
-        //      h += dir.getLeft();
+        //      v += dir.second;
+        //      h += dir.first;
         //    }
         //    int sourceDiff = this.diagonal.get(dir).apply(sourceSquare.h, sourceSquare.v, this.getBoardDimension());
         //    if (beat.size() == 0) {

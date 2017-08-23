@@ -23,7 +23,7 @@ data class Square(private val map: HashMap<String, Any?>) {
      * if square highlighted for allowing to move
      */
     var highlighted: Boolean  by map
-    val size by map
+    val size: Int by map
 
     var draught: Draught? by map
 
