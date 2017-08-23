@@ -56,8 +56,8 @@ internal object BoardUtils {
         return newSquares
     }
 
-    private fun nextSquareByDir(board: BoardContainer, source: Square, dir: kotlin.Pair<Int, Int>): Square? {
-        return findSquareByVH(board, source.v + dir.first, source.h + dir.second)
+    fun nextSquareByDir(board: BoardContainer, source: Square, dir: Map.Entry<Int, Int>): Square? {
+        return findSquareByVH(board, source.v + dir.key, source.h + dir.value)
     }
 
 }

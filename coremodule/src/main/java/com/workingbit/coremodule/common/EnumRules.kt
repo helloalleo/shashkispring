@@ -5,7 +5,7 @@ package com.workingbit.coremodule.common
  * size: size of the desk
  * colon: how many draught on the front line
  */
-enum class EnumRules(size: Int, colon: Int) {
+enum class EnumRules(val dimension: Int, val colon: Int) {
     RUSSIAN(8, 3),
     RUSSIAN_GIVEAWAY(-8, 3),
     INTERNATIONAL(10, 4),
