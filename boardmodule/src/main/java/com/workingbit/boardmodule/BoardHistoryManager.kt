@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull
  */
 class BoardHistoryManager {
 
-    private val boardHistory: BoardHistory
+    val boardHistory: BoardHistory
     private val mapper = ObjectMapper()
     private var current: TreeNode<BoardContainer>? = null
 
