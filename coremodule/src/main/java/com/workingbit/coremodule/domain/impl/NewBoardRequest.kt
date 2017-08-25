@@ -8,8 +8,8 @@ import com.workingbit.coremodule.common.EnumRules
  */
 data class NewBoardRequest(private val map: HashMap<String, Any?>) {
 
-    private val fillBoard: Boolean by map
-    private val black: Boolean by map
-    private val rules: EnumRules by map
-    private val squareSize: Int by map
+    val fillBoard: Boolean by map
+    val black: Boolean by map
+    val rules: EnumRules by map
+    val squareSize: Int by map
 }

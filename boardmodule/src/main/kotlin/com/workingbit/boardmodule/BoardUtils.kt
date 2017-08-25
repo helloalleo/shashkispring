@@ -1,7 +1,10 @@
 package com.workingbit.boardmodule
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.workingbit.coremodule.common.EnumRules
+import com.workingbit.coremodule.domain.impl.Board
 import com.workingbit.coremodule.domain.impl.BoardContainer
+import com.workingbit.coremodule.domain.impl.Draught
 import com.workingbit.coremodule.domain.impl.Square
 import java.util.*
 
@@ -9,6 +12,49 @@ import java.util.*
  * Created by Aleksey Popryaduhin on 20:56 11/08/2017.
  */
 internal object BoardUtils {
+
+    /**
+     * Fill board with draughts
+     *
+     * @param fillBoard
+     * @param black      is player plays black?
+     * @param rules
+     * @param squareSize size of one square
+     * @return
+     */
+    fun initBoard(fillBoard: Boolean, black: Boolean, rules: EnumRules, squareSize: Int?): Board {
+        val squares = ArrayList<Square>()
+        val whiteDraughts = ArrayList<Draught>()
+        val blackDraughts = ArrayList<Draught>()
+        for (v in 0..rules.dimension - 1) {
+            for (h in 0..rules.dimension - 1) {
+                var draught: Draught? = Draught(v, h)
+                var draughtAdded = false
+                if (fillBoard && (h + v + 1) % 2 == 0) {
+                    if (v < rules.colon) {
+                        draught!!.black = !black
+                        draughtAdded = true
+                    } else if (v >= rules.dimension - rules.colon && v < rules.dimension) {
+                        draught!!.black = black
+                        draughtAdded = true
+                    }
+                }
+                if (draughtAdded) {
+                    if (draught!!.black) {
+                        blackDraughts.add(draught)
+                    } else {
+                        whiteDraughts.add(draught)
+                    }
+                } else {
+                    draught = null
+                }
+                val square = Square(v, h, squareSize, draught)
+                squares.add(square)
+            }
+        }
+        val boardChanger = BoardContainer(squares, whiteDraughts, blackDraughts, null)
+        return Board(boardChanger, black, rules, squareSize)
+    }
 
     /**
      * Find variable link to square from board

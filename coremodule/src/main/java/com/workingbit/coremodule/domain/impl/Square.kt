@@ -35,4 +35,11 @@ data class Square(private val map: HashMap<String, Any?>) {
 
     val occupied: Boolean
         get() = draught != null
+
+    constructor(v: Int, h: Int, size: Int?, draught: Draught?) : this(
+            hashMapOf("v" to v,
+                    "h" to h,
+                    "main" to ((h + v + 1) % 2 == 0),
+                    "size" to size,
+                    "draught" to draught))
 }

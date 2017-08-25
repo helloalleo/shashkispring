@@ -1,20 +1,23 @@
-package com.workingbit.board.service
+package com.workingbit.boardmodule.move
 
 import com.workingbit.boardmodule.BoardUtils
 import com.workingbit.boardmodule.BoardUtils.getDistanceVH
+import com.workingbit.boardmodule.dao.BoardDao
 import com.workingbit.coremodule.common.EnumRules
 import com.workingbit.coremodule.domain.impl.BoardContainer
 import com.workingbit.coremodule.domain.impl.Draught
 import com.workingbit.coremodule.domain.impl.Square
 import com.workingbit.coremodule.exception.BoardServiceException
+import uy.kohesive.injekt.injectLazy
 import java.lang.Math.abs
-import java.util.*
 
 /**
  * Created by Aleksey Popryaduhin on 19:39 10/08/2017.
  */
-class HighlightMoveUtil @Throws(BoardServiceException::class)
-internal constructor(private val board: BoardContainer, private val selectedSquare: Square?, private val rules: EnumRules) {
+class HighlightMoveManager @Throws(BoardServiceException::class)
+private constructor(private val board: BoardContainer, private val selectedSquare: Square?, private val rules: EnumRules) {
+
+    private val boardDao: BoardDao by injectLazy()
 
     /**
      * possible directions of moving
@@ -43,6 +46,30 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
     fun findAllowedMoves(): Map<String, Any> {
         return walk(selectedSquare!!, 0)
     }
+
+    /**
+     * @param highlightFor map of {boardId, selectedSquare}
+     * @return map of {allowed, beaten}
+     * @throws BoardServiceException
+     */
+    @Throws(BoardServiceException::class)
+    fun highlight(highlightFor: Map<String, Any>): Map<String, Any>? {
+        val aBoardId = highlightFor["boardId"] as String
+        val board = boardDao.findById(aBoardId) ?: throw BoardServiceException("Board not found")
+        return try {
+            val square = highlightFor["selectedSquare"] as Square
+            // remember selected square
+            board.boardContainer.selectedSquare = square
+            boardDao.save(board)
+            // highlight moves for the selected square
+            val highlightMoveUtil = HighlightMoveManager.getService(board.boardContainer, square, board.rules)
+            highlightMoveUtil.findAllowedMoves()
+        } catch (e: BoardServiceException) {
+            null
+        }
+
+    }
+
 
     /**
      * Walk through desk
@@ -188,17 +215,21 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
         return null
     }
 
+    private fun getDirVH(selectedSquare: Square, currentSquare: Square): Pair<Int, Int> {
+        val distanceVH = getDistanceVH(selectedSquare, currentSquare)
+        return Pair(distanceVH.first / abs(distanceVH.first),
+                distanceVH.second / abs(distanceVH.second))
+    }
+
+    private fun mainDiagonal(h: Int, v: Int, dim: Int): Int = h - v
+
+    private fun subDiagonal(h: Int, v: Int, dim: Int): Int = dim - h - v
+
     companion object {
 
         @Throws(BoardServiceException::class)
-        fun getService(board: BoardContainer, selectedSquare: Square, rules: EnumRules): HighlightMoveUtil {
-            return HighlightMoveUtil(board, selectedSquare, rules)
-        }
-
-        private fun getDirVH(selectedSquare: Square, currentSquare: Square): Pair<Int, Int> {
-            val distanceVH = getDistanceVH(selectedSquare, currentSquare)
-            return Pair(distanceVH.first / abs(distanceVH.first),
-                    distanceVH.second / abs(distanceVH.second))
+        fun getService(board: BoardContainer, selectedSquare: Square, rules: EnumRules): HighlightMoveManager {
+            return HighlightMoveManager(board, selectedSquare, rules)
         }
 
         /**
@@ -254,13 +285,5 @@ internal constructor(private val board: BoardContainer, private val selectedSqua
         //    }
         //    return beat;
         //  }
-
-        private fun mainDiagonal(h: Int, v: Int, dim: Int): Int {
-            return h - v
-        }
-
-        private fun subDiagonal(h: Int, v: Int, dim: Int): Int {
-            return dim - h - v
-        }
     }
 }

@@ -2,6 +2,7 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.common.EnumSearch;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.boardmodule.move.HighlightMoveUtil;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;

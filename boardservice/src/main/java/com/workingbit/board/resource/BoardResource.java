@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
-import com.workingbit.share.domain.impl.Board;
+import com.workingbit.coremodule.domain.impl.Board;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

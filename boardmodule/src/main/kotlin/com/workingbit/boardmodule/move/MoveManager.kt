@@ -1,5 +1,6 @@
-package com.workingbit.boardmodule
+package com.workingbit.boardmodule.move
 
+import com.workingbit.boardmodule.BoardUtils
 import com.workingbit.boardmodule.BoardUtils.getDistanceVH
 import com.workingbit.coremodule.domain.impl.BoardContainer
 import com.workingbit.coremodule.domain.impl.Draught
@@ -10,7 +11,7 @@ import java.util.*
 /**
  * Created by Aleksey Popryaduhin on 20:14 11/08/2017.
  */
-class MoveUtil @Throws(BoardServiceException::class)
+class MoveManager @Throws(BoardServiceException::class)
 internal constructor(val boardContainer: BoardContainer, sourceSquare: Square, targetSquare: Square, private val allowedMoves: List<Square>, private val beatenMoves: List<Draught>, private val undo: Boolean) {
     private val sourceSquare: Square
     private val targetSquare: Square

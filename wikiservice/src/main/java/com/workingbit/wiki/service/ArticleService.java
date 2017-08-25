@@ -1,19 +1,13 @@
 package com.workingbit.wiki.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.domain.impl.Board;
-import com.workingbit.share.domain.impl.NewBoardRequest;
 import com.workingbit.wiki.common.EnumResponse;
 import com.workingbit.wiki.dao.ArticleDao;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.

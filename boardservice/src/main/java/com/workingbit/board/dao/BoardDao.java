@@ -1,8 +1,8 @@
 package com.workingbit.board.dao;
 
-import com.workingbit.board.config.AppProperties;
-import com.workingbit.share.dao.BaseDao;
-import com.workingbit.share.domain.impl.Board;
+import com.workingbit.board.config.BoardProperties;
+import com.workingbit.coremodule.dao.BaseDao;
+import com.workingbit.coremodule.domain.impl.Board;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class BoardDao extends BaseDao<Board> {
 
   @Autowired
-  public BoardDao(AppProperties appProperties) {
+  public BoardDao(BoardProperties appProperties) {
     super(Board.class, appProperties.getRegion(), appProperties.getEndpoint(), appProperties.isTest());
   }
 }

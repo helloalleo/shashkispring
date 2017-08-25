@@ -10,7 +10,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList
 /**
  * Created by Aleksey Popryaduhin on 17:35 23/08/2017.
  */
-class BaseDao<T>(private val clazz: Class<T>, region: String, endpoint: String, test: Boolean) {
+open class BaseDao<T>(private val clazz: Class<T>, region: String, endpoint: String, test: Boolean) {
 
     private var dynamoDBMapper: DynamoDBMapper
 
@@ -31,6 +31,8 @@ class BaseDao<T>(private val clazz: Class<T>, region: String, endpoint: String, 
 
     fun save(entity: T) = dynamoDBMapper.save(entity)
 
+    fun delete(entityId: String) = dynamoDBMapper.delete(entityId)
+
     fun findAll(): PaginatedScanList<T> = dynamoDBMapper.scan(clazz, DynamoDBScanExpression())
 
     fun findById(entityId: String): T? {
@@ -39,4 +41,6 @@ class BaseDao<T>(private val clazz: Class<T>, region: String, endpoint: String, 
         }
         return dynamoDBMapper.load(clazz, entityId)
     }
+
+    protected fun getDynamoDBMapper() = dynamoDBMapper
 }

@@ -1,5 +1,33 @@
-group 'com.workingbit.core'
-version '1.0-SNAPSHOT'
+buildscript {
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven { url "http://repo.spring.io/plugins-release" }
+        maven { url "http://repo.spring.io/milestone" }
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2" }
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2-M2"
+
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
+        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
+
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.0.0-SNAPSHOT")
+    }
+}
+
+plugins {
+//    application
+    id "org.jetbrains.kotlin.jvm" version "1.1.4-2"
+    id("com.github.johnrengelman.plugin-shadow") version "2.0.0"
+}
 
 allprojects {
     apply plugin: 'java'
@@ -13,6 +41,9 @@ allprojects {
     group = 'com.workingbit'
     version = '1.0'
 }
+
+group 'com.workingbit'
+version '1.0-SNAPSHOT'
 
 subprojects {
     repositories {
@@ -38,18 +69,28 @@ subprojects {
     dependencies {
         compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 
+        compile "uy.kohesive.injekt:injekt-core:1.16.+"
+
         compile 'org.springframework.boot:spring-boot-starter-web'
         compile 'org.springframework.boot:spring-boot-starter-jersey'
         compile 'org.springframework.boot:spring-boot-devtools'
+
         compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
         compile 'com.amazonaws.serverless:aws-serverless-java-container-spring:0.5.1'
         compile 'com.amazonaws:aws-java-sdk-dynamodb'
+
         compile 'org.apache.commons:commons-lang3:3.5'
         compile 'org.apache.commons:commons-collections4:4.1'
+
         compile 'org.projectlombok:lombok:1.16.16'
 
-        testCompile 'org.springframework.boot:spring-boot-starter-test'
-//    testCompile group: 'junit', name: 'junit', version: '4.12'
+        compile "io.projectreactor:reactor-core:3.1.0.M3"
+
+        testCompile("io.projectreactor:reactor-test:3.1.0.M3")
+
+        testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-SNAPSHOT")
+        testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
+        testRuntime("org.junit.platform:junit-platform-launcher:1.0.0-SNAPSHOT")
     }
 }
 
@@ -60,9 +101,18 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+//tasks {
+//    withType<KotlinCompiler> {
+//        kotlinOptions {
+//            jvmTarget = "1.8"
+//            freeCompilerArgs = listOf("-Xjsr305-annotations=enable")
+//        }
+//    }
+//}
+
 project(':coremodule') {
-    bootRepackage.enabled = false
-    findMainClass.enabled = false
+//    bootRepackage.enabled = false
+//    findMainClass.enabled = false
 
     jar {
         baseName = 'coremodule'
@@ -73,22 +123,22 @@ project(':coremodule') {
 project(':boardservice') {
     apply plugin: 'application'
 
-    bootRepackage {
-        mainClass = 'com.workingbit.board.LocalBoardApplication'
-    }
+//    bootRepackage {
+//        mainClass = 'com.workingbit.board.LocalBoardApplication'
+//    }
 
-    springBoot {
-        mainClass = 'com.workingbit.board.LocalBoardApplication'
-        executable = true
-        buildInfo()
-    }
-
-    bootRun {
-        addResources = false
-    }
-
-    task stage(dependsOn: 'bootRepackage') {
-    }
+//    springBoot {
+//        mainClass = 'com.workingbit.board.LocalBoardApplication'
+//        executable = true
+//        buildInfo()
+//    }
+//
+//    bootRun {
+//        addResources = false
+//    }
+//
+//    task stage(dependsOn: 'bootRepackage') {
+//    }
 
     dependencies {
         compile project(':coremodule')
@@ -105,25 +155,71 @@ project(':boardservice') {
     }
 }
 
-project(':wikiservice') {
+//project(':wikiservice') {
+//    apply plugin: 'application'
+//
+//    bootRepackage {
+//        mainClass = 'com.workingbit.wiki.LocalWikiApplication'
+//    }
+//
+//    springBoot {
+//        mainClass = 'com.workingbit.wiki.LocalWikiApplication'
+//        executable = true
+//        buildInfo()
+//    }
+//
+//    bootRun {
+//        addResources = false
+//    }
+//
+//    task stage(dependsOn: 'bootRepackage') {
+//    }
+//
+//    dependencies {
+//        compile project(':coremodule')
+//    }
+//
+//    task copyRuntimeLibs(type: Copy) {
+//        into "$buildDir/libs/deps/lib"
+//        from configurations.runtime
+//    }
+//
+//    task batchZip(type: Zip) {
+//        from sourceSets.main.output, "$buildDir/libs/deps"
+//    }
+//}
+
+project(':articleservice') {
     apply plugin: 'application'
 
-    bootRepackage {
-        mainClass = 'com.workingbit.wiki.LocalWikiApplication'
-    }
+//    bootRepackage {
+//        mainClass = 'com.workingbit.wiki.LocalArticleApplication'
+//    }
+//
+//    springBoot {
+//        mainClass = 'com.workingbit.wiki.LocalArticleApplication'
+//        executable = true
+//        buildInfo()
+//    }
+//
+//    bootRun {
+//        addResources = false
+//    }
+//
+//    task stage(dependsOn: 'bootRepackage') {
+//    }
+//    application {
+        mainClassName = 'com.workingbit.articleservice.Application'
+//    }
 
-    springBoot {
-        mainClass = 'com.workingbit.wiki.LocalWikiApplication'
-        executable = true
-        buildInfo()
-    }
-
-    bootRun {
-        addResources = false
-    }
-
-    task stage(dependsOn: 'bootRepackage') {
-    }
+//    tasks {
+//        withType<KotlinCompile> {
+//            kotlinOptions {
+//                jvmTarget = "1.8"
+//                freeCompilerArgs = listOf("-Xjsr305-annotations=enable")
+//            }
+//        }
+//    }
 
     dependencies {
         compile project(':coremodule')
@@ -139,39 +235,16 @@ project(':wikiservice') {
     }
 }
 
-sourceCompatibility=1.8
-targetCompatibility=1.8
-
-buildscript {
-    ext.kotlin_version = '1.2-M2'
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-        maven { url "http://repo.spring.io/plugins-release" }
-        maven { url "http://repo.spring.io/milestone" }
-        maven { url "https://plugins.gradle.org/m2/" }
-
-        maven { url "http://dl.bintray.com/kotlin/kotlin-eap-1.2" }
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
-        classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
-        classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
-        classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
-    }
-}
-
-
-defaultTasks 'bootRun'
+//sourceCompatibility=1.8
+//targetCompatibility=1.8
 
 repositories {
     mavenCentral()
+    maven { setUrl("https://repo.spring.io/milestone") }
+    maven { setUrl("https://repo.spring.io/snapshot") }
+    maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots") }
 }
+//defaultTasks 'bootRun'
 
 clean {
     delete "target"
@@ -185,4 +258,4 @@ task wrapper(type: Wrapper) {
     gradleVersion = '4.0'
 }
 
-bootRepackage.enabled = false
+//bootRepackage.enabled = false

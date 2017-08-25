@@ -1,11 +1,10 @@
-package com.workingbit.boardmodule
+package com.workingbit.boardmodule.history
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.workingbit.coremodule.domain.impl.BoardContainer
 import com.workingbit.coremodule.domain.impl.BoardHistory
 import com.workingbit.coremodule.domain.impl.TreeNode
 import java.util.*
-import javax.validation.constraints.NotNull
 
 /**
  * Created by Aleksey Popryaduhin on 19:52 12/08/2017.
@@ -40,7 +39,7 @@ class BoardHistoryManager {
      *
      * @param boardContainer
      */
-    fun addBoard(@NotNull boardContainer: BoardContainer): TreeNode<BoardContainer>? {
+    fun addBoard(boardContainer: BoardContainer): TreeNode<BoardContainer>? {
         val child = TreeNode(boardContainer)
         current?.addChild(child)
         current = child

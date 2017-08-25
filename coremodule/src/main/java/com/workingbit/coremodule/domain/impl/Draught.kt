@@ -18,4 +18,9 @@ data class Draught(private val map: HashMap<String, Any?>) {
     var queen: Boolean by map
     var beaten: Boolean by map
     var highlighted: Boolean by map
+
+    constructor(v: Int, h: Int) : this(hashMapOf(
+            "v" to v,
+            "h" to h
+    ))
 }
