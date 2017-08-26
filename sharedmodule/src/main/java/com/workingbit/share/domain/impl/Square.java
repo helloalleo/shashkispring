@@ -24,6 +24,12 @@ public class Square implements ICoordinates, BaseDomain {
    * col
    */
   private int h;
+
+  /**
+   * Board's dimension
+   */
+  private int dim;
+
   /**
    * on the main part where we have the draughts
    */
@@ -42,9 +48,10 @@ public class Square implements ICoordinates, BaseDomain {
   @JsonIgnore
   private Draught pointDraught;
 
-  public Square(int v, int h, boolean main, int size, Draught draught) {
+  public Square(int v, int h, int dim, boolean main, int size, Draught draught) {
     this.v = v;
     this.h = h;
+    this.dim = dim;
     this.main = main;
     this.size = size;
     this.draught = draught;
@@ -55,7 +62,17 @@ public class Square implements ICoordinates, BaseDomain {
   }
 
   @Override
+  public String toString() {
+    return "Square{" +
+        "notation=" + toNotation() +
+        ", highlighted=" + highlighted +
+        ", draught=" + draught +
+        ", pointDraught=" + pointDraught +
+        '}';
+  }
+
+  @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Square(v, h, main, size, ObjectUtils.clone(draught));
+    return new Square(v, h, getDim(), main, size, ObjectUtils.clone(draught));
   }
 }

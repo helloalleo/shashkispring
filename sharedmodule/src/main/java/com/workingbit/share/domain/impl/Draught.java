@@ -21,24 +21,27 @@ public class Draught implements ICoordinates, BaseDomain {
    * col
    */
   private int h;
+
+  private int dim;
+
   private boolean black;
   private boolean queen;
   private boolean beaten;
   private boolean highlighted;
 
-  public Draught(int v, int h) {
+  public Draught(int v, int h, int dim) {
     this.v = v;
     this.h = h;
+    this.dim = dim;
   }
 
-  public Draught(int v, int h, boolean black) {
-    this.v = v;
-    this.h = h;
+  public Draught(int v, int h, int dim, boolean black) {
+    this(v, h, dim);
     this.black = black;
   }
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Draught(v, h, black, queen, beaten, highlighted);
+    return new Draught(v, h, getDim(), black, queen, beaten, highlighted);
   }
 }

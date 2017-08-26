@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AppProperties;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.impl.*;
+import com.workingbit.share.domain.impl.Board;
+import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Draught;
+import com.workingbit.share.domain.impl.Square;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -32,28 +35,27 @@ public class BaseServiceTest {
   BoardDao boardDao;
 
   Board getBoard() {
-    assert boardService != null;
-    Board board = boardService.createBoard(new NewBoardRequest(false, false, EnumRules.RUSSIAN, 60));
-    assert board.getId() != null;
+    BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN, 60);
+    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
     BoardContainer currentBoard = board.getCurrentBoard();
     Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
     Square selectedSquare = squareByVH.get();
-    Draught draught = new Draught(5, 2);
+    Draught draught = new Draught(5, 2, getRules().getDimension());
     selectedSquare.setDraught(draught);
     currentBoard.setSelectedSquare(selectedSquare);
     return board;
   }
 
   Draught getDraught(int v, int h) {
-    return new Draught(v, h);
+    return new Draught(v, h, getRules().getDimension());
   }
 
   Square getSquare(Draught draught, int v, int h) {
-    return new Square(v, h, true, 60, draught);
+    return new Square(v, h, getRules().getDimension(), true, 60, draught);
   }
 
   Draught getDraughtBlack(int v, int h) {
-    return new Draught(v, h, true);
+    return new Draught(v, h, getRules().getDimension(), true);
   }
 
   Square getSquareByVH(BoardContainer board, int v, int h) {

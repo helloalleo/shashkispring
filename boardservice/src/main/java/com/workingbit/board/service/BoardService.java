@@ -4,13 +4,11 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -18,8 +16,7 @@ import java.util.Optional;
 import static com.workingbit.board.common.EnumBaseKeys.*;
 import static com.workingbit.board.common.EnumSearch.allowed;
 import static com.workingbit.board.common.EnumSearch.beaten;
-import static com.workingbit.board.service.BoardUtils.getBoardServiceExceptionSupplier;
-import static com.workingbit.board.service.BoardUtils.mapList;
+import static com.workingbit.board.service.BoardUtils.*;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.
@@ -41,8 +38,9 @@ public class BoardService {
   }
 
   public Board createBoard(NewBoardRequest newBoardRequest) {
-    Board board = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
-    boardDao.save(board);
+    BoardContainer boardContainer = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
+    Board board = new Board(boardContainer, newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
+    boardHistoryService.addBoardAndSave(board);
     return board;
   }
 
@@ -56,51 +54,6 @@ public class BoardService {
 
   public void delete(String boardId) {
     boardDao.delete(boardId);
-  }
-
-  /**
-   * Fill board with draughts
-   *
-   * @param fillBoard
-   * @param black      is player plays black?
-   * @param rules
-   * @param squareSize size of one square
-   * @return
-   */
-  private Board initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
-    List<Square> squares = new ArrayList<>();
-    List<Draught> whiteDraughts = new ArrayList<>();
-    List<Draught> blackDraughts = new ArrayList<>();
-    for (int v = 0; v < rules.getDimension(); v++) {
-      for (int h = 0; h < rules.getDimension(); h++) {
-        Draught draught = new Draught(v, h, true);
-        boolean draughtAdded = false;
-        if (fillBoard && ((h + v + 1) % 2 == 0)) {
-          if (v < rules.getRowsForDraughts()) {
-            draught.setBlack(!black);
-            draughtAdded = true;
-          } else if (v >= rules.getDimension() - rules.getRowsForDraughts() && v < rules.getDimension()) {
-            draught.setBlack(black);
-            draughtAdded = true;
-          }
-        }
-        if (draughtAdded) {
-          if (draught.isBlack()) {
-            blackDraughts.add(draught);
-          } else {
-            whiteDraughts.add(draught);
-          }
-        } else {
-          draught = null;
-        }
-        Square square = new Square(v, h, (h + v + 1) % 2 == 0, squareSize, draught);
-        squares.add(square);
-      }
-    }
-    BoardContainer boardChanger = new BoardContainer(squares, whiteDraughts, blackDraughts, null);
-    Board board = new Board(boardChanger, black, rules, squareSize);
-    boardHistoryService.addBoardAndSave(board);
-    return board;
   }
 
   public void addDraught(BoardContainer board, Draught draught) {
@@ -129,8 +82,7 @@ public class BoardService {
         board.getCurrentBoard().setSelectedSquare(square);
         boardDao.save(board);
         // highlight moves for the selected square
-        HighlightMoveUtil highlightMoveUtil = HighlightMoveUtil.getService(board.getCurrentBoard(), square, board.getRules());
-        return highlightMoveUtil.findAllowedMoves();
+        return HighlightMoveUtil.highlight(board, square);
       } catch (BoardServiceException e) {
         return null;
       }

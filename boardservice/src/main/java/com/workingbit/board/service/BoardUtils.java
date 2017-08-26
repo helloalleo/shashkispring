@@ -2,7 +2,9 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -15,7 +17,49 @@ import java.util.function.Supplier;
 /**
  * Created by Aleksey Popryaduhin on 20:56 11/08/2017.
  */
-class BoardUtils {
+public class BoardUtils {
+
+  /**
+   * Fill board with draughts
+   *
+   * @param fillBoard
+   * @param black      is player plays black?
+   * @param rules
+   * @param squareSize size of one square
+   * @return
+   */
+  static BoardContainer initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
+    List<Square> squares = new ArrayList<>();
+    List<Draught> whiteDraughts = new ArrayList<>();
+    List<Draught> blackDraughts = new ArrayList<>();
+    for (int v = 0; v < rules.getDimension(); v++) {
+      for (int h = 0; h < rules.getDimension(); h++) {
+        Draught draught = new Draught(v, h, rules.getDimension(), true);
+        boolean draughtAdded = false;
+        if (fillBoard && ((h + v + 1) % 2 == 0)) {
+          if (v < rules.getRowsForDraughts()) {
+            draught.setBlack(!black);
+            draughtAdded = true;
+          } else if (v >= rules.getDimension() - rules.getRowsForDraughts() && v < rules.getDimension()) {
+            draught.setBlack(black);
+            draughtAdded = true;
+          }
+        }
+        if (draughtAdded) {
+          if (draught.isBlack()) {
+            blackDraughts.add(draught);
+          } else {
+            whiteDraughts.add(draught);
+          }
+        } else {
+          draught = null;
+        }
+        Square square = new Square(v, h, rules.getDimension(), (h + v + 1) % 2 == 0, squareSize, draught);
+        squares.add(square);
+      }
+    }
+    return new BoardContainer(squares, whiteDraughts, blackDraughts, null);
+  }
 
   /**
    * Find variable link to square from board

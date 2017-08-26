@@ -3,17 +3,18 @@ package com.workingbit.board.service;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.function.TrinaryFunction;
 import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.workingbit.board.common.EnumSearch.allowed;
-import static com.workingbit.board.common.EnumSearch.beaten;
 import static com.workingbit.board.service.BoardUtils.findSquareByVH;
 import static com.workingbit.board.service.BoardUtils.getDistanceVH;
 import static java.lang.Math.abs;
@@ -56,12 +57,22 @@ public class HighlightMoveUtil {
     this.selectedSquare = selectedSquare;
   }
 
-  public static HighlightMoveUtil getService(BoardContainer board, Square selectedSquare, EnumRules rules) throws BoardServiceException {
-      return new HighlightMoveUtil(board, selectedSquare, rules);
-  }
-
   public Map<String, Object> findAllowedMoves() throws BoardServiceException {
     return walk(selectedSquare, 0);
+  }
+
+  /**
+   * Initial filtering. Returns On Main part of board and the diagonals of selected draught
+   *
+   * @return
+   */
+  CompletableFuture<Stream<Square>> filterNotOnMainAndSelected() {
+    // get squares without selected
+    List<Square> squares = board.getSquares();
+    squares.remove(selectedSquare);
+    // first filter
+    return CompletableFuture.completedFuture(squares.stream())
+        .thenApply(squareStream -> filterNotOnMainAndSelected(squareStream, selectedSquare));
   }
 
   /**
@@ -77,38 +88,46 @@ public class HighlightMoveUtil {
     int dimension = getBoardDimension();
     int mainDiagonal = selectedSquare.getV() - selectedSquare.getH();
     int subDiagonal = dimension - selectedSquare.getV() - selectedSquare.getH();
-    List<Square> squares = board.getSquares();
+    Triple<List<Square>, List<Square>, List<Square>> squares = Triple.of(board.getSquares(), new ArrayList<>(), new ArrayList<>());
+    // filter simple draughts
+//    CompletableFuture<Stream<Square>> simpleDraughts =
+//        onMain.thenApply(squareStream -> filterDraughts(squareStream, selectedSquare));
+
+//    onMain.thenApply(squareStream -> filterQueens(squareStream, selectedSquare));
+//    List<Pair<Integer, Integer>> forwardDirs = getForwardDirs(selectedSquare, );
+
     // split board's square list on rows
-    Stream<List<Square>> iterateRows = getRows(dimension, squares);
-    Iterator<List<Square>> rowsIterator = iterateRows.parallel().iterator();
-    while (rowsIterator.hasNext()) {
-      // get next row
-      List<Square> next = rowsIterator.next();
-      for (Square currentSquare : next) {
-        Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, currentSquare);
-        // if selected draught is not queen and we near of it other words not far then 2 squares then go next else skip this square
-        if (!currentSquare.isMain() // if we on the main black square
-            || !selectedSquare.getPointDraught().isQueen() && (abs(distanceVH.getLeft()) > 1 || abs(distanceVH.getRight()) > 1)
-            || currentSquare.equals(selectedSquare)) {
-          continue;
-        }
-        // if we on main diagonal or on sub diagonal of given square, so check square pos left and right
-        if (isSquareOnMainDiagonal(mainDiagonal, currentSquare) || isSquareOnSubDiagonal(dimension, subDiagonal, currentSquare)) {
-          List<Pair<Integer, Integer>> forwardDirs = getForwardDirs(selectedSquare, currentSquare);
-          for (Pair<Integer, Integer> curDir : forwardDirs) {
-            Optional<Square> nextSquare = mustBeat(selectedSquare.getPointDraught().isBlack(), curDir, currentSquare, selectedSquare);
-            if (nextSquare.isPresent()) {
-              Map<String, Object> walk = walk(nextSquare.get(), deep);
-              allowedMoves.add(nextSquare.get());
-              beatenMoves.add(nextSquare.get().getPointDraught());
-            }
-            // if we can move forward by dir then add to allowed moves
-            else if (canMove(selectedSquare, currentSquare)) {
-              allowedMoves.add(currentSquare);
-            }
+//    Stream<List<Square>> iterateRows = getRows(dimension, squares);
+//    Iterator<List<Square>> rowsIterator = iterateRows.parallel().iterator();
+//    while (rowsIterator.hasNext()) {
+    // get next row
+//      List<Square> next = rowsIterator.next();
+/*
+    for (Square currentSquare : squares) {
+      Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, currentSquare);
+      // if selected draught is not queen and we near of it other words not far then 2 squares then go next else skip this square
+      if (!currentSquare.isMain() // if we on the main black square
+          || !selectedSquare.getPointDraught().isQueen() && (abs(distanceVH.getLeft()) > 1 || abs(distanceVH.getRight()) > 1)
+          || currentSquare.equals(selectedSquare)) {
+        continue;
+      }
+      // if we on main diagonal or on sub diagonal of given square, so check square pos left and right
+      if (isSquareOnMainDiagonal(mainDiagonal, currentSquare) || isSquareOnSubDiagonal(dimension, subDiagonal, currentSquare)) {
+        List<Pair<Integer, Integer>> forwardDirs = getForwardDirs(selectedSquare, currentSquare);
+        for (Pair<Integer, Integer> curDir : forwardDirs) {
+          Optional<Square> nextSquare = mustBeat(selectedSquare.getPointDraught().isBlack(), curDir, currentSquare, selectedSquare);
+          if (nextSquare.isPresent()) {
+            Map<String, Object> walk = walk(nextSquare.get(), deep);
+            allowedMoves.add(nextSquare.get());
+            beatenMoves.add(nextSquare.get().getPointDraught());
+          }
+          // if we can move forward by dir then add to allowed moves
+          else if (canMove(selectedSquare, currentSquare)) {
+            allowedMoves.add(currentSquare);
           }
         }
       }
+//      }
     }
     List<Square> allowedAfterBeat = allowedMoves
         .stream()
@@ -119,7 +138,45 @@ public class HighlightMoveUtil {
       put(allowed.name(), completeAllowed);
       put(beaten.name(), beatenMoves);
     }};
+    */
+    return null;
   }
+
+  /**
+   * Filters usual draughts
+   *
+   * @param squareStream
+   * @param selectedSquare
+   * @return
+   */
+  private Stream<Square> filterDraughts(Stream<Square> squareStream, Square selectedSquare) {
+    return squareStream
+        .filter(square -> {
+          Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, square);
+          return selectedSquare.getPointDraught().isQueen() || abs(distanceVH.getLeft()) > 1 || abs(distanceVH.getRight()) > 1;
+        });
+  }
+
+  /**
+   * Filter main square and on the diagonals of current square
+   *
+   * @param squareStream
+   * @param selectedSquare
+   * @return
+   */
+  private Stream<Square> filterNotOnMainAndSelected(Stream<Square> squareStream, Square selectedSquare) {
+    int dimension = getBoardDimension();
+    int mainDiagonal = selectedSquare.getV() - selectedSquare.getH();
+    int subDiagonal = dimension - selectedSquare.getV() - selectedSquare.getH();
+    return squareStream
+        .filter(Square::isMain)
+        .filter(square -> isSquareOnMainDiagonal(mainDiagonal, square)
+            || isSquareOnSubDiagonal(dimension, subDiagonal, square));
+  }
+
+//  private Triple<List<Square>, List<Square>, List<Square>> filterNotOnMainAndSelected(Triple<List<Square>, List<Square>, List<Square>> squares) {
+//    return null;
+//  }
 
   private List<Pair<Integer, Integer>> getForwardDirs(Square selectedSquare, Square currentSquare) {
     Pair<Integer, Integer> dirVH = getDirVH(selectedSquare, currentSquare);
@@ -192,11 +249,12 @@ public class HighlightMoveUtil {
 
   /**
    * метод возвращает поля на которые нужно стать, чтобы побить шашку
+   * <p>
+   * //   * @param black
+   * //   * @param sourceSquare
+   * //   * @param dir
+   * //   * @param deep
    *
-//   * @param black
-//   * @param sourceSquare
-//   * @param dir
-//   * @param deep
    * @returns {any}
    */
 //  private List<Square> walkFront(boolean black, Square sourceSquare, Pair<Integer, Integer> dir, int deep) {
@@ -243,13 +301,13 @@ public class HighlightMoveUtil {
 //    }
 //    return beat;
 //  }
-
   private static Optional<Square> nextSquareByDir(BoardContainer board, Square source, Pair<Integer, Integer> dir) {
     return findSquareByVH(board, source.getV() + dir.getLeft(), source.getH() + dir.getRight());
   }
 
   /**
    * Return allowed square for move after beat
+   *
    * @param black
    * @param dir
    * @param currentSquare
@@ -285,5 +343,15 @@ public class HighlightMoveUtil {
 
   private static int subDiagonal(int h, int v, int dim) {
     return dim - h - v;
+  }
+
+  public static Map<String, Object> highlight(Board board, Square selectedSquare) throws BoardServiceException {
+    try {
+      // highlight moves for the selected square
+      HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), selectedSquare, board.getRules());
+      return highlightMoveUtil.findAllowedMoves();
+    } catch (BoardServiceException e) {
+      return null;
+    }
   }
 }
