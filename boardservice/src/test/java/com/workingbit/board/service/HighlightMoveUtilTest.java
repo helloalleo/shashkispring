@@ -14,16 +14,14 @@ import org.junit.Test;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.workingbit.board.service.BoardUtils.findSquareByNotation;
 import static com.workingbit.board.service.BoardUtils.findSquareByVH;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Aleksey Popryaduhin on 20:01 10/08/2017.
@@ -33,14 +31,15 @@ public class HighlightMoveUtilTest {
   public void setUp() throws Exception {
   }
 
+  /* this was commented because it was intermediate
   @Test
   public void filterNotOnMainAndSelectedSquares() throws Exception, BoardServiceException {
     Board board = getBoard();
     Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3");
     HighlightMoveUtil highlight = new HighlightMoveUtil(board.getCurrentBoard(), square, board.getRules());
-    CompletableFuture<Stream<Square>> x = highlight.filterNotOnMainAndSelectedSquares();
-    Stream<Square> squareStream = x.get();
-    String squares = squareStream.map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    CompletableFuture<List<Square>> x = highlight.filterNotOnMainAndSelectedSquares();
+    List<Square> squareStream = x.get();
+    String squares = squareStream.stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
     assertEquals("h8,g7,f6,a5,e5,b4,d4,b2,d2,a1,e1", squares);
   }
 
@@ -49,20 +48,20 @@ public class HighlightMoveUtilTest {
     Board board = getBoard();
     Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
     HighlightMoveUtil highlight = new HighlightMoveUtil(board.getCurrentBoard(), square, board.getRules());
-    CompletableFuture<Stream<Square>> x = highlight.filterQueenSquares();
-    Stream<Square> squareStream = x.get();
-    String squares = squareStream.map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    CompletableFuture<List<Square>> x = highlight.filterQueenSquares();
+    List<Square> squareStream = x.get();
+    String squares = squareStream.stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
     assertEquals("a5,e5,b4,d4,b2,d2,a1,e1", squares);
   }
+  */
 
   @Test
   public void findAllowedMoves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
-    HighlightMoveUtil highlight = new HighlightMoveUtil(board.getCurrentBoard(), square, board.getRules());
-    CompletableFuture<Stream<Square>> x = highlight.findAllowedMoves();
-    Stream<Square> squareStream = x.get(5, TimeUnit.SECONDS);
-    String squares = squareStream.map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    Optional<List<Square>> highlight = HighlightMoveUtil.highlight(board, square);
+    assertTrue(highlight.isPresent());
+    String squares = highlight.get().stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
     assertEquals("b4,d4", squares);
   }
 
@@ -71,10 +70,9 @@ public class HighlightMoveUtilTest {
     Board board = getBoard();
     Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d4"); // c3
-    HighlightMoveUtil highlight = new HighlightMoveUtil(board.getCurrentBoard(), square, board.getRules());
-    CompletableFuture<Stream<Square>> x = highlight.findAllowedMoves();
-    Stream<Square> squareStream = x.get(5, TimeUnit.SECONDS);
-    String squares = squareStream.map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    Optional<List<Square>> highlight = HighlightMoveUtil.highlight(board, square);
+    assertTrue(highlight.isPresent());
+    String squares = highlight.get().stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
     assertEquals("e5", squares);
   }
 
@@ -138,7 +136,7 @@ public class HighlightMoveUtilTest {
 //    assertEquals("(6,1)", resultToString(allowedMoves, beaten));
 //  }
 
-//  @Test
+  //  @Test
 //  public void shouldWhiteDraughtBeatBackwardTwice() throws Exception, BoardServiceException {
 //    Board board = getBoard();
 //    BoardService boardService = getBoardService();

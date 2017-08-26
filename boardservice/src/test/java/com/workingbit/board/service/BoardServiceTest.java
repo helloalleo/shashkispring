@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import static com.workingbit.board.common.EnumBaseKeys.*;
 import static com.workingbit.board.common.EnumSearch.allowed;
@@ -64,7 +65,7 @@ public class BoardServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void should_save_move_history() throws BoardServiceException {
+  public void should_save_move_history() throws BoardServiceException, ExecutionException, InterruptedException {
     Board board = getNewBoard();
     Draught draught = getDraught(5, 2);
     Square square = getSquareByVH(board.getCurrentBoard(), 5, 2);
@@ -73,9 +74,9 @@ public class BoardServiceTest extends BaseServiceTest {
 
     // find allowed and beaten
 //    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), square, getRules());
-    Map<String, Object> allowedMovesMap = HighlightMoveUtil.highlight(board,square);
-    List<Square> allowedMoves = (List<Square>) allowedMovesMap.get(allowed.name());
-    List<Draught> beatenMoves = (List<Draught>) allowedMovesMap.get(beaten.name());
+    Optional<List<Square>> allowedMovesMap = HighlightMoveUtil.highlight(board,square);
+//    List<Square> allowedMoves = (List<Square>) allowedMovesMap.get(allowed.name());
+//    List<Draught> beatenMoves = (List<Draught>) allowedMovesMap.get(beaten.name());
 
     // create moveTo action
     Board finalBoard = board;
@@ -83,8 +84,8 @@ public class BoardServiceTest extends BaseServiceTest {
       put(boardId.name(), finalBoard.getId());
       put(selectedSquare.name(), square);
       put(targetSquare.name(), target);
-      put(allowed.name(), allowedMoves);
-      put(beaten.name(), beatenMoves);
+//      put(allowed.name(), allowedMoves);
+//      put(beaten.name(), beatenMoves);
     }};
 
     // move draught and save
@@ -115,13 +116,13 @@ public class BoardServiceTest extends BaseServiceTest {
       put(selectedSquare.name(), square);
       put(boardId.name(), board.getId());
     }};
-    Map<String, Object> highlight = boardService.highlight(hl);
+    List<Square> highlight = boardService.highlight(hl);
     // find allowed and beaten
-    List<Square> allowedMoves = (List<Square>) highlight.get(allowed.name());
-    List<Draught> beatenMoves = (List<Draught>) highlight.get(beaten.name());
+//    List<Square> allowedMoves = (List<Square>) highlight.get(allowed.name());
+//    List<Draught> beatenMoves = (List<Draught>) highlight.get(beaten.name());
 
     // create moveTo action
-    Map<String, Object> moveTo = getMoveTo(board, square, target, allowedMoves, beatenMoves);
+    Map<String, Object> moveTo = getMoveTo(board, square, target, null, null);
     MapUtils.debugPrint(System.out, "PREP MOVE", moveTo);
 
     // move draught and save
@@ -136,12 +137,12 @@ public class BoardServiceTest extends BaseServiceTest {
     }};
     highlight = boardService.highlight(hl);
     // find allowed and beaten
-    allowedMoves = (List<Square>) highlight.get(allowed.name());
-    beatenMoves = (List<Draught>) highlight.get(beaten.name());
+//    allowedMoves = (List<Square>) highlight.get(allowed.name());
+//    beatenMoves = (List<Draught>) highlight.get(beaten.name());
 
     Square nextTarget = BoardUtils.findSquareByVH(board.getCurrentBoard(), 3,4).get();
     // create moveTo action
-    moveTo = getMoveTo(board, target, nextTarget, allowedMoves, beatenMoves);
+    moveTo = getMoveTo(board, target, nextTarget, null, null);
     MapUtils.debugPrint(System.out, "PREP MOVE", moveTo);
 
     // move draught and save

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static com.workingbit.board.common.EnumBaseKeys.*;
 import static com.workingbit.board.common.EnumSearch.allowed;
@@ -73,7 +74,7 @@ public class BoardService {
    * @return map of {allowed, beaten}
    * @throws BoardServiceException
    */
-  public Map<String, Object> highlight(Map<String, Object> highlightFor) throws BoardServiceException {
+  public List<Square> highlight(Map<String, Object> highlightFor) throws BoardServiceException {
     String aBoardId = (String) highlightFor.get(boardId.name());
     return boardDao.findById(aBoardId).map(board -> {
       try {
@@ -82,8 +83,9 @@ public class BoardService {
         board.getCurrentBoard().setSelectedSquare(square);
         boardDao.save(board);
         // highlight moves for the selected square
-        return HighlightMoveUtil.highlight(board, square);
-      } catch (BoardServiceException e) {
+        return HighlightMoveUtil.highlight(board, square).get();
+      } catch (BoardServiceException | InterruptedException | ExecutionException e) {
+        e.printStackTrace();
         return null;
       }
     }).orElseThrow(getBoardServiceExceptionSupplier("Unable to find allowed moves"));
