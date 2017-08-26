@@ -3,6 +3,7 @@ package com.workingbit.board.service;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.function.TrinaryFunction;
 import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,22 +59,56 @@ public class HighlightMoveUtil {
     this.selectedSquare = selectedSquare;
   }
 
-  public Map<String, Object> findAllowedMoves() throws BoardServiceException {
-    return walk(selectedSquare, 0);
-  }
-
   /**
    * Initial filtering. Returns On Main part of board and the diagonals of selected draught
    *
    * @return
    */
-  CompletableFuture<Stream<Square>> filterNotOnMainAndSelected() {
+  CompletableFuture<Stream<Square>> filterNotOnMainAndSelectedSquares() {
     // get squares without selected
     List<Square> squares = board.getSquares();
     squares.remove(selectedSquare);
     // first filter
     return CompletableFuture.completedFuture(squares.stream())
-        .thenApply(squareStream -> filterNotOnMainAndSelected(squareStream, selectedSquare));
+        .thenApply(squareStream -> filterNotOnMainAndSelectedSquares(squareStream, selectedSquare));
+  }
+
+  CompletableFuture<Stream<Square>> filterQueenSquares() {
+    // filter simple draughts
+    return filterNotOnMainAndSelectedSquares()
+        .thenApply(squareStream -> filterQueenSquares(squareStream, selectedSquare));
+  }
+
+  public CompletableFuture<Stream<Square>> findAllowedMoves() {
+    return filterQueenSquares()
+        .thenApply(squareStream -> findAllowedMoves(squareStream, selectedSquare));
+  }
+
+  private Stream<Square> findAllowedMoves(Stream<Square> squareStream, Square selectedSquare) {
+    Supplier<Stream<Pair<Square, Square>>> suplier = ()->squareStream
+        .map(square -> {
+          try {
+            Optional<Square> nextSquare = mustBeat(selectedSquare.getPointDraught().isBlack(), square, selectedSquare);
+            if (nextSquare.isPresent()) {
+              return Pair.<Square, Square>of(null, nextSquare.get());
+            } else if (canMove(selectedSquare, square)) {
+              return Pair.<Square, Square>of(square, null);
+            }
+          } catch (BoardServiceException e) {
+            Log.error(e.getMessage());
+          }
+          return null;
+        })
+        .filter(Objects::nonNull);
+    boolean beaten = suplier.get()
+        .anyMatch(pair -> pair.getRight() != null);
+    if (beaten) {
+      return suplier.get()
+          .map(Pair::getRight);
+    } else {
+      return suplier.get()
+          .map(Pair::getLeft);
+    }
   }
 
   /**
@@ -149,11 +185,11 @@ public class HighlightMoveUtil {
    * @param selectedSquare
    * @return
    */
-  private Stream<Square> filterDraughts(Stream<Square> squareStream, Square selectedSquare) {
+  private Stream<Square> filterQueenSquares(Stream<Square> squareStream, Square selectedSquare) {
     return squareStream
         .filter(square -> {
           Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, square);
-          return selectedSquare.getPointDraught().isQueen() || abs(distanceVH.getLeft()) > 1 || abs(distanceVH.getRight()) > 1;
+          return selectedSquare.getPointDraught().isQueen() || abs(distanceVH.getLeft()) < 3 || abs(distanceVH.getRight()) < 3;
         });
   }
 
@@ -164,7 +200,7 @@ public class HighlightMoveUtil {
    * @param selectedSquare
    * @return
    */
-  private Stream<Square> filterNotOnMainAndSelected(Stream<Square> squareStream, Square selectedSquare) {
+  private Stream<Square> filterNotOnMainAndSelectedSquares(Stream<Square> squareStream, Square selectedSquare) {
     int dimension = getBoardDimension();
     int mainDiagonal = selectedSquare.getV() - selectedSquare.getH();
     int subDiagonal = dimension - selectedSquare.getV() - selectedSquare.getH();
@@ -174,7 +210,7 @@ public class HighlightMoveUtil {
             || isSquareOnSubDiagonal(dimension, subDiagonal, square));
   }
 
-//  private Triple<List<Square>, List<Square>, List<Square>> filterNotOnMainAndSelected(Triple<List<Square>, List<Square>, List<Square>> squares) {
+//  private Triple<List<Square>, List<Square>, List<Square>> filterNotOnMainAndSelectedSquares(Triple<List<Square>, List<Square>, List<Square>> squares) {
 //    return null;
 //  }
 
@@ -309,13 +345,12 @@ public class HighlightMoveUtil {
    * Return allowed square for move after beat
    *
    * @param black
-   * @param dir
    * @param currentSquare
    * @param selectedSquare
    * @return
    */
-  private Optional<Square> mustBeat(boolean black, Pair<Integer, Integer> dir, Square currentSquare, Square selectedSquare) throws BoardServiceException {
-    Optional<Square> nextSquareOpt = nextSquareByDir(board, currentSquare, dir);
+  private Optional<Square> mustBeat(boolean black, Square currentSquare, Square selectedSquare) throws BoardServiceException {
+    Optional<Square> nextSquareOpt = nextSquareByDir(board, currentSquare, getDirVH(selectedSquare, currentSquare));
     return nextSquareOpt.map(nextSquare -> {
       Draught currentDraught = currentSquare.getDraught();
       int dimension = getBoardDimension();
@@ -349,7 +384,7 @@ public class HighlightMoveUtil {
     try {
       // highlight moves for the selected square
       HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), selectedSquare, board.getRules());
-      return highlightMoveUtil.findAllowedMoves();
+      return highlightMoveUtil.walk(selectedSquare, 0);
     } catch (BoardServiceException e) {
       return null;
     }

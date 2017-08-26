@@ -41,6 +41,19 @@ public class Draught implements ICoordinates, BaseDomain {
   }
 
   @Override
+  public String toString() {
+    return "Draught{" +
+        "notation=" + toNotation() +
+        ", v=" + v +
+        ", h=" + h +
+        ", black=" + black +
+        ", queen=" + queen +
+        ", beaten=" + beaten +
+        ", highlighted=" + highlighted +
+        '}';
+  }
+
+  @Override
   public Object clone() throws CloneNotSupportedException {
     return new Draught(v, h, getDim(), black, queen, beaten, highlighted);
   }

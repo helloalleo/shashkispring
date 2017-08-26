@@ -6,6 +6,7 @@ import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -74,6 +75,18 @@ public class BoardUtils {
   static Optional<Square> findSquareByVH(BoardContainer board, int v, int h) {
     for (Square square : board.getSquares()) {
       if (square.getH() == h && square.getV() == v) {
+        return Optional.of(square);
+      }
+    }
+    return Optional.empty();
+  }
+
+  static Optional<Square> findSquareByNotation(BoardContainer board, String notation) {
+    if (StringUtils.isBlank(notation)) {
+      return Optional.empty();
+    }
+    for (Square square : board.getSquares()) {
+      if (square.toNotation().equals(notation)) {
         return Optional.of(square);
       }
     }
