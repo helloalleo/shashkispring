@@ -19,6 +19,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import static com.workingbit.board.common.EnumSearch.allowed;
+import static com.workingbit.board.common.EnumSearch.beaten;
 import static com.workingbit.board.service.BoardUtils.findSquareByNotation;
 import static com.workingbit.board.service.BoardUtils.findSquareByVH;
 import static org.junit.Assert.assertEquals;
@@ -67,14 +68,30 @@ public class HighlightMoveUtilTest {
   }
 
   @Test
-  public void findOneAllowedMove() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void find_one_beaten_allowed_move() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d4"); // c3
     Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
     assertTrue(highlight.isPresent());
-    String squares = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-//    assertEquals("e5", squares);
+    String allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    String beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    assertEquals("e5", allowedMoves);
+    assertEquals("d4", beatenDraughts);
+  }
+
+  @Test
+  public void find_sequence_beaten_and_allowed_move() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
+    Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d4"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d6"); // c3
+    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
+    assertTrue(highlight.isPresent());
+    String allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    String beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    assertEquals("c7,e5", allowedMoves);
+    assertEquals("d6,d4", beatenDraughts);
   }
 
 //  @Test
