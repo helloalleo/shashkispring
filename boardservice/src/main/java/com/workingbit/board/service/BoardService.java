@@ -58,14 +58,14 @@ public class BoardService {
   }
 
   public void addDraught(BoardContainer board, Draught draught) {
-    Optional<Square> draughtOnBoard = board.getSquares()
-        .stream()
-        // find square by coords of draught
-        .filter(square -> square.getV() == draught.getV() && square.getH() == draught.getH())
-        .findFirst();
-    draughtOnBoard.ifPresent(square -> {
-      square.setDraught((Draught) draught);
-    });
+//    Optional<Square> draughtOnBoard = board.getSquares()
+//        .stream()
+//        // find square by coords of draught
+//        .filter(square -> square.getV() == draught.getV() && square.getH() == draught.getH())
+//        .findFirst();
+//    draughtOnBoard.ifPresent(square -> {
+//      square.setDraught((Draught) draught);
+//    });
   }
 
   /**

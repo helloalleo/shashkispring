@@ -1,6 +1,5 @@
 package com.workingbit.share.domain.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.BaseDomain;
 import lombok.Data;
@@ -8,6 +7,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -17,7 +17,9 @@ import java.util.Objects;
 public class BoardContainer implements BaseDomain {
 
   private String id;
-  private List<Square> squares = new ArrayList<>();
+  private List<Square> squares;
+  private Map<EnumDiagonals, Square[]> diagonalsMap;
+
   private List<Draught> whiteDraughts = new ArrayList<>();
   private List<Draught> blackDraughts = new ArrayList<>();
   private Square selectedSquare;
@@ -52,14 +54,14 @@ public class BoardContainer implements BaseDomain {
     return this;
   }
 
-   public void mapBoard(ObjectMapper objectMapper) {
-    List<Square> mappedSquares = new ArrayList<>(squares.size());
-    for (int i = 0; i < squares.size(); i++) {
-      Square square = objectMapper.convertValue(squares.get(i), Square.class);
-      mappedSquares.add(square);
-    }
-    squares = mappedSquares;
-  }
+//   public void mapBoard(ObjectMapper objectMapper) {
+//    Square[] mappedSquares = new Square[squares.length];
+//    for (int i = 0; i < squares.size(); i++) {
+//      Square square = objectMapper.convertValue(squares.get(i), Square.class);
+//      mappedSquares.add(square);
+//    }
+//    squares = mappedSquares;
+//  }
 
   @Override
   public boolean equals(Object o) {

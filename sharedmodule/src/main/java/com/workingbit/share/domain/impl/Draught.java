@@ -29,15 +29,26 @@ public class Draught implements ICoordinates, BaseDomain {
   private boolean beaten;
   private boolean highlighted;
 
-  public Draught(int v, int h, int dim) {
+  private Square holderSquare;
+
+  public Draught(int v, int h, int dim, Square holderSquare) {
     this.v = v;
     this.h = h;
     this.dim = dim;
+    this.holderSquare = holderSquare;
   }
 
-  public Draught(int v, int h, int dim, boolean black) {
-    this(v, h, dim);
+  public Draught(int v, int h, int dim, boolean black, Square holderSquare) {
+    this(v, h, dim, holderSquare);
     this.black = black;
+  }
+
+  public Draught(int v, int h, int dimension, boolean b) {
+
+  }
+
+  public Draught(int v, int h, int dimension) {
+
   }
 
   @Override
@@ -55,6 +66,6 @@ public class Draught implements ICoordinates, BaseDomain {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Draught(v, h, getDim(), black, queen, beaten, highlighted);
+    return new Draught(v, h, getDim(), black, queen, beaten, highlighted, holderSquare);
   }
 }
