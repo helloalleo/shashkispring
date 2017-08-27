@@ -41,7 +41,8 @@ public class BoardService {
   public Board createBoard(NewBoardRequest newBoardRequest) {
     BoardContainer boardContainer = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
     Board board = new Board(boardContainer, newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
-    boardHistoryService.addBoardAndSave(board);
+    save(board);
+//    boardHistoryService.addBoardAndSave(board);
     return board;
   }
 

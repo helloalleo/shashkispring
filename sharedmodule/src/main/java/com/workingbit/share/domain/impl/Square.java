@@ -28,6 +28,7 @@ public class Square implements ICoordinates, BaseDomain {
   /**
    * Board's dimension
    */
+  @JsonIgnore
   private int dim;
 
   /**

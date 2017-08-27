@@ -49,6 +49,7 @@ public class BoardUtils {
     }
     boardContainer.setBlackDraughts(blackDraughts);
     boardContainer.setWhiteDraughts(whiteDraughts);
+    boardContainer.setDiagonals(allDiagonals);
     return boardContainer;
   }
 
@@ -72,7 +73,7 @@ public class BoardUtils {
         if (((v + h + 1) % 2 == 0)
             && (prime && (v - h + offset) == 0
             || !prime && (v + h - offset) == dim - 1)) {
-          Square square = new Square(v, h, dim, true, squareSize, null);
+          Square square = new Square(v, h, dim, prime, squareSize, null);
           squares.add(square);
         }
       }

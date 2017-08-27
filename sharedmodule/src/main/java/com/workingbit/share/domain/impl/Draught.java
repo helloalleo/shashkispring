@@ -1,5 +1,6 @@
 package com.workingbit.share.domain.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,7 @@ public class Draught implements ICoordinates, BaseDomain {
    */
   private int h;
 
+  @JsonIgnore
   private int dim;
 
   private boolean black;

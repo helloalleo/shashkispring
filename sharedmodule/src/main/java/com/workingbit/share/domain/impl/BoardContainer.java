@@ -5,10 +5,8 @@ import com.workingbit.share.domain.BaseDomain;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -17,29 +15,25 @@ import java.util.Objects;
 public class BoardContainer implements BaseDomain {
 
   private String id;
-  private List<Square> squares;
-  private Map<EnumDiagonals, Square[]> diagonalsMap;
 
   private List<Draught> whiteDraughts = new ArrayList<>();
   private List<Draught> blackDraughts = new ArrayList<>();
   private Square selectedSquare;
+  private List<List<Square>> diagonals;
 
   public BoardContainer() {
   }
 
-  public BoardContainer(List<Square> squares,
-                      List<Draught> whiteDraughts,
+  public BoardContainer(List<Draught> whiteDraughts,
                       List<Draught> blackDraughts,
                       Square selectedSquare) {
-    this.squares = ObjectUtils.clone(squares);
     this.whiteDraughts = ObjectUtils.clone(whiteDraughts);
     this.blackDraughts = ObjectUtils.clone(blackDraughts);
     this.selectedSquare = ObjectUtils.clone(selectedSquare);
   }
 
   public BoardContainer(BoardContainer currentBoard) {
-    this(currentBoard.getSquares(),
-        currentBoard.getWhiteDraughts(),
+    this(currentBoard.getWhiteDraughts(),
         currentBoard.getBlackDraughts(),
         currentBoard.getSelectedSquare());
   }
@@ -79,9 +73,24 @@ public class BoardContainer implements BaseDomain {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new BoardContainer(ObjectUtils.clone(squares),
-        ObjectUtils.clone(whiteDraughts),
+    return new BoardContainer(ObjectUtils.clone(whiteDraughts),
         ObjectUtils.clone(blackDraughts),
         ObjectUtils.clone(selectedSquare));
+  }
+
+  public void setDiagonals(List<List<Square>> diagonals) {
+    this.diagonals = diagonals;
+  }
+
+  public List<Square> getSquares() {
+    if (diagonals.isEmpty()) {
+      return Collections.emptyList();
+    }
+    return diagonals
+        .stream()
+        .flatMap(Collection::stream)
+        .filter(square -> !square.isMain())
+        .sorted(Comparator.comparingInt(Square::getV))
+        .collect(Collectors.toList());
   }
 }
