@@ -183,14 +183,14 @@ public class HighlightMoveUtilTest {
     BoardContainer currentBoard = board.getCurrentBoard();
     Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
     Square selectedSquare = squareByVH.get();
-    Draught draught = new Draught(5, 2, getRules().getDimension());
+    Draught draught = new Draught(5, 2, getRules().getDimension(),null);
     selectedSquare.setDraught(draught);
     currentBoard.setSelectedSquare(selectedSquare);
     return board;
   }
 
   Draught getDraught(int v, int h) {
-    return new Draught(v, h, getRules().getDimension());
+    return new Draught(v, h, getRules().getDimension(),null);
   }
 
   Square getSquare(Draught draught, int v, int h) {
@@ -198,7 +198,7 @@ public class HighlightMoveUtilTest {
   }
 
   Draught getDraughtBlack(int v, int h) {
-    return new Draught(v, h, getRules().getDimension(), true);
+    return new Draught(v, h, getRules().getDimension(), true,null);
   }
 
   Square getSquareByVH(BoardContainer board, int v, int h) {

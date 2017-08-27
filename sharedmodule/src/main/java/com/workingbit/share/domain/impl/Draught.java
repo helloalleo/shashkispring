@@ -4,7 +4,12 @@ import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Aleksey Popryaduhin on 09:28 10/08/2017.
@@ -12,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"v", "h"})
 public class Draught implements ICoordinates, BaseDomain {
   /**
    * row
@@ -30,6 +36,7 @@ public class Draught implements ICoordinates, BaseDomain {
   private boolean highlighted;
 
   private Square holderSquare;
+  private List<List<Square>> diagonals = new ArrayList<>();
 
   public Draught(int v, int h, int dim, Square holderSquare) {
     this.v = v;
@@ -43,12 +50,16 @@ public class Draught implements ICoordinates, BaseDomain {
     this.black = black;
   }
 
-  public Draught(int v, int h, int dimension, boolean b) {
+//  public Draught(int v, int h, int dimension, boolean b) {
+//
+//  }
+//
+//  public Draught(int v, int h, int dimension) {
+//
+//  }
 
-  }
-
-  public Draught(int v, int h, int dimension) {
-
+  public void addDiagonal(List<Square> diagonal) {
+    this.diagonals.add(diagonal);
   }
 
   @Override
@@ -61,11 +72,12 @@ public class Draught implements ICoordinates, BaseDomain {
         ", queen=" + queen +
         ", beaten=" + beaten +
         ", highlighted=" + highlighted +
+        ", diagonals=" + diagonals +
         '}';
   }
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Draught(v, h, getDim(), black, queen, beaten, highlighted, holderSquare);
+    return new Draught(v, h, getDim(), black, queen, beaten, highlighted, holderSquare, ObjectUtils.clone(diagonals));
   }
 }

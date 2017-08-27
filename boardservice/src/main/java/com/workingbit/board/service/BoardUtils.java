@@ -5,12 +5,14 @@ import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
-import com.workingbit.share.domain.impl.EnumDiagonals;
 import com.workingbit.share.domain.impl.Square;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -29,52 +31,38 @@ public class BoardUtils {
    */
   static BoardContainer initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
     BoardContainer boardContainer = new BoardContainer();
+
     List<Draught> whiteDraughts = new ArrayList<>();
     List<Draught> blackDraughts = new ArrayList<>();
-    for (int v = 0; v < rules.getDimension(); v++) {
-      for (int h = 0; h < rules.getDimension(); h++) {
-        Square square = new Square(v, h, rules.getDimension(), (h + v + 1) % 2 == 0, squareSize, null);
-        Draught draught = new Draught(v, h, rules.getDimension(), true, square);
-        boolean draughtAdded = false;
-        if (fillBoard && ((h + v + 1) % 2 == 0)) {
+    List<List<Square>> allDiagonals = getAllDiagonals(rules.getDimension(), squareSize);
+    for (List<Square> diagonal : allDiagonals) {
+      for (Square square : diagonal) {
+        int v = square.getV(), h = square.getH();
+        if (fillBoard) {
           if (v < rules.getRowsForDraughts()) {
-            draught.setBlack(!black);
-            draughtAdded = true;
+            placeDraught(black, rules, blackDraughts, diagonal, square, v, h);
           } else if (v >= rules.getDimension() - rules.getRowsForDraughts() && v < rules.getDimension()) {
-            draught.setBlack(black);
-            draughtAdded = true;
-          }
-        }
-        if (draughtAdded) {
-          if (draught.isBlack()) {
-            blackDraughts.add(draught);
-          } else {
-            whiteDraughts.add(draught);
+            placeDraught(!black, rules, whiteDraughts, diagonal, square, v, h);
           }
         }
       }
     }
-    Map<EnumDiagonals, Square[]> diagonalsMap = boardContainer.getDiagonalsMap();
-
-//    diagonalsMap.put(EnumDiagonals.mainRoad, getSquareArray(EnumDiagonals.mainRoad,1, 1, true, rules, squareSize));
-
-//    diagonalsMap.put(EnumDiagonals.doubleB8A7Main, getSquareArray(EnumDiagonals.mainRoad, 1, 7, true, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.doubleH2G1Main, getSquareArray(EnumDiagonals.mainRoad, 7, 1, true, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.fourthD8A5Main, getSquareArray(EnumDiagonals.mainRoad, 1, 5, true, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.fourthH4E1Main, getSquareArray(EnumDiagonals.mainRoad, 5, 1, true, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.tripleF8A3Main, getSquareArray(EnumDiagonals.mainRoad, 1, 3, true, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.tripleH6C1Main, getSquareArray(EnumDiagonals.mainRoad, 3, 1, true, rules, squareSize));
-//
-//    diagonalsMap.put(EnumDiagonals.doubleB8H2Sub, getSquareArray(EnumDiagonals.mainRoad, 8, 2, false, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.doubleA7G1Sub, getSquareArray(EnumDiagonals.mainRoad, 7, 1, false, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.fourthD8H4Sub, getSquareArray(EnumDiagonals.mainRoad, 8, 4, false, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.fourthA5E1Sub, getSquareArray(EnumDiagonals.mainRoad, 5, 1, false, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.tripleA3C1Sub, getSquareArray(EnumDiagonals.mainRoad, 3, 1, false, rules, squareSize));
-//    diagonalsMap.put(EnumDiagonals.tripleF8H6Sub, getSquareArray(EnumDiagonals.mainRoad, 8, 6, false, rules, squareSize));
-
     boardContainer.setBlackDraughts(blackDraughts);
     boardContainer.setWhiteDraughts(whiteDraughts);
     return boardContainer;
+  }
+
+  private static void placeDraught(boolean black, EnumRules rules, List<Draught> draughts, List<Square> diagonal, Square square, int v, int h) {
+    Draught draught = new Draught(v, h, rules.getDimension(), true, square);
+    int index = draughts.indexOf(draught);
+    if (index != -1) {
+      draught = draughts.get(index);
+    } else {
+      draught.setBlack(black);
+      draughts.add(draught);
+    }
+    draught.addDiagonal(diagonal);
+    System.out.println(index + " " + draught.getDiagonals().size() + " " + draught);
   }
 
   static List<Square> getSquareArray(int offset, int dim, int squareSize, boolean prime) {
@@ -103,6 +91,15 @@ public class BoardUtils {
         diagonals.add(diagonal);
       }
     }
+    return diagonals;
+  }
+
+  static List<List<Square>> getAllDiagonals(int dim, int squareSize) {
+    List<List<Square>> diagonals = new ArrayList<>(dim * dim * 2);
+    List<List<Square>> main = getDiagonals(dim, squareSize, true);
+    List<List<Square>> sub = getDiagonals(dim, squareSize, false);
+    diagonals.addAll(main);
+    diagonals.addAll(sub);
     return diagonals;
   }
 
