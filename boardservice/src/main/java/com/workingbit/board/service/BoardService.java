@@ -9,10 +9,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import static com.workingbit.board.common.EnumBaseKeys.*;
 import static com.workingbit.board.common.EnumSearch.allowed;
@@ -77,17 +77,18 @@ public class BoardService {
   public List<Square> highlight(Map<String, Object> highlightFor) throws BoardServiceException {
     String aBoardId = (String) highlightFor.get(boardId.name());
     return boardDao.findById(aBoardId).map(board -> {
-      try {
-        Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
-        // remember selected square
-        board.getCurrentBoard().setSelectedSquare(square);
-        boardDao.save(board);
-        // highlight moves for the selected square
-        return HighlightMoveUtil.highlight(board, square).get();
-      } catch (BoardServiceException | InterruptedException | ExecutionException e) {
-        e.printStackTrace();
-        return null;
-      }
+//      try {
+//        Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
+//        // remember selected square
+//        board.getCurrentBoard().setSelectedSquare(square);
+//        boardDao.save(board);
+//        // highlight moves for the selected square
+//        return HighlightMoveUtil.highlight(board, square).get();
+//      } catch (BoardServiceException | InterruptedException | ExecutionException e) {
+//        e.printStackTrace();
+//        return null;
+//      }
+      return new ArrayList();
     }).orElseThrow(getBoardServiceExceptionSupplier("Unable to find allowed moves"));
   }
 

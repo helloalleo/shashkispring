@@ -46,7 +46,7 @@ public class Square implements ICoordinates, BaseDomain {
    * Selected draught is point for new recursion
    */
   @JsonIgnore
-  private Draught pointDraught;
+  private Square breakpointSquare;
 
   public Square(int v, int h, int dim, boolean main, int size, Draught draught) {
     this.v = v;
@@ -67,7 +67,6 @@ public class Square implements ICoordinates, BaseDomain {
         "notation=" + toNotation() +
         ", highlighted=" + highlighted +
         ", draught=" + draught +
-        ", pointDraught=" + pointDraught +
         '}';
   }
 

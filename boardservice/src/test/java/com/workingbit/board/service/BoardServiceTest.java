@@ -74,7 +74,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
     // find allowed and beaten
 //    HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board.getCurrentBoard(), square, getRules());
-    Optional<List<Square>> allowedMovesMap = HighlightMoveUtil.highlight(board,square);
+//    Optional<List<Square>> allowedMovesMap = HighlightMoveUtil.highlight(board,square);
 //    List<Square> allowedMoves = (List<Square>) allowedMovesMap.get(allowed.name());
 //    List<Draught> beatenMoves = (List<Draught>) allowedMovesMap.get(beaten.name());
 

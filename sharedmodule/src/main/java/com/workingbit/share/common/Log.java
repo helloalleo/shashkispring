@@ -15,4 +15,9 @@ public class Log {
   public static void debug(String message) {
     LOG.info(message);
   }
+
+  public static void error(String message, Throwable e) {
+    LOG.severe(message);
+    e.printStackTrace();
+  }
 }
