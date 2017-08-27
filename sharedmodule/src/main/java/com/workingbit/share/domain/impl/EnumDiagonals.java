@@ -5,16 +5,16 @@ package com.workingbit.share.domain.impl;
  */
 public enum EnumDiagonals {
   mainRoad,
-  doubleG1A7Bg,
-  doubleH2B8Bg,
-  doubleG1H2Sm,
-  doubleA7B8Sm,
-  tripleC1H6Bg,
-  tripleA3F8Bg,
-  tripleA3C1Sm,
-  tripleH6F8Sm,
-  fourthA5E1Bg,
-  fourthH4D8Bg,
-  fourthE1H4Sm,
-  fourthA5D8Sm
+  doubleH2G1Main,
+  doubleB8A7Main,
+  tripleH6C1Main,
+  tripleF8A3Main,
+  fourthH4E1Main,
+  fourthD8A5Main,
+  tripleA3C1Sub,
+  tripleF8H6Sub,
+  fourthA5E1Sub,
+  fourthD8H4Sub,
+  doubleA7G1Sub,
+  doubleB8H2Sub
 }

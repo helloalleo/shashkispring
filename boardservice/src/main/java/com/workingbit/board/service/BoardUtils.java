@@ -56,35 +56,34 @@ public class BoardUtils {
     }
     Map<EnumDiagonals, Square[]> diagonalsMap = boardContainer.getDiagonalsMap();
 
-    diagonalsMap.put(EnumDiagonals.mainRoad, getSquareArray(1, 1, true, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.mainRoad, getSquareArray(EnumDiagonals.mainRoad,1, 1, true, rules, squareSize));
 
-    diagonalsMap.put(EnumDiagonals.doubleA7B8Sm, getSquareArray(1, 7, true, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.doubleG1H2Sm, getSquareArray(7, 1, true, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.fourthA5D8Sm, getSquareArray(1, 5, true, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.fourthE1H4Sm, getSquareArray(5, 1, true, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.tripleA3F8Bg, getSquareArray(1, 3, true, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.tripleC1H6Bg, getSquareArray(3, 1, true, rules, squareSize));
-
-    diagonalsMap.put(EnumDiagonals.doubleH2B8Bg, getSquareArray(8, 2, false, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.doubleG1A7Bg, getSquareArray(7, 1, false, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.fourthH4D8Bg, getSquareArray(8, 4, false, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.fourthE1H4Sm, getSquareArray(5, 1, false, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.tripleC1H6Bg, getSquareArray(3, 1, false, rules, squareSize));
-    diagonalsMap.put(EnumDiagonals.tripleH6F8Sm, getSquareArray(8, 6, false, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.doubleB8A7Main, getSquareArray(EnumDiagonals.mainRoad, 1, 7, true, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.doubleH2G1Main, getSquareArray(EnumDiagonals.mainRoad, 7, 1, true, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.fourthD8A5Main, getSquareArray(EnumDiagonals.mainRoad, 1, 5, true, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.fourthH4E1Main, getSquareArray(EnumDiagonals.mainRoad, 5, 1, true, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.tripleF8A3Main, getSquareArray(EnumDiagonals.mainRoad, 1, 3, true, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.tripleH6C1Main, getSquareArray(EnumDiagonals.mainRoad, 3, 1, true, rules, squareSize));
+//
+//    diagonalsMap.put(EnumDiagonals.doubleB8H2Sub, getSquareArray(EnumDiagonals.mainRoad, 8, 2, false, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.doubleA7G1Sub, getSquareArray(EnumDiagonals.mainRoad, 7, 1, false, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.fourthD8H4Sub, getSquareArray(EnumDiagonals.mainRoad, 8, 4, false, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.fourthA5E1Sub, getSquareArray(EnumDiagonals.mainRoad, 5, 1, false, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.tripleA3C1Sub, getSquareArray(EnumDiagonals.mainRoad, 3, 1, false, rules, squareSize));
+//    diagonalsMap.put(EnumDiagonals.tripleF8H6Sub, getSquareArray(EnumDiagonals.mainRoad, 8, 6, false, rules, squareSize));
 
     boardContainer.setBlackDraughts(blackDraughts);
     boardContainer.setWhiteDraughts(whiteDraughts);
     return boardContainer;
   }
 
-  static List<Square> getSquareArray(int offsetV, int offsetH, int dim, int squareSize, boolean prime) {
+  static List<Square> getSquareArray(int offset, int dim, int squareSize, boolean prime) {
     List<Square> squares = new ArrayList<>();
     for (int v = 0; v < dim; v++) {
       for (int h = 0; h < dim; h++) {
-        System.out.println((v + h - offsetV - offsetH) + ", v " + v + ", h " + h + ", dim " + dim);
         if (((v + h + 1) % 2 == 0)
-            && (prime && (v - offsetV) == (h - offsetH)
-            || !prime && (v + h - offsetV) == dim - 1)) {
+            && (prime && (v - h + offset) == 0
+            || !prime && (v + h - offset) == dim - 1)) {
           Square square = new Square(v, h, dim, true, squareSize, null);
           squares.add(square);
         }
@@ -93,16 +92,18 @@ public class BoardUtils {
     return squares;
   }
 
-  static Square[] getSquareArray(int offsetV, int offsetH, boolean main, EnumRules rules, int squareSize) {
-    int dim = rules.getDimension();
-    for (int v = 0; v < dim; v++) {
-      for (int h = 0; h < dim; h++) {
-//        if (((h + v + 1) % 2 == 0) && (h - v == offsetH || !main && subDiagonal(v, h, dim))) {
-//          Square square = new Square(v, h, dim, true, squareSize, null);
-//        }
+  static List<List<Square>> getDiagonals(int dim, int squareSize, boolean main) {
+    List<List<Square>> diagonals = new ArrayList<>(dim - 2);
+    for (int i = -dim; i < dim - 1; i++) {
+      if ((i == 1 - dim) && main) {
+        continue;
+      }
+      List<Square> diagonal = BoardUtils.getSquareArray(i, dim, squareSize, main);
+      if (!diagonal.isEmpty()) {
+        diagonals.add(diagonal);
       }
     }
-    return new Square[8];
+    return diagonals;
   }
 
 //  private static boolean mainDiagonal(int v, int h, int dim) {
