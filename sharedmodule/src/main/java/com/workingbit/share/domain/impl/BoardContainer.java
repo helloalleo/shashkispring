@@ -1,12 +1,14 @@
 package com.workingbit.share.domain.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.BaseDomain;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -19,14 +21,16 @@ public class BoardContainer implements BaseDomain {
   private List<Draught> whiteDraughts = new ArrayList<>();
   private List<Draught> blackDraughts = new ArrayList<>();
   private Square selectedSquare;
-  private List<List<Square>> diagonals;
+  @JsonIgnore
+  private List<List<Square>> diagonals = new ArrayList<>();
+  private List<Square> squares = new ArrayList<>();
 
   public BoardContainer() {
   }
 
   public BoardContainer(List<Draught> whiteDraughts,
-                      List<Draught> blackDraughts,
-                      Square selectedSquare) {
+                        List<Draught> blackDraughts,
+                        Square selectedSquare) {
     this.whiteDraughts = ObjectUtils.clone(whiteDraughts);
     this.blackDraughts = ObjectUtils.clone(blackDraughts);
     this.selectedSquare = ObjectUtils.clone(selectedSquare);
@@ -80,17 +84,5 @@ public class BoardContainer implements BaseDomain {
 
   public void setDiagonals(List<List<Square>> diagonals) {
     this.diagonals = diagonals;
-  }
-
-  public List<Square> getSquares() {
-    if (diagonals.isEmpty()) {
-      return Collections.emptyList();
-    }
-    return diagonals
-        .stream()
-        .flatMap(Collection::stream)
-        .filter(square -> !square.isMain())
-        .sorted(Comparator.comparingInt(Square::getV))
-        .collect(Collectors.toList());
   }
 }

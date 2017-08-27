@@ -9,11 +9,9 @@ import com.workingbit.share.domain.impl.Square;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Created by Aleksey Popryaduhin on 20:56 11/08/2017.
@@ -50,6 +48,9 @@ public class BoardUtils {
     boardContainer.setBlackDraughts(blackDraughts);
     boardContainer.setWhiteDraughts(whiteDraughts);
     boardContainer.setDiagonals(allDiagonals);
+    List<List<Square>> subDiagonals = getDiagonals(rules.getDimension(), squareSize, false);
+    List<Square> squares = getSquares(subDiagonals, rules.getDimension());
+    boardContainer.setSquares(squares);
     return boardContainer;
   }
 
@@ -102,6 +103,26 @@ public class BoardUtils {
     diagonals.addAll(main);
     diagonals.addAll(sub);
     return diagonals;
+  }
+
+  private static List<Square> getSquares(List<List<Square>> diagonals, int dim) {
+    List<Square> squares = new ArrayList<>();
+    List<Square> collect = diagonals
+        .stream()
+        .flatMap(Collection::stream)
+        .sorted(Comparator.comparingInt(Square::getV))
+        .collect(Collectors.toList());
+    Iterator<Square> iterator = collect.iterator();
+    for (int i = 0; i < dim; i++) {
+      for (int j = 0; j < dim; j++) {
+        if ((i + j) % 2 == 0) {
+          squares.add(null);
+        } else if (iterator.hasNext()) {
+          squares.add(iterator.next());
+        }
+      }
+    }
+    return squares;
   }
 
 //  private static boolean mainDiagonal(int v, int h, int dim) {
