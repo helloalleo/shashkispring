@@ -123,19 +123,15 @@ public class HighlightMoveUtil {
       int indexOfSelected = squares.indexOf(selectedSquare);
       if (indexOfSelected != -1) {
         ListIterator<Square> squareListIterator = squares.listIterator(indexOfSelected);
-        if (black) {
-          allowedMoves.add(squareListIterator.next());
-        } else {
-          findBeaten(allowedMoves, beatenMoves, squareListIterator, black, selectedSquare);
-        }
+        findBeaten(allowedMoves, beatenMoves, squareListIterator, black, selectedSquare);
       }
     }
     return diagonals;
   }
 
   private void findBeaten(List<Square> allowedMoves, List<Square> beatenMoves, ListIterator<Square> squareListIterator, boolean black, Square selectedSquare) throws BoardServiceException {
-    Square next = squareListIterator.previous();
-    Square nextNext = squareListIterator.previous();
+    Square next = black ? squareListIterator.next() : squareListIterator.previous();
+    Square nextNext = black ? squareListIterator.next() : squareListIterator.previous();
     boolean mustBeat = mustBeat(next, selectedSquare, nextNext);
     if (mustBeat) {
       beatenMoves.add(next);

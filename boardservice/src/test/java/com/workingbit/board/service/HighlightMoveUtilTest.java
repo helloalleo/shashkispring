@@ -94,6 +94,20 @@ public class HighlightMoveUtilTest {
     assertEquals("d4,d6", beatenDraughts);
   }
 
+  @Test
+  public void find_turk_stroke() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
+    Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d4"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d6"); // c3
+    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
+    assertTrue(highlight.isPresent());
+    String allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    String beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
+    assertEquals("e5,c7", allowedMoves);
+    assertEquals("d4,d6", beatenDraughts);
+  }
+
 //  @Test
 //  public void shouldBlackDraughtMoveBackwardOnOnePosition() throws Exception, BoardServiceException {
 //    Board board = getBoard();
