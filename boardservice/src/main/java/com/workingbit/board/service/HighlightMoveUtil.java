@@ -77,7 +77,7 @@ public class HighlightMoveUtil {
    * @return
    */
   private CompletableFuture<List<Square>> filterNotOnMainAndSelectedSquares(Square selectedSquare) {
-    return filterNotOnMainAndSelectedSquares(new ArrayList<>(board.getSquares()), selectedSquare);
+    return filterNotOnMainAndSelectedSquares(new ArrayList<>(board.getSquaresSet()), selectedSquare);
   }
 
   private CompletableFuture<List<Square>> filterQueenSquares(MoveTracer tracer) {

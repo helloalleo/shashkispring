@@ -6,12 +6,10 @@ import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.NewBoardRequest;
-import com.workingbit.share.domain.impl.Square;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -70,7 +68,7 @@ public class BoardResource {
   @PostMapping(ResourceConstants.HIGHLIGHT)
   public Map<String, Object> highlight(@RequestBody Map<String, Object> highlightFor) {
     try {
-      List<Square> highlighted = boardService.highlight(highlightFor);
+      Map<String, Object> highlighted = boardService.highlight(highlightFor);
       return new HashMap<String, Object>() {{
         put(ok.name(), true);
         put(data.name(), highlighted);

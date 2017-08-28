@@ -50,6 +50,7 @@ public class BoardUtils {
     boardContainer.setBlackDraughts(blackDraughts);
     boardContainer.setWhiteDraughts(whiteDraughts);
     boardContainer.setDiagonals(allDiagonals);
+    boardContainer.setSquaresSet(squares);
     List<Square> board = getSquares(squares, rules.getDimension());
     boardContainer.setSquares(board);
     return boardContainer;
@@ -145,7 +146,7 @@ public class BoardUtils {
   }
 
   static Optional<Square> findSquareByVH(BoardContainer board, int v, int h) {
-    for (Square square : board.getSquares()) {
+    for (Square square : board.getSquaresSet()) {
       if (square.getH() == h && square.getV() == v) {
         return Optional.of(square);
       }
@@ -157,7 +158,7 @@ public class BoardUtils {
     if (StringUtils.isBlank(notation)) {
       return Optional.empty();
     }
-    for (Square square : board.getSquares()) {
+    for (Square square : board.getSquaresSet()) {
       if (square.toNotation().equals(notation)) {
         return Optional.of(square);
       }

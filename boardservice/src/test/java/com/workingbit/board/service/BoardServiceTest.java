@@ -116,7 +116,7 @@ public class BoardServiceTest extends BaseServiceTest {
       put(selectedSquare.name(), square);
       put(boardId.name(), board.getId());
     }};
-    List<Square> highlight = boardService.highlight(hl);
+    Map<String, Object> highlight = boardService.highlight(hl);
     // find allowed and beaten
 //    List<Square> allowedMoves = (List<Square>) highlight.get(allowed.name());
 //    List<Draught> beatenMoves = (List<Draught>) highlight.get(beaten.name());

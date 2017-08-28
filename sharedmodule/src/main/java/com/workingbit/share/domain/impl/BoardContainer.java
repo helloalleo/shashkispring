@@ -6,9 +6,7 @@ import com.workingbit.share.domain.BaseDomain;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -23,6 +21,8 @@ public class BoardContainer implements BaseDomain {
   private Square selectedSquare;
   @JsonIgnore
   private List<List<Square>> diagonals = new ArrayList<>();
+  @JsonIgnore
+  private Set<Square> squaresSet = new HashSet<>();
   private List<Square> squares = new ArrayList<>();
 
   public BoardContainer() {
@@ -84,5 +84,9 @@ public class BoardContainer implements BaseDomain {
 
   public void setDiagonals(List<List<Square>> diagonals) {
     this.diagonals = diagonals;
+  }
+
+  public void setSquaresSet(Set<Square> squaresSet) {
+    this.squaresSet = squaresSet;
   }
 }
