@@ -64,7 +64,7 @@ public class HighlightMoveUtilTest {
     Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
     assertTrue(highlight.isPresent());
     String squares = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-    assertEquals("b4,d4", squares);
+    assertEquals("d4,b4", squares);
   }
 
   @Test
@@ -181,7 +181,7 @@ public class HighlightMoveUtilTest {
     BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN, 60);
     Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
     BoardContainer currentBoard = board.getCurrentBoard();
-    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
+    Optional<Square> squareByVH = BoardUtils.findSquareByNotation(currentBoard, "c3"); // 5,2
     Square selectedSquare = squareByVH.get();
     Draught draught = new Draught(5, 2, getRules().getDimension());
     selectedSquare.setDraught(draught);

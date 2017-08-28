@@ -22,7 +22,7 @@ public class BoardContainer implements BaseDomain {
   @JsonIgnore
   private List<List<Square>> diagonals = new ArrayList<>();
   @JsonIgnore
-  private Set<Square> squaresSet = new HashSet<>();
+  private List<Square> squaresSet = new ArrayList<>();
   private List<Square> squares = new ArrayList<>();
 
   public BoardContainer() {
@@ -86,7 +86,7 @@ public class BoardContainer implements BaseDomain {
     this.diagonals = diagonals;
   }
 
-  public void setSquaresSet(Set<Square> squaresSet) {
+  public void setSquaresSet(List<Square> squaresSet) {
     this.squaresSet = squaresSet;
   }
 }

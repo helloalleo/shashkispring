@@ -3,15 +3,21 @@ package com.workingbit.share.domain.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by Aleksey Popryaduhin on 09:26 10/08/2017.
  */
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"v", "h"})
 public class Square implements ICoordinates, BaseDomain {
@@ -43,11 +49,8 @@ public class Square implements ICoordinates, BaseDomain {
 
   private Draught draught;
 
-  /**
-   * Selected draught is point for new recursion
-   */
   @JsonIgnore
-  private Square breakpointSquare;
+  private Set<List<Square>> diagonals = new HashSet<>();
 
   public Square(int v, int h, int dim, boolean main, int size, Draught draught) {
     this.v = v;
@@ -56,6 +59,10 @@ public class Square implements ICoordinates, BaseDomain {
     this.main = main;
     this.size = size;
     this.draught = draught;
+  }
+
+  public Square(int v, int h, int dim, boolean prime, int squareSize) {
+    this(v, h, dim, prime, squareSize, null);
   }
 
   public boolean isOccupied() {
@@ -73,6 +80,10 @@ public class Square implements ICoordinates, BaseDomain {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Square(v, h, getDim(), main, size, ObjectUtils.clone(draught));
+    return new Square(v, h, getDim(), main, highlighted, size, ObjectUtils.clone(draught), ObjectUtils.clone(diagonals));
+  }
+
+  public void addDiagonal(List<Square> diagonal) {
+    this.diagonals.add(diagonal);
   }
 }

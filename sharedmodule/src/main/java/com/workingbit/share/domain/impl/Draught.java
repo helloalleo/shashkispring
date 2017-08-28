@@ -7,10 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Aleksey Popryaduhin on 09:28 10/08/2017.
@@ -37,9 +33,6 @@ public class Draught implements ICoordinates, BaseDomain {
   private boolean beaten;
   private boolean highlighted;
 
-  @JsonIgnore
-  private List<List<Square>> diagonals = new ArrayList<>();
-
   public Draught(int v, int h, int dim) {
     this.v = v;
     this.h = h;
@@ -59,10 +52,6 @@ public class Draught implements ICoordinates, BaseDomain {
 //
 //  }
 
-  public void addDiagonal(List<Square> diagonal) {
-    this.diagonals.add(diagonal);
-  }
-
   @Override
   public String toString() {
     return "Draught{" +
@@ -73,12 +62,11 @@ public class Draught implements ICoordinates, BaseDomain {
         ", queen=" + queen +
         ", beaten=" + beaten +
         ", highlighted=" + highlighted +
-        ", diagonals=" + diagonals +
         '}';
   }
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Draught(v, h, getDim(), black, queen, beaten, highlighted, ObjectUtils.clone(diagonals));
+    return new Draught(v, h, getDim(), black, queen, beaten, highlighted);
   }
 }

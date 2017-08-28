@@ -1,6 +1,5 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.common.EnumSearch;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.function.TrinaryFunction;
 import com.workingbit.board.model.MoveTracer;
@@ -42,7 +41,7 @@ public class HighlightMoveUtil {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
-    selectedSquare.setBreakpointSquare(null);
+//    selectedSquare.setBreakpointSquare(null);
     selectedSquare.getDraught().setHighlighted(true);
     board.setSelectedSquare(selectedSquare);
 
@@ -97,34 +96,23 @@ public class HighlightMoveUtil {
    * @return
    */
   public Map<String, Object> findAllMoves() {
-    CompletableFuture<List<MoveTracer>> allowedAndBeatenMoves = findAllowedAndBeatenMoves(new MoveTracer(null, null, selectedSquare));
-    Map<String, Object> allowedAndBeatenMap = new HashMap<>();
-    allowedAndBeatenMap.put(allowed.name(), new ArrayList<>());
-    allowedAndBeatenMap.put(beaten.name(), new ArrayList<>());
-    try {
-      boolean beaten = allowedAndBeatenMoves.get()
-          .stream()
-          .anyMatch(moveTracer -> moveTracer.getBeaten() != null);
-      if (beaten) {
-        allowedAndBeatenMoves.get()
-            .forEach(pair -> {
-              if (pair.getBeaten() != null) {
-                List<Square> allowedMoves = (List<Square>) allowedAndBeatenMap.get(allowed.name());
-                allowedMoves.add(pair.getAllowed());
-                List<Square> beatenMoves = (List<Square>) allowedAndBeatenMap.get(EnumSearch.beaten.name());
-                beatenMoves.add(pair.getBeaten());
-              }
-            });
-      } else {
-        allowedAndBeatenMoves.get()
-            .forEach(pair -> {
-              List<Square> allowedMoves = (List<Square>) allowedAndBeatenMap.get(allowed.name());
-              allowedMoves.add(pair.getAllowed());
-            });
+    List<Square> allowedMoves = new ArrayList<>();
+    Draught draught = selectedSquare.getDraught();
+    Set<List<Square>> diagonals = selectedSquare.getDiagonals();
+    for (List<Square> squares : diagonals) {
+      int indexOfSelected = squares.indexOf(selectedSquare);
+      if (indexOfSelected != -1) {
+        ListIterator<Square> squareListIterator = squares.listIterator(indexOfSelected);
+        if (draught.isBlack()) {
+          allowedMoves.add(squareListIterator.next());
+        } else {
+          allowedMoves.add(squareListIterator.previous());
+        }
       }
-    } catch (InterruptedException | ExecutionException e) {
-      Log.error(e.getMessage(), e);
     }
+    Map<String, Object> allowedAndBeatenMap = new HashMap<>();
+    allowedAndBeatenMap.put(allowed.name(), allowedMoves);
+    allowedAndBeatenMap.put(beaten.name(), new ArrayList<>());
     return allowedAndBeatenMap;
   }
 
@@ -253,7 +241,7 @@ public class HighlightMoveUtil {
         .stream()
         .filter(square -> {
           Pair<Integer, Integer> distanceVH = getDistanceVH(selectedSquare, square);
-          return getBreakpointSquare(selectedSquare).getDraught().isQueen() || abs(distanceVH.getLeft()) < 3 || abs(distanceVH.getRight()) < 3;
+          return selectedSquare.getDraught().isQueen() || abs(distanceVH.getLeft()) < 3 || abs(distanceVH.getRight()) < 3;
         })
         .collect(Collectors.toList());
   }
@@ -280,7 +268,7 @@ public class HighlightMoveUtil {
   private List<Pair<Integer, Integer>> getForwardDirs(Square selectedSquare, Square currentSquare) {
     Pair<Integer, Integer> dirVH = getDirVH(selectedSquare, currentSquare);
     List<Pair<Integer, Integer>> forwardDirs = new ArrayList<>();
-    if (currentSquare.isOccupied() || selectedSquare.getBreakpointSquare().getDraught().isQueen()) {
+    if (currentSquare.isOccupied() || selectedSquare.getDraught().isQueen()) {
       forwardDirs.addAll(dirs.stream()
           .filter(d -> !d.equals(Pair.of(dirVH.getLeft() * -1, dirVH.getRight() * -1)))
           .collect(Collectors.toList()));
@@ -323,9 +311,9 @@ public class HighlightMoveUtil {
   }
 
   private boolean canMove(Square selectedSquare, Square currentSquare) {
-    boolean black = getBreakpointSquare(selectedSquare).getDraught().isBlack();
-    boolean queen = getBreakpointSquare(selectedSquare).getDraught().isQueen();
-    boolean beaten = getBreakpointSquare(selectedSquare).getDraught().isBeaten();
+    boolean black = selectedSquare.getDraught().isBlack();
+    boolean queen = selectedSquare.getDraught().isQueen();
+    boolean beaten =selectedSquare.getDraught().isBeaten();
     Pair<Integer, Integer> dist = getDistanceVH(selectedSquare, currentSquare);
     return (
         // rules for draught
@@ -438,7 +426,7 @@ public class HighlightMoveUtil {
           && !nextSquare.isOccupied()) {
         // store new point for recursion in next square
         currentDraught.setBeaten(true);
-        nextSquare.setBreakpointSquare(currentSquare);
+//        nextSquare.setBreakpointSquare(currentSquare);
         System.out.println("next square " + nextSquare.toNotation());
         return nextSquare;
       }
@@ -446,9 +434,9 @@ public class HighlightMoveUtil {
     });
   }
 
-  private Square getBreakpointSquare(Square selectedSquare) {
-    return selectedSquare.getBreakpointSquare() != null ? selectedSquare.getBreakpointSquare() : this.selectedSquare;
-  }
+//  private Square getBreakpointSquare(Square selectedSquare) {
+//    return selectedSquare.getBreakpointSquare() != null ? selectedSquare.getBreakpointSquare() : this.selectedSquare;
+//  }
 
   private static int mainDiagonal(int h, int v, int dim) {
     return h - v;
