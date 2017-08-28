@@ -32,15 +32,17 @@ public class BoardUtils {
 
     List<Draught> whiteDraughts = new ArrayList<>();
     List<Draught> blackDraughts = new ArrayList<>();
+    Set<Square> squares = new HashSet<>();
     List<List<Square>> allDiagonals = getAllDiagonals(rules.getDimension(), squareSize);
     for (List<Square> diagonal : allDiagonals) {
       for (Square square : diagonal) {
         int v = square.getV(), h = square.getH();
+        squares.add(square);
         if (fillBoard) {
           if (v < rules.getRowsForDraughts()) {
-            placeDraught(black, rules, blackDraughts, diagonal, square, v, h);
+            placeDraught(!black, rules, blackDraughts, diagonal, square, v, h);
           } else if (v >= rules.getDimension() - rules.getRowsForDraughts() && v < rules.getDimension()) {
-            placeDraught(!black, rules, whiteDraughts, diagonal, square, v, h);
+            placeDraught(black, rules, whiteDraughts, diagonal, square, v, h);
           }
         }
       }
@@ -48,23 +50,22 @@ public class BoardUtils {
     boardContainer.setBlackDraughts(blackDraughts);
     boardContainer.setWhiteDraughts(whiteDraughts);
     boardContainer.setDiagonals(allDiagonals);
-    List<List<Square>> subDiagonals = getDiagonals(rules.getDimension(), squareSize, false);
-    List<Square> squares = getSquares(subDiagonals, rules.getDimension());
-    boardContainer.setSquares(squares);
+    List<Square> board = getSquares(squares, rules.getDimension());
+    boardContainer.setSquares(board);
     return boardContainer;
   }
 
   private static void placeDraught(boolean black, EnumRules rules, List<Draught> draughts, List<Square> diagonal, Square square, int v, int h) {
-    Draught draught = new Draught(v, h, rules.getDimension(), true, square);
+    Draught draught = new Draught(v, h, rules.getDimension());
     int index = draughts.indexOf(draught);
     if (index != -1) {
       draught = draughts.get(index);
     } else {
       draught.setBlack(black);
       draughts.add(draught);
+      square.setDraught(draught);
     }
     draught.addDiagonal(diagonal);
-    System.out.println(index + " " + draught.getDiagonals().size() + " " + draught);
   }
 
   static List<Square> getSquareArray(int offset, int dim, int squareSize, boolean prime) {
@@ -105,11 +106,10 @@ public class BoardUtils {
     return diagonals;
   }
 
-  private static List<Square> getSquares(List<List<Square>> diagonals, int dim) {
+  private static List<Square> getSquares(Set<Square> diagonals, int dim) {
     List<Square> squares = new ArrayList<>();
     List<Square> collect = diagonals
         .stream()
-        .flatMap(Collection::stream)
         .sorted(Comparator.comparingInt(Square::getV))
         .collect(Collectors.toList());
     Iterator<Square> iterator = collect.iterator();

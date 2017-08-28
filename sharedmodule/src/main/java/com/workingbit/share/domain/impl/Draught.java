@@ -37,18 +37,17 @@ public class Draught implements ICoordinates, BaseDomain {
   private boolean beaten;
   private boolean highlighted;
 
-  private Square holderSquare;
+  @JsonIgnore
   private List<List<Square>> diagonals = new ArrayList<>();
 
-  public Draught(int v, int h, int dim, Square holderSquare) {
+  public Draught(int v, int h, int dim) {
     this.v = v;
     this.h = h;
     this.dim = dim;
-    this.holderSquare = holderSquare;
   }
 
-  public Draught(int v, int h, int dim, boolean black, Square holderSquare) {
-    this(v, h, dim, holderSquare);
+  public Draught(int v, int h, int dim, boolean black) {
+    this(v, h, dim);
     this.black = black;
   }
 
@@ -80,6 +79,6 @@ public class Draught implements ICoordinates, BaseDomain {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Draught(v, h, getDim(), black, queen, beaten, highlighted, holderSquare, ObjectUtils.clone(diagonals));
+    return new Draught(v, h, getDim(), black, queen, beaten, highlighted, ObjectUtils.clone(diagonals));
   }
 }

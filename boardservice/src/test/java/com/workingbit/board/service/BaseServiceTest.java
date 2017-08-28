@@ -40,14 +40,14 @@ public class BaseServiceTest {
     BoardContainer currentBoard = board.getCurrentBoard();
     Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
     Square selectedSquare = squareByVH.get();
-    Draught draught = new Draught(5, 2, getRules().getDimension(),null);
+    Draught draught = new Draught(5, 2, getRules().getDimension());
     selectedSquare.setDraught(draught);
     currentBoard.setSelectedSquare(selectedSquare);
     return board;
   }
 
   Draught getDraught(int v, int h) {
-    return new Draught(v, h, getRules().getDimension(),null);
+    return new Draught(v, h, getRules().getDimension());
   }
 
   Square getSquare(Draught draught, int v, int h) {
@@ -55,7 +55,7 @@ public class BaseServiceTest {
   }
 
   Draught getDraughtBlack(int v, int h) {
-    return new Draught(v, h, getRules().getDimension(), true,null);
+    return new Draught(v, h, getRules().getDimension(), true);
   }
 
   Square getSquareByVH(BoardContainer board, int v, int h) {
