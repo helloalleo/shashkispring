@@ -44,6 +44,11 @@ public class Draught implements ICoordinates, BaseDomain {
     this.black = black;
   }
 
+  public Draught(int v, int h, int dim, boolean black, boolean queen) {
+    this(v, h, dim, black);
+    this.queen = queen;
+  }
+
 //  public Draught(int v, int h, int dimension, boolean b) {
 //
 //  }

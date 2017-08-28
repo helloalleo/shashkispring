@@ -1,5 +1,6 @@
 package com.workingbit.board.service;
 
+import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.BoardContainer;
@@ -73,6 +74,13 @@ public class BoardUtilsTest {
 //    assertEquals("{1=[[[h8, g7, f6, e5, d4, c3, b2, a1]]], 2=[[[a3, b2, c1], [f8, e7, d6, c5, b4, a3]], [[a3, b2, c1], [h8, g7, f6, e5, d4, c3, b2, a1]], [[a3, b2, c1], [h6, g5, f4, e3, d2, c1]], [[a5, b4, c3, d2, e1], [h8, g7, f6, e5, d4, c3, b2, a1]], [[a5, b4, c3, d2, e1], [h6, g5, f4, e3, d2, c1]], [[a5, b4, c3, d2, e1], [h4, g3, f2, e1]], [[a7, b6, c5, d4, e3, f2, g1], [h6, g5, f4, e3, d2, c1]], [[a7, b6, c5, d4, e3, f2, g1], [h4, g3, f2, e1]], [[a7, b6, c5, d4, e3, f2, g1], [h2, g1]], [[b8, c7, d6, e5, f4, g3, h2], [h4, g3, f2, e1]], [[b8, c7, d6, e5, f4, g3, h2], [h2, g1]]]}", collect.toString());
 //    collect = boardContainer.getBlackDraughts().stream().map(draught -> draught.getDiagonals()).map(lists -> lists.stream().map(squares -> squares.stream().map(square -> square.toNotation()).collect(Collectors.toList())).collect(Collectors.toList())).collect(Collectors.groupingBy(o -> o.size()));
 //    assertEquals("{1=[[[h8, g7, f6, e5, d4, c3, b2, a1]]], 2=[[[a7, b6, c5, d4, e3, f2, g1], [b8, a7]], [[a7, b6, c5, d4, e3, f2, g1], [d8, c7, b6, a5]], [[b8, c7, d6, e5, f4, g3, h2], [b8, a7]], [[b8, c7, d6, e5, f4, g3, h2], [d8, c7, b6, a5]], [[b8, c7, d6, e5, f4, g3, h2], [f8, e7, d6, c5, b4, a3]], [[d8, e7, f6, g5, h4], [d8, c7, b6, a5]], [[d8, e7, f6, g5, h4], [f8, e7, d6, c5, b4, a3]], [[d8, e7, f6, g5, h4], [h8, g7, f6, e5, d4, c3, b2, a1]], [[f8, g7, h6], [f8, e7, d6, c5, b4, a3]], [[f8, g7, h6], [h8, g7, f6, e5, d4, c3, b2, a1]], [[f8, g7, h6], [h6, g5, f4, e3, d2, c1]]]}", collect.toString());
+  }
+
+  @Test
+  public void add_draught_to_board() throws BoardServiceException {
+    BoardContainer boardContainer = BoardUtils.initBoard(true, false, EnumRules.RUSSIAN, getSquareSize());
+    Square square = BoardUtils.addDraught(boardContainer, "c3", true);
+    System.out.println(square.getDiagonals());
   }
 
   private int getSquareSize() {

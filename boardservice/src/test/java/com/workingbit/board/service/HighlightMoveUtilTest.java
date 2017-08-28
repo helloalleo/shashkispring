@@ -90,8 +90,8 @@ public class HighlightMoveUtilTest {
     assertTrue(highlight.isPresent());
     String allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
     String beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-    assertEquals("c7,e5", allowedMoves);
-    assertEquals("d6,d4", beatenDraughts);
+    assertEquals("e5,c7", allowedMoves);
+    assertEquals("d4,d6", beatenDraughts);
   }
 
 //  @Test
@@ -220,11 +220,8 @@ public class HighlightMoveUtilTest {
     return square;
   }
 
-  private Square getSquareByVHWithBlackDraught(BoardContainer currentBoard, String notation) {
-    Square square = getSquareByNotation(currentBoard, notation);
-    Draught draught = getDraughtBlack(square.getV(), square.getH());
-    square.setDraught(draught);
-    return square;
+  private Square getSquareByVHWithBlackDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
+    return BoardUtils.addDraught(currentBoard, notation, true);
   }
 
 }

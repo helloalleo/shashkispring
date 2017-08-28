@@ -4,7 +4,6 @@ import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.function.TrinaryFunction;
 import com.workingbit.board.model.MoveTracer;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -85,35 +84,64 @@ public class HighlightMoveUtil {
         .thenApply(squareStream -> filterQueenSquaresFunction(squareStream, selectedSquare));
   }
 
-  private CompletableFuture<List<MoveTracer>> findAllowedAndBeatenMoves(MoveTracer moveTracer) {
-    return filterQueenSquares(moveTracer)
-        .thenApply(squareStream -> findAllowedAndBeatenMovesFunction(squareStream, moveTracer));
-  }
-
   /**
    * Entry point for initially selected square
    *
    * @return
    */
-  public Map<String, Object> findAllMoves() {
+  public Map<String, Object> findAllMoves() throws BoardServiceException {
     List<Square> allowedMoves = new ArrayList<>();
+    List<Square> beatenMoves = new ArrayList<>();
     Draught draught = selectedSquare.getDraught();
-    Set<List<Square>> diagonals = selectedSquare.getDiagonals();
-    for (List<Square> squares : diagonals) {
-      int indexOfSelected = squares.indexOf(selectedSquare);
-      if (indexOfSelected != -1) {
-        ListIterator<Square> squareListIterator = squares.listIterator(indexOfSelected);
-        if (draught.isBlack()) {
-          allowedMoves.add(squareListIterator.next());
-        } else {
-          allowedMoves.add(squareListIterator.previous());
+    boolean black = draught.isBlack();
+    Set<List<Square>> diagonals = findBeatenMoves(selectedSquare, allowedMoves, beatenMoves, black);
+    if (beatenMoves.isEmpty()) {
+      for (List<Square> squares : diagonals) {
+        int indexOfSelected = squares.indexOf(selectedSquare);
+        if (indexOfSelected != -1) {
+          ListIterator<Square> squareListIterator = squares.listIterator(indexOfSelected);
+          if (black) {
+            allowedMoves.add(squareListIterator.next());
+          } else {
+            Square next = squareListIterator.previous();
+            if (canMove(selectedSquare, next)) {
+              allowedMoves.add(next);
+            }
+          }
         }
       }
     }
     Map<String, Object> allowedAndBeatenMap = new HashMap<>();
     allowedAndBeatenMap.put(allowed.name(), allowedMoves);
-    allowedAndBeatenMap.put(beaten.name(), new ArrayList<>());
+    allowedAndBeatenMap.put(beaten.name(), beatenMoves);
     return allowedAndBeatenMap;
+  }
+
+  private Set<List<Square>> findBeatenMoves(Square selectedSquare, List<Square> allowedMoves, List<Square> beatenMoves, boolean black) throws BoardServiceException {
+    Set<List<Square>> diagonals = selectedSquare.getDiagonals();
+    for (List<Square> squares : diagonals) {
+      int indexOfSelected = squares.indexOf(selectedSquare);
+      if (indexOfSelected != -1) {
+        ListIterator<Square> squareListIterator = squares.listIterator(indexOfSelected);
+        if (black) {
+          allowedMoves.add(squareListIterator.next());
+        } else {
+          findBeaten(allowedMoves, beatenMoves, squareListIterator, black, selectedSquare);
+        }
+      }
+    }
+    return diagonals;
+  }
+
+  private void findBeaten(List<Square> allowedMoves, List<Square> beatenMoves, ListIterator<Square> squareListIterator, boolean black, Square selectedSquare) throws BoardServiceException {
+    Square next = squareListIterator.previous();
+    Square nextNext = squareListIterator.previous();
+    boolean mustBeat = mustBeat(next, selectedSquare, nextNext);
+    if (mustBeat) {
+      beatenMoves.add(next);
+      allowedMoves.add(nextNext);
+      findBeatenMoves(nextNext, allowedMoves, beatenMoves, black);
+    }
   }
 
 //  private List<Square> findAllowedMovesFunction(List<Square> squareStream, Square selectedSquare) {
@@ -133,34 +161,6 @@ public class HighlightMoveUtil {
 //          .collect(Collectors.toList());
 //    }
 //  }
-
-  private List<MoveTracer> findAllowedAndBeatenMovesFunction(List<Square> squares, MoveTracer tracer) {
-    return squares
-        .stream()
-        .map(square -> {
-          try {
-            Optional<Square> nextSquare = mustBeat(square, selectedSquare, tracer.getPrevious());
-            if (nextSquare.isPresent()) {
-              MoveTracer captureTracer = new MoveTracer(nextSquare.get(), square, selectedSquare);
-              System.out.println("beaten " + tracer);
-              List<MoveTracer> allowedMoves = findAllowedAndBeatenMoves(captureTracer).get();
-              System.out.println(allowedMoves);
-              allowedMoves.add(tracer);
-              return allowedMoves;
-            } else if (canMove(selectedSquare, square)) {
-              MoveTracer moveTracer = new MoveTracer(square, null, selectedSquare);
-              System.out.println("move " + moveTracer);
-              return Collections.singletonList(moveTracer);
-            }
-          } catch (BoardServiceException | InterruptedException | ExecutionException e) {
-            Log.error(e.getMessage(), e);
-          }
-          return null;
-        })
-        .filter(Objects::nonNull)
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
-  }
 
   /**
    * Walk through desk
@@ -313,7 +313,7 @@ public class HighlightMoveUtil {
   private boolean canMove(Square selectedSquare, Square currentSquare) {
     boolean black = selectedSquare.getDraught().isBlack();
     boolean queen = selectedSquare.getDraught().isQueen();
-    boolean beaten =selectedSquare.getDraught().isBeaten();
+    boolean beaten = selectedSquare.getDraught().isBeaten();
     Pair<Integer, Integer> dist = getDistanceVH(selectedSquare, currentSquare);
     return (
         // rules for draught
@@ -400,38 +400,22 @@ public class HighlightMoveUtil {
    *
    * @param currentSquare
    * @param selectedSquare
-   * @param previousSquare
    * @return
    */
-  private Optional<Square> mustBeat(Square currentSquare, Square selectedSquare, Square previousSquare) throws BoardServiceException {
+  private boolean mustBeat(Square currentSquare, Square selectedSquare, Square nextSquare) throws BoardServiceException {
     Pair<Integer, Integer> newDir = getDirVH(selectedSquare, currentSquare);
-//    Square breakpointSquare = getBreakpointSquare(selectedSquare);
-//    if (isOnCross(breakpointSquare, currentSquare)) {
-//      Pair<Integer, Integer> previousDir = getDirVH(breakpointSquare, currentSquare);
-//      if (previousDir.equals(newDir) && !breakpointSquare.equals(this.selectedSquare)) {
-//        return Optional.empty();
-//      }
-//    }
-    Optional<Square> nextSquareOpt = nextSquareByDir(board, currentSquare, newDir);
-    return nextSquareOpt.map(nextSquare -> {
-      if (nextSquare.equals(previousSquare)) {
-        return null;
-      }
-      Draught currentDraught = currentSquare.getDraught();
-      if (currentSquare.isOccupied()
-          // current square is opposite color
-          && currentDraught.isBlack() != this.selectedSquare.getDraught().isBlack()
-          && isOnCross(selectedSquare, nextSquare)
-          // next square empty
-          && !nextSquare.isOccupied()) {
-        // store new point for recursion in next square
-        currentDraught.setBeaten(true);
-//        nextSquare.setBreakpointSquare(currentSquare);
-        System.out.println("next square " + nextSquare.toNotation());
-        return nextSquare;
-      }
-      return null;
-    });
+    Draught currentDraught = currentSquare.getDraught();
+    if (currentSquare.isOccupied()
+        // current square is opposite color
+        && currentDraught.isBlack() != this.selectedSquare.getDraught().isBlack()
+        && isOnCross(selectedSquare, nextSquare)
+        // next square empty
+        && !nextSquare.isOccupied()) {
+      // store new point for recursion in next square
+      currentDraught.setBeaten(true);
+      return true;
+    }
+    return false;
   }
 
 //  private Square getBreakpointSquare(Square selectedSquare) {

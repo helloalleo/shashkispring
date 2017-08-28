@@ -90,11 +90,8 @@ public class BoardUtils {
   }
 
   static List<Square> getAllDiagonals(int dim, int squareSize) {
-    List<List<Square>> diagonals = new ArrayList<>(dim * dim * 2);
     List<List<Square>> main = getDiagonals(dim, squareSize, true);
     List<List<Square>> sub = getDiagonals(dim, squareSize, false);
-    diagonals.addAll(main);
-    diagonals.addAll(sub);
 
     List<Square> squares = new ArrayList<>();
     for (List<Square> diagonal : sub) {
@@ -201,5 +198,27 @@ public class BoardUtils {
       newSquares.add(square);
     }
     return newSquares;
+  }
+
+  public static Square addDraught(BoardContainer boardContainer, String newSquare, boolean black) throws BoardServiceException {
+    return addDraught(boardContainer, newSquare, black, false);
+  }
+
+  public static Square addDraught(BoardContainer currentBoard, String notation, boolean black, boolean queen) throws BoardServiceException {
+    Optional<Square> squareOptional = findSquareByNotation(currentBoard, notation);
+    return squareOptional.map(square -> {
+      Draught draught = new Draught(square.getV(), square.getH(), square.getDim(), black, queen);
+      square.setDraught(draught);
+      updateBoardWithSquare(currentBoard, square);
+      return square;
+    }).orElseThrow(getBoardServiceExceptionSupplier("Unable to add draught"));
+  }
+
+  private static void updateBoardWithSquare(BoardContainer currentBoard, Square newSquare) {
+    List<Square> squaresSet = currentBoard.getSquaresSet();
+    Set<List<Square>> diagonals = squaresSet.get(squaresSet.indexOf(newSquare)).getDiagonals();
+    for (List<Square> diagonal : diagonals) {
+      diagonal.set(diagonal.indexOf(newSquare), newSquare);
+    }
   }
 }
