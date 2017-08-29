@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Aleksey Popryaduhin on 13:52 27/08/2017.
@@ -80,7 +81,11 @@ public class BoardUtilsTest {
   public void add_draught_to_board() throws BoardServiceException {
     BoardContainer boardContainer = BoardUtils.initBoard(true, false, EnumRules.RUSSIAN, getSquareSize());
     Square square = BoardUtils.addDraught(boardContainer, "c3", true);
-    System.out.println(square.getDiagonals());
+    square.getDiagonals().forEach(squares -> {
+      int index = squares.indexOf(square);
+      Square square1 = squares.get(index);
+      assertNotNull(square1.getDraught());
+    });
   }
 
   private int getSquareSize() {
