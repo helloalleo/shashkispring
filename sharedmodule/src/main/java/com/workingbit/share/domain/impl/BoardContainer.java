@@ -21,9 +21,12 @@ public class BoardContainer implements BaseDomain {
   private Square selectedSquare;
   @JsonIgnore
   private List<List<Square>> diagonals = new ArrayList<>();
-  @JsonIgnore
-  private List<Square> squaresSet = new ArrayList<>();
   private List<Square> squares = new ArrayList<>();
+  /**
+   * Squares without nulls
+   */
+  @JsonIgnore
+  private List<Square> boardSquares = new ArrayList<>();
 
   public BoardContainer() {
   }
@@ -80,13 +83,5 @@ public class BoardContainer implements BaseDomain {
     return new BoardContainer(ObjectUtils.clone(whiteDraughts),
         ObjectUtils.clone(blackDraughts),
         ObjectUtils.clone(selectedSquare));
-  }
-
-  public void setDiagonals(List<List<Square>> diagonals) {
-    this.diagonals = diagonals;
-  }
-
-  public void setSquaresSet(List<Square> squaresSet) {
-    this.squaresSet = squaresSet;
   }
 }

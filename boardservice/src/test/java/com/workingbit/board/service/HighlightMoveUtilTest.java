@@ -11,6 +11,7 @@ import com.workingbit.share.domain.impl.Square;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -86,12 +87,19 @@ public class HighlightMoveUtilTest {
     Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d4"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "d6"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "b6"); // c3
     Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
     assertTrue(highlight.isPresent());
-    String allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-    String beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-    assertEquals("c7,e5", allowedMoves);
-    assertEquals("d4,d6", beatenDraughts);
+    List<String> allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    List<String> beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    Arrays.stream("c7,e5,a5".split(",")).forEach(n -> {
+      assertTrue(allowedMoves.contains(n));
+      assertEquals(3, allowedMoves.size());
+    });
+    Arrays.stream("d4,d6,b6".split(",")).forEach(n -> {
+      assertTrue(beatenDraughts.contains(n));
+      assertEquals(3, beatenDraughts.size());
+    });
   }
 
   @Test

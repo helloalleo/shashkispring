@@ -47,7 +47,7 @@ public class HighlightMoveUtil {
     Draught draught = selectedSquare.getDraught();
     boolean black = draught.isBlack();
     boolean queen = draught.isQueen();
-    findBeatenMoves(selectedSquare, allowedMoves, beatenMoves, black, queen);
+    findBeatenMoves(selectedSquare, allowedMoves, beatenMoves, black, queen, 0);
     if (beatenMoves.isEmpty()) {
       findAllowedMoves(selectedSquare, allowedMoves, black, queen);
     }
@@ -87,26 +87,35 @@ public class HighlightMoveUtil {
     }
   }
 
-  private void findBeatenMoves(Square selectedSquare, List<Square> allowedMoves, List<Square> beatenMoves, boolean black, boolean queen) throws BoardServiceException {
+  private void findBeatenMoves(Square selectedSquare, List<Square> allowedMoves, List<Square> beatenMoves, boolean black, boolean queen, int deep) throws BoardServiceException {
     Set<List<Square>> diagonals = selectedSquare.getDiagonals();
     for (List<Square> squares : diagonals) {
       int indexOfSelected = squares.indexOf(selectedSquare);
       if (indexOfSelected != -1) {
         ListIterator<Square> squareListIterator = squares.listIterator(indexOfSelected);
-        findBeaten(allowedMoves, beatenMoves, squareListIterator, selectedSquare, black, queen);
+        findBeaten(allowedMoves, beatenMoves, squareListIterator, selectedSquare, black, queen, deep);
+        squareListIterator = squares.listIterator(indexOfSelected);
+        findBeaten(allowedMoves, beatenMoves, squareListIterator, selectedSquare, !black, queen, deep);
       }
     }
   }
 
-  private void findBeaten(List<Square> allowedMoves, List<Square> beatenMoves, ListIterator<Square> squareListIterator, Square selectedSquare, boolean black, boolean queen) throws BoardServiceException {
+  private void findBeaten(List<Square> allowedMoves, List<Square> beatenMoves, ListIterator<Square> squareListIterator, Square selectedSquare, boolean black, boolean queen, int deep) throws BoardServiceException {
     Square next, previous = selectedSquare;
     boolean mustBeat;
     do {
+      if (!((black && squareListIterator.hasNext()) || (!black && squareListIterator.hasPrevious()))) {
+        break;
+      }
       next = black ? squareListIterator.next() : squareListIterator.previous();
       mustBeat = mustBeat(next, previous);
-      if (mustBeat) {
+      if (mustBeat ) {
+        if (beatenMoves.contains(previous)) {
+          return;
+        }
         beatenMoves.add(previous);
-        findBeatenMoves(next, allowedMoves, beatenMoves, black, queen);
+        deep++;
+        findBeatenMoves(next, allowedMoves, beatenMoves, black, queen, deep);
         if (queen) {
           if (black) {
             squareListIterator.previous();
@@ -117,9 +126,15 @@ public class HighlightMoveUtil {
         } else {
           allowedMoves.add(next);
         }
+      } else if (isDraughtWithSameColor(next)) {
+        return;
       }
       previous = next;
     } while ((black && squareListIterator.hasNext()) || (!black && squareListIterator.hasPrevious()));
+  }
+
+  private boolean isDraughtWithSameColor(Square next) {
+    return next.isOccupied() && next.getDraught().isBlack() == this.selectedSquare.getDraught().isBlack();
   }
 
   private boolean canMove(Square selectedSquare, Square currentSquare) {
