@@ -7,11 +7,12 @@ import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static com.workingbit.board.service.BoardUtils.isSubDiagonal;
+import static org.junit.Assert.*;
 
 /**
  * Created by Aleksey Popryaduhin on 13:52 27/08/2017.
@@ -93,6 +94,19 @@ public class BoardUtilsTest {
       Square square1 = squares.get(index);
       assertNotNull(square1.getDraught());
     });
+  }
+
+  @Test
+  public void test_main_diagonal() {
+    BoardContainer boardContainer = BoardUtils.initBoard(true, false, EnumRules.RUSSIAN, getSquareSize());
+    Square square = boardContainer.getBoardSquares().get(4);
+    List<Square> diagonal0 = square.getDiagonals().get(0);
+    System.out.println(diagonal0);
+    List<Square> diagonal1 = square.getDiagonals().get(1);
+    System.out.println(diagonal1);
+    assertFalse(isSubDiagonal(diagonal0, diagonal1));
+    // TODO more checks
+    assertTrue(isSubDiagonal(diagonal0, Collections.singletonList(diagonal0.get(2))));
   }
 
   private int getSquareSize() {

@@ -9,9 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Aleksey Popryaduhin on 09:26 10/08/2017.
@@ -50,7 +49,7 @@ public class Square implements ICoordinates, BaseDomain {
   private Draught draught;
 
   @JsonIgnore
-  private Set<List<Square>> diagonals = new HashSet<>();
+  private List<List<Square>> diagonals = new ArrayList<>();
 
   public Square(int v, int h, int dim, boolean main, int size, Draught draught) {
     this.v = v;

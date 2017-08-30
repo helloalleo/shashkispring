@@ -34,30 +34,6 @@ public class HighlightMoveUtilTest {
   public void setUp() throws Exception {
   }
 
-  /* this was commented because it was intermediate
-  @Test
-  public void filterNotOnMainAndSelectedSquares() throws Exception, BoardServiceException {
-    Board board = getBoard();
-    Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3");
-    HighlightMoveUtil highlight = new HighlightMoveUtil(board.getCurrentBoard(), square, board.getRules());
-    CompletableFuture<List<Square>> x = highlight.filterNotOnMainAndSelectedSquares();
-    List<Square> squareStream = x.get();
-    String squares = squareStream.stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-    assertEquals("h8,g7,f6,a5,e5,b4,d4,b2,d2,a1,e1", squares);
-  }
-
-  @Test
-  public void filterQueenSquares() throws BoardServiceException, ExecutionException, InterruptedException {
-    Board board = getBoard();
-    Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "c3"); // c3
-    HighlightMoveUtil highlight = new HighlightMoveUtil(board.getCurrentBoard(), square, board.getRules());
-    CompletableFuture<List<Square>> x = highlight.filterQueenSquares();
-    List<Square> squareStream = x.get();
-    String squares = squareStream.stream().map(ICoordinates::toNotation).collect(Collectors.joining(","));
-    assertEquals("a5,e5,b4,d4,b2,d2,a1,e1", squares);
-  }
-  */
-
   @Test
   public void findAllowedMoves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
@@ -92,14 +68,60 @@ public class HighlightMoveUtilTest {
     assertTrue(highlight.isPresent());
     List<String> allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
     List<String> beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
-    Arrays.stream("c7,e5,a5".split(",")).forEach(n -> {
-      assertTrue(allowedMoves.contains(n));
-      assertEquals(3, allowedMoves.size());
-    });
     Arrays.stream("d4,d6,b6".split(",")).forEach(n -> {
-      assertTrue(beatenDraughts.contains(n));
-      assertEquals(3, beatenDraughts.size());
+      assertTrue(beatenDraughts.toString(), beatenDraughts.contains(n));
     });
+    assertEquals(3, beatenDraughts.size());
+    Arrays.stream("c7,e5,a5".split(",")).forEach(n -> {
+      assertTrue(allowedMoves.toString(), allowedMoves.contains(n));
+    });
+    assertEquals(3, allowedMoves.size());
+  }
+
+  @Test
+  public void turk_stroke() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "e1"); // c3
+    square.getDraught().setQueen(true);
+    Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "c3"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "b6"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "e7"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "e5"); // c3
+    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
+    assertTrue(highlight.isPresent());
+    List<String> allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    List<String> beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    Arrays.stream("c3,b6,e7,e5".split(",")).forEach(n -> {
+      assertTrue(beatenDraughts.toString(), beatenDraughts.contains(n));
+    });
+    assertEquals(4, beatenDraughts.size());
+    Arrays.stream("f8,b4,a5,f4,g3,h2,c7,d8,d4".split(",")).forEach(n -> {
+      assertTrue(allowedMoves.contains(n));
+    });
+    System.out.println(allowedMoves);
+    assertEquals(9, allowedMoves.size());
+  }
+
+  @Test
+  public void queen_beats_sequence() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Square square = getSquareByVHWithDraught(board.getCurrentBoard(), "e1"); // c3
+    square.getDraught().setQueen(true);
+    Square squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "c3"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "b6"); // c3
+    squareBlack = getSquareByVHWithBlackDraught(board.getCurrentBoard(), "e5"); // c3
+    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
+    assertTrue(highlight.isPresent());
+    List<String> allowedMoves = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    List<String> beatenDraughts = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    Arrays.stream("c3,b6,e5".split(",")).forEach(n -> {
+      assertTrue(beatenDraughts.toString(), beatenDraughts.contains(n));
+    });
+    assertEquals(3, beatenDraughts.size());
+    Arrays.stream("b4,a5,f4,g3,h2,c7,d8".split(",")).forEach(n -> {
+      assertTrue(allowedMoves.contains(n));
+    });
+    assertEquals(7, allowedMoves.size());
   }
 
   @Test

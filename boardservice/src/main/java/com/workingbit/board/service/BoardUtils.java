@@ -87,6 +87,10 @@ public class BoardUtils {
     return diagonals;
   }
 
+  public static boolean isSubDiagonal(List<Square> diagonal, List<Square> subDiagonal) {
+    return subDiagonal.stream().allMatch(diagonal::contains);
+  }
+
   static List<Square> getBoardSquares(int dim, int squareSize) {
     List<List<Square>> main = getDiagonals(dim, squareSize, true);
     List<List<Square>> sub = getDiagonals(dim, squareSize, false);
@@ -134,7 +138,7 @@ public class BoardUtils {
 //    return h - v;
 //  }
 //
-//  private static boolean subDiagonal(int v, int h, int dim) {
+//  private static boolean isSubDiagonal(int v, int h, int dim) {
 //    return dim - h - v;
 //  }
 
@@ -216,7 +220,7 @@ public class BoardUtils {
 
   private static void updateBoardWithSquare(BoardContainer currentBoard, Square newSquare) {
     List<Square> squaresSet = currentBoard.getBoardSquares();
-    Set<List<Square>> diagonals = squaresSet.get(squaresSet.indexOf(newSquare)).getDiagonals();
+    List<List<Square>> diagonals = squaresSet.get(squaresSet.indexOf(newSquare)).getDiagonals();
     for (List<Square> diagonal : diagonals) {
       diagonal.set(diagonal.indexOf(newSquare), newSquare);
     }
