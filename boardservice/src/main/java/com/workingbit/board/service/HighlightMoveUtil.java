@@ -48,7 +48,7 @@ class HighlightMoveUtil {
     Draught draught = selectedSquare.getDraught();
     boolean black = draught.isBlack();
     boolean queen = draught.isQueen();
-    findBeatenMovesOnDiagonalsOfSelectedSquare(beatenMoves, allowedMoves, selectedSquare, black, queen);
+    findBeatenMovesOnDiagonalsOfSelectedSquare(selectedSquare, black, queen, beatenMoves, allowedMoves);
     if (beatenMoves.isEmpty()) {
       findAllowedMoves(selectedSquare, allowedMoves, black, queen);
     }
@@ -58,102 +58,119 @@ class HighlightMoveUtil {
     return allowedAndBeatenMap;
   }
 
-  private void findAllowedMoves(Square selectedSquare, List<Square> allowedMoves, boolean black, boolean queen) {
+  private void findAllowedMoves(Square selectedSquare, List<Square> allowedMoves, boolean down, boolean queen) {
     List<List<Square>> diagonals = selectedSquare.getDiagonals();
     for (List<Square> diagonal : diagonals) {
       int indexOfSelected = diagonal.indexOf(selectedSquare);
       if (indexOfSelected != -1) {
-        ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
         if (!queen) {
-          findAllowed(allowedMoves, black, squareListIterator);
+          findAllowed(diagonal, selectedSquare, down, allowedMoves);
         } else {
-          findAllowedForQueen(allowedMoves, black, squareListIterator);
-          squareListIterator = diagonal.listIterator(indexOfSelected);
-          findAllowedForQueen(allowedMoves, !black, squareListIterator);
+          findAllowedForQueen(diagonal, selectedSquare, down, allowedMoves);
+          findAllowedForQueen(diagonal, selectedSquare, !down, allowedMoves);
         }
       }
     }
   }
 
-  private void findAllowedForQueen(List<Square> allowedMoves, boolean black, ListIterator<Square> squareListIterator) {
-    do {
-      findAllowed(allowedMoves, black, squareListIterator);
-    } while (black && squareListIterator.hasNext() || !black && squareListIterator.hasPrevious());
+  private void findAllowedForQueen(List<Square> diagonal, Square selectedSquare, boolean down, List<Square> allowedMoves) {
+    ListIterator<Square> squareListIterator = diagonal.listIterator(diagonal.indexOf(selectedSquare));
+    while (down && squareListIterator.hasNext() || !down && squareListIterator.hasPrevious()) {
+      findAllowedUsingIterator(down, allowedMoves, squareListIterator);
+    }
   }
 
-  private void findAllowed(List<Square> allowedMoves, boolean black, ListIterator<Square> squareListIterator) {
+  private void findAllowed(List<Square> diagonal, Square selectedSquare, boolean black, List<Square> allowedMoves) {
+    ListIterator<Square> squareListIterator = diagonal.listIterator(diagonal.indexOf(selectedSquare));
+    findAllowedUsingIterator(black, allowedMoves, squareListIterator);
+  }
+
+  private void findAllowedUsingIterator(boolean black, List<Square> allowedMoves, ListIterator<Square> squareListIterator) {
     Square next = black ? squareListIterator.next() : squareListIterator.previous();
     if (canMove(next)) {
       allowedMoves.add(next);
     }
   }
 
-  private void findBeatenMovesOnDiagonalsOfSelectedSquare(List<Square> beatenMoves, List<Square> allowedMoves, Square selectedSquare, boolean black, boolean queen) throws BoardServiceException {
+  private void findBeatenMovesOnDiagonalsOfSelectedSquare(Square selectedSquare, boolean black, boolean queen, List<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
     List<List<Square>> diagonals = selectedSquare.getDiagonals();
     int indexOfSelected;
+    Set<Square> beatenMovesSet = new HashSet<>();
+    List<Square> a = new ArrayList<>();
     for (List<Square> diagonal : diagonals) {
       indexOfSelected = diagonal.indexOf(selectedSquare);
       if (indexOfSelected != -1) {
         List<Square> newBeaten = new ArrayList<>();
-        walkOnDiagonal(selectedSquare, newBeaten, black, queen, diagonal, allowedMoves);
-        beatenMoves.addAll(newBeaten);
+        walkOnDiagonal(selectedSquare, newBeaten, black, queen, diagonal, a);
+        beatenMovesSet.addAll(newBeaten);
       }
     }
+    allowedMoves.addAll(new HashSet<>(a));
+    beatenMoves.addAll(beatenMovesSet);
   }
 
   private void walkOnDiagonal(Square selectedSquare, List<Square> beatenMoves, boolean down, boolean queen, List<Square> diagonal, List<Square> allowedMoves) throws BoardServiceException {
-    findBeatenMovesOnHalfDiagonal(beatenMoves, allowedMoves, diagonal, selectedSquare, down, queen);
-    findBeatenMovesOnHalfDiagonal(beatenMoves, allowedMoves, diagonal, selectedSquare, !down, queen);
+    findBeatenMovesOnHalfDiagonal(diagonal, selectedSquare, down, queen, 0, beatenMoves, allowedMoves);
+    findBeatenMovesOnHalfDiagonal(diagonal, selectedSquare, !down, queen, 0, beatenMoves, allowedMoves);
   }
 
-  private void findBeatenMovesOnHalfDiagonal(List<Square> beatenMoves, List<Square> allowedMoves, List<Square> diagonal, Square selectedSquare, boolean down, boolean queen) throws BoardServiceException {
-    findBeatenMovesOnHalfDiagonal(beatenMoves, allowedMoves, diagonal, selectedSquare, down, queen, 0);
-  }
-
-  private void findBeatenMovesOnHalfDiagonal(List<Square> beatenMoves, List<Square> allowedMoves, List<Square> diagonal, Square selectedSquare, boolean down, boolean queen, int deep) throws BoardServiceException {
+  private void findBeatenMovesOnHalfDiagonal(List<Square> diagonal, Square selectedSquare, boolean down, boolean queen, int deep, List<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
     int indexOfSelected = diagonal.indexOf(selectedSquare);
     ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
     Square next, previous = selectedSquare;
     deep++;
     boolean mustBeat;
+    List<Square> walkAllowedMoves = new ArrayList<>();
     do {
-      if (/*!beatenMoves.isEmpty() && !queen || */!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
+      if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
         break;
       }
       next = down ? squareListIterator.next() : squareListIterator.previous();
       mustBeat = mustBeat(next, previous);
       if (mustBeat) {
-        // turk stroke
-        if (previous.getDraught().isBeaten()) {
+        if (beatenMoves.contains(previous)) {
           return;
         }
         previous.getDraught().setBeaten(true);
         beatenMoves.add(previous);
-        allowedMoves.add(next);
         if (!queen) {
-          walkCrossDiagonal(beatenMoves, allowedMoves, next, previous, down, deep, false);
+          allowedMoves.add(next);
+          walkCrossDiagonalForBeaten(next, previous, down, deep, false, beatenMoves, allowedMoves);
         }
       } else if (isDraughtWithSameColor(next)) {
         return;
       }
-      if (!beatenMoves.isEmpty() && deep < 3 && queen) {
-//        List<Square> newBeaten = new ArrayList<>();
-        walkCrossDiagonal(beatenMoves, allowedMoves, next, previous, down, deep, true);
-        if (!beatenMoves.isEmpty() && deep < 2) {
+      if (!beatenMoves.isEmpty() && !beatenMoves.contains(next) && queen) {
+        List<Square> newBeaten = new ArrayList<>();
+        walkCrossDiagonalForBeaten(next, previous, down, deep, true, newBeaten, allowedMoves);
+        if (!newBeaten.isEmpty() && !allowedMoves.contains(next) && canMove(next)) {
           allowedMoves.add(next);
+        } else {
+          walkAllowedMoves.add(next);
         }
-//        beatenMoves.addAll(newBeaten);
+        beatenMoves.addAll(newBeaten);
       }
       previous = next;
     }
     while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
+    if (beatenMoves.size() == 1) {
+      allowedMoves.addAll(walkAllowedMoves);
+    }
   }
 
-  private void walkCrossDiagonal(List<Square> beatenMoves, List<Square> allowedMoves, Square next, Square previous, boolean down, int deep, boolean queen) throws BoardServiceException {
+  private void walkCoDiagonalForAllowed(boolean down, Square next, Square previous, List<Square> allowedMoves) {
+    for (List<Square> diagonal : next.getDiagonals()) {
+      if (isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
+        findAllowedForQueen(diagonal, next, down, allowedMoves);
+      }
+    }
+  }
+
+  private void walkCrossDiagonalForBeaten(Square next, Square previous, boolean down, int deep, boolean queen, List<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
     for (List<Square> diagonal : next.getDiagonals()) {
       if (!isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
-        findBeatenMovesOnHalfDiagonal(beatenMoves, allowedMoves, diagonal, next, down, queen, deep);
-        findBeatenMovesOnHalfDiagonal(beatenMoves, allowedMoves, diagonal, next, !down, queen, deep);
+        findBeatenMovesOnHalfDiagonal(diagonal, next, down, queen, deep, beatenMoves, allowedMoves);
+        findBeatenMovesOnHalfDiagonal(diagonal, next, !down, queen, deep, beatenMoves, allowedMoves);
       }
     }
   }
