@@ -213,14 +213,14 @@ public class BoardUtils {
     return squareOptional.map(square -> {
       Draught draught = new Draught(square.getV(), square.getH(), square.getDim(), black, queen);
       square.setDraught(draught);
-      updateBoardWithSquare(currentBoard, square);
+      updateSquareOnBoard(currentBoard, square);
       return square;
     }).orElseThrow(getBoardServiceExceptionSupplier("Unable to add draught"));
   }
 
-  private static void updateBoardWithSquare(BoardContainer currentBoard, Square newSquare) {
-    List<Square> squaresSet = currentBoard.getBoardSquares();
-    List<List<Square>> diagonals = squaresSet.get(squaresSet.indexOf(newSquare)).getDiagonals();
+  public static void updateSquareOnBoard(BoardContainer currentBoard, Square newSquare) {
+    List<Square> squares = currentBoard.getBoardSquares();
+    List<List<Square>> diagonals = squares.get(squares.indexOf(newSquare)).getDiagonals();
     for (List<Square> diagonal : diagonals) {
       diagonal.set(diagonal.indexOf(newSquare), newSquare);
     }

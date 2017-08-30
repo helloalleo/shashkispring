@@ -65,7 +65,7 @@ public class HighlightMoveUtil {
       if (indexOfSelected != -1) {
         ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
         if (!queen) {
-          findAllowed(selectedSquare, allowedMoves, black, squareListIterator);
+          findAllowed(allowedMoves, black, squareListIterator);
         } else {
           findAllowedForQueen(selectedSquare, allowedMoves, black, squareListIterator);
           squareListIterator = diagonal.listIterator(indexOfSelected);
@@ -77,13 +77,13 @@ public class HighlightMoveUtil {
 
   private void findAllowedForQueen(Square selectedSquare, List<Square> allowedMoves, boolean black, ListIterator<Square> squareListIterator) {
     do {
-      findAllowed(selectedSquare, allowedMoves, black, squareListIterator);
+      findAllowed(allowedMoves, black, squareListIterator);
     } while (black && squareListIterator.hasNext() || !black && squareListIterator.hasPrevious());
   }
 
-  private void findAllowed(Square selectedSquare, List<Square> allowedMoves, boolean black, ListIterator<Square> squareListIterator) {
+  private void findAllowed(List<Square> allowedMoves, boolean black, ListIterator<Square> squareListIterator) {
     Square next = black ? squareListIterator.next() : squareListIterator.previous();
-    if (canMove(selectedSquare, next)) {
+    if (canMove(next)) {
       allowedMoves.add(next);
     }
   }
@@ -105,17 +105,9 @@ public class HighlightMoveUtil {
     ListIterator<Square> squareListIterator;
     int indexOfSelected = diagonal.indexOf(selectedSquare);
     squareListIterator = diagonal.listIterator(indexOfSelected);
-    if (!beatenMoves.isEmpty() && !isSubDiagonal(diagonal, Arrays.asList(selectedSquare, beatenMoves.get(beatenMoves.size() - 1)))) {
-      findBeatenMovesOnHalfDiagonal(beatenMoves, squareListIterator, selectedSquare, down, queen, deep);
-    } else if (beatenMoves.isEmpty()) {
-      findBeatenMovesOnHalfDiagonal(beatenMoves, squareListIterator, selectedSquare, down, queen, deep);
-    }
+    findBeatenMovesOnHalfDiagonal(beatenMoves, squareListIterator, selectedSquare, down, queen, deep);
     squareListIterator = diagonal.listIterator(indexOfSelected);
-    if (!beatenMoves.isEmpty() && !isSubDiagonal(diagonal, Arrays.asList(selectedSquare, beatenMoves.get(beatenMoves.size() - 1)))) {
-      findBeatenMovesOnHalfDiagonal(beatenMoves, squareListIterator, selectedSquare, !down, queen, deep);
-    } else if (beatenMoves.isEmpty()) {
-      findBeatenMovesOnHalfDiagonal(beatenMoves, squareListIterator, selectedSquare, !down, queen, deep);
-    }
+    findBeatenMovesOnHalfDiagonal(beatenMoves, squareListIterator, selectedSquare, !down, queen, deep);
   }
 
   private void findBeatenMovesOnHalfDiagonal(List<Square> beatenMoves, ListIterator<Square> squareListIterator, Square selectedSquare, boolean down, boolean queen, int deep) throws BoardServiceException {
@@ -129,9 +121,11 @@ public class HighlightMoveUtil {
       next = down ? squareListIterator.next() : squareListIterator.previous();
       mustBeat = mustBeat(next, previous);
       if (mustBeat) {
-        if (beatenMoves.contains(previous)) {
+        // turk stroke
+        if (previous.getDraught().isBeaten()) {
           return;
         }
+        previous.getDraught().setBeaten(true);
         beatenMoves.add(previous);
       } else if (isDraughtWithSameColor(next)) {
         return;
@@ -155,9 +149,8 @@ public class HighlightMoveUtil {
     return next.isOccupied() && next.getDraught().isBlack() == this.selectedSquare.getDraught().isBlack();
   }
 
-  private boolean canMove(Square selectedSquare, Square currentSquare) {
-    boolean beaten = currentSquare.getDraught() != null && currentSquare.getDraught().isBeaten();
-    return !currentSquare.isOccupied() && !beaten;
+  private boolean canMove(Square nextSquare) {
+    return !nextSquare.isOccupied();
   }
 
   /**
@@ -167,13 +160,9 @@ public class HighlightMoveUtil {
    * @return
    */
   private boolean mustBeat(Square nextSquare, Square previousSquare) throws BoardServiceException {
-    if (previousSquare.isOccupied()
+    return previousSquare.isOccupied()
         && previousSquare.getDraught().isBlack() != this.selectedSquare.getDraught().isBlack()
-        && !nextSquare.isOccupied()) {
-      previousSquare.getDraught().setBeaten(true);
-      return true;
-    }
-    return false;
+        && !nextSquare.isOccupied();
   }
 
   public static Optional<Map<String, Object>> highlight(Board board, Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
@@ -184,9 +173,5 @@ public class HighlightMoveUtil {
     } catch (BoardServiceException e) {
       return Optional.empty();
     }
-  }
-
-  private boolean isDown(Square previousSquare, Square selectedSquare) {
-    return selectedSquare.getV() - previousSquare.getV() > 0;
   }
 }
