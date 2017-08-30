@@ -149,21 +149,30 @@ public class HighlightMoveUtil {
         }
         beatenMoves.add(previous);
         deep++;
-        if (queen) {
-          if (down) {
-            squareListIterator.previous();
-          } else {
-            squareListIterator.next();
-          }
-          findAllowedForQueen(previous, allowedMoves, down, squareListIterator);
-        } else {
-          allowedMoves.add(next);
-        }
-        for (List<Square> diagonal : next.getDiagonals()) {
-          walkOnDiagonal(next, beatenMoves, down, queen, deep, diagonal, allowedMoves);
-        }
+//        if (queen) {
+//          if (down) {
+//            squareListIterator.previous();
+//          } else {
+//            squareListIterator.next();
+//          }
+//          findAllowedForQueen(previous, allowedMoves, down, squareListIterator);
+//        } else {
+//          allowedMoves.add(next);
+//        }
+        allowedMoves.add(next);
       } else if (isDraughtWithSameColor(next)) {
         return;
+      }
+      if (!beatenMoves.isEmpty() && deep != -1) {
+        for (List<Square> diagonal : next.getDiagonals()) {
+          if (!isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
+            int indexOfSelected = diagonal.indexOf(next);
+            ListIterator<Square> squareListIteratorDown = diagonal.listIterator(indexOfSelected);
+            findBeatenMovesOnHalfDiagonal(allowedMoves, beatenMoves, squareListIteratorDown, next, down, queen, -1);
+            ListIterator<Square> squareListIteratorUp = diagonal.listIterator(indexOfSelected);
+            findBeatenMovesOnHalfDiagonal(allowedMoves, beatenMoves, squareListIteratorUp, next, !down, queen, -1);
+          }
+        }
       }
       previous = next;
     } while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
