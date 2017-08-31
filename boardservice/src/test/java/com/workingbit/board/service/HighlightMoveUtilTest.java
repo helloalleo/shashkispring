@@ -59,8 +59,8 @@ public class HighlightMoveUtilTest {
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
     assertTrue(highlight.isPresent());
-    testCollection("d4,d6,b6", highlight.get(),beaten);
-    testCollection("c7,e5,a5", highlight.get(),allowed);
+    testCollection("d4,d6,b6", highlight.get(), beaten);
+    testCollection("c7,e5,a5", highlight.get(), allowed);
   }
 
   @Test
@@ -91,7 +91,7 @@ public class HighlightMoveUtilTest {
     Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
     assertTrue(highlight.isPresent());
     testCollection("b2,b4,d4,d6,f6,f4", highlight.get(), beaten);
-    testCollection("a3,c5,e3,g5,e7", highlight.get(),allowed);
+    testCollection("a3,c5,e3,g5,e7", highlight.get(), allowed);
   }
 
   @Test
