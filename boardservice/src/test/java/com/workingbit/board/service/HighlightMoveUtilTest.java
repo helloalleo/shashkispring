@@ -75,7 +75,7 @@ public class HighlightMoveUtilTest {
     Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
     assertTrue(highlight.isPresent());
     testCollection("c3,b6,e7,e5", highlight.get(), beaten);
-    testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6,g5,h4", highlight.get(), allowed);
+    testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6", highlight.get(), allowed);
   }
 
   @Test

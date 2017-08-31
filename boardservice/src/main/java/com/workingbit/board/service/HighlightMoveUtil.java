@@ -144,15 +144,19 @@ class HighlightMoveUtil {
       } else if (isDraughtWithSameColor(next)) {
         return;
       }
-      if (!beatenMoves.getChildren().isEmpty() && queen) {
+      if (!beatenMoves.getChildren().isEmpty() && queen && canMove(next)) {
         if (cross) {
           List<Tree.Node<Square>> children = beatenMoves.getChildren();
           Tree.Node<Square> newBeatenMoves = children.get(children.size() - 1);
           walkCrossDiagonalForBeaten(next, previous, down, deep, true, newBeatenMoves, allowedMoves);
-          if (!newBeatenMoves.getChildren().isEmpty()) {
+          boolean hasBeatenOnCrossDiagonal = hasBeatenOnCrossDiagonal(next, previous);
+          if (hasBeatenOnCrossDiagonal) {
+            System.out.println(next);
+            System.out.println(newBeatenMoves.getChildren());
             allowedMoves.add(next);
-          } else {
-//            walkAllowedMoves.add(next);
+          } else if (newBeatenMoves.getChildren().isEmpty()) {
+            walkAllowedMoves.add(next);
+            System.out.println(next.toNotation());
           }
         }
       }
@@ -160,7 +164,7 @@ class HighlightMoveUtil {
     }
     while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
 
-    if (!walkAllowedMoves.isEmpty() && hasBeatenOnCrossDiagonal(walkAllowedMoves.get(0), previous)) {
+    if (!walkAllowedMoves.isEmpty() && walkAllowedMoves.contains(previous)) {
       allowedMoves.addAll(walkAllowedMoves);
     }
   }
@@ -168,7 +172,7 @@ class HighlightMoveUtil {
   private boolean hasBeatenOnCrossDiagonal(Square next, Square previous) {
     for (List<Square> diagonal : next.getDiagonals()) {
       if (!isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
-        return diagonal.stream().anyMatch(Square::isOccupied);
+        return diagonal.stream().anyMatch(square -> square.isOccupied() && square.getDraught().isBeaten());
       }
     }
     return false;
