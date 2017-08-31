@@ -119,9 +119,69 @@ class HighlightMoveUtil {
   }
 
   private void findBeatenMovesOnHalfDiagonal(List<Square> diagonal, Square selectedSquare, boolean down, boolean queen, int deep, boolean cross, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+    if (queen) {
+      findBeatenMovesForQueen(diagonal, selectedSquare, down, deep, cross, beatenMoves, allowedMoves);
+    } else {
+      findBeatenMovesForDraught(diagonal, selectedSquare, down, deep, beatenMoves, allowedMoves);
+    }
+  }
+
+  private void findBeatenMovesForQueen(List<Square> diagonal, Square selectedSquare, boolean down, int deep, boolean cross, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
     int indexOfSelected = diagonal.indexOf(selectedSquare);
     ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
     List<Square> walkAllowedMoves = new ArrayList<>();
+    Square next, previous = selectedSquare;
+    deep++;
+    boolean mustBeat;
+    do {
+      if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
+        break;
+      }
+      next = down ? squareListIterator.next() : squareListIterator.previous();
+      mustBeat = mustBeat(next, previous);
+      if (mustBeat) {
+        if (treeContains(beatenMoves, previous)) {
+          return;
+        }
+        addBeatenMove(beatenMoves, previous);
+        cross = true;
+      } else if (isDraughtWithSameColor(next)) {
+        return;
+      }
+      if (!beatenMoves.getChildren().isEmpty() && canMove(next)) {
+        if (cross) {
+          walkCross(down, deep, beatenMoves, allowedMoves, walkAllowedMoves, next, previous);
+        }
+      }
+      previous = next;
+    }
+    while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
+
+    if (!walkAllowedMoves.isEmpty() && walkAllowedMoves.contains(previous)) {
+      allowedMoves.addAll(walkAllowedMoves);
+    }
+  }
+
+  private void addBeatenMove(Tree.Node<Square> beatenMoves, Square previous) {
+    previous.getDraught().setBeaten(true);
+    beatenMoves.addChild(previous);
+  }
+
+  private void walkCross(boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves, List<Square> walkAllowedMoves, Square next, Square previous) throws BoardServiceException {
+    List<Tree.Node<Square>> children = beatenMoves.getChildren();
+    Tree.Node<Square> newBeatenMoves = children.get(children.size() - 1);
+    walkCrossDiagonalForBeaten(next, previous, down, deep, true, newBeatenMoves, allowedMoves);
+    boolean hasBeatenOnCrossDiagonal = hasBeatenOnCrossDiagonal(next, previous);
+    if (hasBeatenOnCrossDiagonal) {
+      allowedMoves.add(next);
+    } else if (newBeatenMoves.getChildren().isEmpty()) {
+      walkAllowedMoves.add(next);
+    }
+  }
+
+  private void findBeatenMovesForDraught(List<Square> diagonal, Square selectedSquare, boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+    int indexOfSelected = diagonal.indexOf(selectedSquare);
+    ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
     Square next, previous = selectedSquare;
     deep++;
     int moveCounter = 0;
@@ -133,45 +193,24 @@ class HighlightMoveUtil {
       next = down ? squareListIterator.next() : squareListIterator.previous();
       mustBeat = mustBeat(next, previous);
       if (mustBeat) {
-        if (queen && treeContains(beatenMoves, previous) || !queen && leavesContain(beatenMoves, previous)) {
+        if (leavesContain(beatenMoves, previous)) {
           return;
         }
-        previous.getDraught().setBeaten(true);
-        beatenMoves.addChild(previous);
-        cross = true;
-        if (!queen) {
-          if (!allowedMoves.contains(next)) {
-            allowedMoves.add(next);
-          }
-          walkCrossDiagonalForBeaten(next, previous, down, deep, false, beatenMoves, allowedMoves);
+        addBeatenMove(beatenMoves, previous);
+        if (!allowedMoves.contains(next)) {
+          allowedMoves.add(next);
         }
+        walkCrossDiagonalForBeaten(next, previous, down, deep, false, beatenMoves, allowedMoves);
       } else if (isDraughtWithSameColor(next)) {
         return;
       }
-      if (!queen && moveCounter > 0 && !down || !queen && moveCounter > 1) {
+      if (moveCounter > 0 && !down || moveCounter > 1) {
         return;
       }
       moveCounter++;
-      if (!beatenMoves.getChildren().isEmpty() && queen && canMove(next)) {
-        if (cross) {
-          List<Tree.Node<Square>> children = beatenMoves.getChildren();
-          Tree.Node<Square> newBeatenMoves = children.get(children.size() - 1);
-          walkCrossDiagonalForBeaten(next, previous, down, deep, true, newBeatenMoves, allowedMoves);
-          boolean hasBeatenOnCrossDiagonal = hasBeatenOnCrossDiagonal(next, previous);
-          if (hasBeatenOnCrossDiagonal) {
-            allowedMoves.add(next);
-          } else if (newBeatenMoves.getChildren().isEmpty()) {
-            walkAllowedMoves.add(next);
-          }
-        }
-      }
       previous = next;
     }
     while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
-
-    if (!walkAllowedMoves.isEmpty() && walkAllowedMoves.contains(previous)) {
-      allowedMoves.addAll(walkAllowedMoves);
-    }
   }
 
   private boolean hasBeatenOnCrossDiagonal(Square next, Square previous) {
