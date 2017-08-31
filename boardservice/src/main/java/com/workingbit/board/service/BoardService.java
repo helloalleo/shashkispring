@@ -36,19 +36,18 @@ public class BoardService {
     this.boardHistoryService = boardHistoryService;
   }
 
-  public Board createBoard(NewBoardRequest newBoardRequest) {
+  public BoardContainer createBoard(NewBoardRequest newBoardRequest) {
     BoardContainer boardContainer = initBoard(newBoardRequest.isFillBoard(), newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
-    Board board = new Board(boardContainer, newBoardRequest.isBlack(), newBoardRequest.getRules(), newBoardRequest.getSquareSize());
-    save(board);
+    save(boardContainer);
 //    boardHistoryService.addBoardAndSave(board);
-    return board;
+    return boardContainer;
   }
 
-  public PaginatedScanList<Board> findAll() {
+  public PaginatedScanList<BoardContainer> findAll() {
     return boardDao.findAll();
   }
 
-  public Optional<Board> findById(String boardId) {
+  public Optional<BoardContainer> findById(String boardId) {
     return boardDao.findById(boardId);
   }
 
@@ -79,7 +78,7 @@ public class BoardService {
       try {
         Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
         // remember selected square
-        board.getCurrentBoard().setSelectedSquare(square);
+        board.setSelectedSquare(square);
         boardDao.save(board);
         // highlight moves for the selected square
         return HighlightMoveUtil.highlight(board, square).orElse(Collections.emptyMap());
@@ -99,7 +98,7 @@ public class BoardService {
    * @throws BoardServiceException
    */
   public Map<String, Object> move(Map<String, Object> moveTo) throws BoardServiceException {
-    Optional<Board> boardOptional = findById((String) moveTo.get(boardId.name()));
+    Optional<BoardContainer> boardOptional = findById((String) moveTo.get(boardId.name()));
     return boardOptional.map(board -> {
       Square selected = mapper.convertValue(moveTo.get(selectedSquare.name()), Square.class);
       Square target = mapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
@@ -108,11 +107,10 @@ public class BoardService {
       boolean isUndo = (boolean) moveTo.getOrDefault(undoMove.name(), false);
       try {
         // create move service
-        MoveUtil moveUtil = new MoveUtil(board.getCurrentBoard(), selected, target, allowedMoves, beatenMoves, isUndo);
+        MoveUtil moveUtil = new MoveUtil(board, selected, target, allowedMoves, beatenMoves, isUndo);
         // do move should update board
         Pair<BoardContainer, Map<String, Object>> move = moveUtil.moveAndUpdateBoard();
-        board.setCurrentBoard(move.getLeft());
-        boardHistoryService.addBoardAndSave(board);
+//        boardHistoryService.addBoardAndSave(board);
         boardDao.save(board);
         return move.getRight();
       } catch (BoardServiceException e) {
@@ -126,7 +124,7 @@ public class BoardService {
     return move(undoMove);
   }
 
-  public void save(Board board) {
+  public void save(BoardContainer board) {
     boardDao.save(board);
   }
 }

@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AppProperties;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.share.common.EnumRules;
-import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Optional;
 
 import static com.workingbit.board.service.BoardUtils.findSquareByVH;
 import static org.mockito.Mockito.mock;
@@ -34,16 +31,16 @@ public class BaseServiceTest {
   @Autowired
   BoardDao boardDao;
 
-  Board getBoard() {
+  BoardContainer getBoard() {
     BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN, 60);
-    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
-    BoardContainer currentBoard = board.getCurrentBoard();
-    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
-    Square selectedSquare = squareByVH.get();
-    Draught draught = new Draught(5, 2, getRules().getDimension());
-    selectedSquare.setDraught(draught);
-    currentBoard.setSelectedSquare(selectedSquare);
-    return board;
+//    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
+//    BoardContainer currentBoard = board.getCurrentBoard();
+//    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
+//    Square selectedSquare = squareByVH.get();
+//    Draught draught = new Draught(5, 2, getRules().getDimension());
+//    selectedSquare.setDraught(draught);
+//    currentBoard.setSelectedSquare(selectedSquare);
+    return boardContainer;
   }
 
   Draught getDraught(int v, int h) {

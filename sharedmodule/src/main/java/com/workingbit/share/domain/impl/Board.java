@@ -2,7 +2,6 @@ package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.workingbit.board.common.DBConstants;
-import com.workingbit.share.common.EnumRules;
 import com.workingbit.share.domain.BaseDomain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,31 +27,12 @@ public class Board implements BaseDomain {
   @DynamoDBAttribute(attributeName = "currentBoard")
   private BoardContainer currentBoard;
 
-  /**
-   * Is player on the black side?
-   */
-  @DynamoDBAttribute(attributeName = "black")
-  private boolean black;
-
-  @DynamoDBTypeConvertedEnum
-  @DynamoDBAttribute(attributeName = "rules")
-  private EnumRules rules;
-
-  /**
-   * Size of one square
-   */
-  @DynamoDBAttribute(attributeName = "squareSize")
-  private int squareSize;
-
-  public Board(BoardContainer board, boolean black, EnumRules rules, int squareSize) {
+  public Board(BoardContainer board) {
     this.currentBoard = board;
-    this.black = black;
-    this.rules = rules;
-    this.squareSize = squareSize;
   }
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return new Board(id, ObjectUtils.clone(currentBoard), black, rules, squareSize);
+    return new Board(id, ObjectUtils.clone(currentBoard));
   }
 }

@@ -4,7 +4,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
-import com.workingbit.share.domain.impl.Board;
+import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +32,7 @@ public class BoardResource {
 
   @GetMapping()
   public Map<String, Object> findAll() {
-    PaginatedScanList<Board> boards = boardService.findAll();
+    PaginatedScanList<BoardContainer> boards = boardService.findAll();
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), boards);
@@ -41,7 +41,7 @@ public class BoardResource {
 
   @GetMapping(path = "/{id}")
   public Map<String, Object> findById(@PathVariable("id") String articleId) {
-    Optional<Board> boardOptional = boardService.findById(articleId);
+    Optional<BoardContainer> boardOptional = boardService.findById(articleId);
     return boardOptional.<Map<String, Object>>map(iBoard -> new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), iBoard);
@@ -50,7 +50,7 @@ public class BoardResource {
 
   @PostMapping()
   public Map<String, Object> create(@RequestBody NewBoardRequest newBoardRequest) {
-    Board board = boardService.createBoard(newBoardRequest);
+    BoardContainer board = boardService.createBoard(newBoardRequest);
     return new HashMap<String, Object>() {{
       put(ok.name(), true);
       put(data.name(), board);
