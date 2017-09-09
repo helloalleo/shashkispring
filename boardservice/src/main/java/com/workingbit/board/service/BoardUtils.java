@@ -43,8 +43,8 @@ public class BoardUtils {
         }
       }
     }
-    boardContainer.setBlackDraughts(blackDraughts);
-    boardContainer.setWhiteDraughts(whiteDraughts);
+//    boardContainer.setBlackDraughts(blackDraughts);
+//    boardContainer.setWhiteDraughts(whiteDraughts);
     boardContainer.setBoardSquares(boardSquares);
     List<Square> board = getSquares(boardSquares, rules.getDimension());
     boardContainer.setSquares(board);

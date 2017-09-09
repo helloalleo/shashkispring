@@ -78,7 +78,7 @@ public class BoardService {
       try {
         Square square = mapper.convertValue(highlightFor.get(selectedSquare.name()), Square.class);
         // remember selected square
-        board.setSelectedSquare(square);
+//        board.setSelectedSquare(square);
         boardDao.save(board);
         // highlight moves for the selected square
         return HighlightMoveUtil.highlight(board, square).orElse(Collections.emptyMap());

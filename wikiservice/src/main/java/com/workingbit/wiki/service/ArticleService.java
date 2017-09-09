@@ -2,7 +2,7 @@ package com.workingbit.wiki.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.domain.impl.Board;
+import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import com.workingbit.wiki.common.EnumResponse;
 import com.workingbit.wiki.dao.ArticleDao;
@@ -43,9 +43,9 @@ public class ArticleService {
   public HashMap<String, Object> createArticleAndBoard(Map<String, Object> articleAndBoard) {
     Article article = objectMapper.convertValue(articleAndBoard.get(EnumResponse.article.name()), Article.class);
     NewBoardRequest newBoardRequest = objectMapper.convertValue(articleAndBoard.get(EnumResponse.board.name()), NewBoardRequest.class);
-    final Board[] board = {null};
+    final BoardContainer[] board = {null};
     if (article.getBoardIds().isEmpty()) {
-      Optional<Board> boardOptional = boardRemoteService.createBoard(newBoardRequest);
+      Optional<BoardContainer> boardOptional = boardRemoteService.createBoard(newBoardRequest);
       boardOptional.ifPresent(iBoard -> {
         article.getBoardIds().add(iBoard.getId());
         board[0] = iBoard;

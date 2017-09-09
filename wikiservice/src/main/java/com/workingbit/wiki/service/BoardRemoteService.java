@@ -1,7 +1,7 @@
 package com.workingbit.wiki.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.share.domain.impl.Board;
+import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,10 +28,10 @@ public class BoardRemoteService {
     this.objectMapper = objectMapper;
   }
 
-  public Optional<Board> createBoard(NewBoardRequest newBoardRequest) {
+  public Optional<BoardContainer> createBoard(NewBoardRequest newBoardRequest) {
     Map<String, Object> post = restTemplateService.post(newBoardRequest);
     if (((boolean) post.get(ok.name()))) {
-      Board map = objectMapper.convertValue(post.get(data.name()), Board.class);
+      BoardContainer map = objectMapper.convertValue(post.get(data.name()), BoardContainer.class);
       return Optional.ofNullable(map);
     }
     return Optional.empty();

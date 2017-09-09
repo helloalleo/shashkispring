@@ -28,7 +28,7 @@ class HighlightMoveUtil {
     }
     this.selectedSquare = selectedSquare;
     selectedSquare.getDraught().setHighlighted(true);
-    board.setSelectedSquare(selectedSquare);
+//    board.setSelectedSquare(selectedSquare);
   }
 
   static Optional<Map<String, Object>> highlight(BoardContainer board, Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
