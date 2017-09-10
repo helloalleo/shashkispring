@@ -36,6 +36,10 @@ subprojects {
         }
     }
 
+    configurations {
+        generatedCompile
+    }
+
     dependencies {
         compile 'org.springframework.boot:spring-boot-starter-web'
         compile 'org.springframework.boot:spring-boot-starter-jersey'
@@ -50,10 +54,14 @@ subprojects {
 
         compile 'org.projectlombok:lombok:1.16.16'
 
-        compile "org.springframework.boot:spring-boot-starter-data-rest:${spring_boot_version}"
+        compile 'io.swagger:swagger-codegen:2.2.3'
 
-        compile 'io.springfox:springfox-swagger2:2.5.0'
-        compile 'io.springfox:springfox-swagger-ui:2.5.0'
+        generatedCompile "org.springframework.boot:spring-boot-starter-data-rest"
+        generatedCompile 'org.springframework.boot:spring-boot-starter-web'
+        generatedCompile project(':sharedmodule')
+
+        generatedCompile 'io.springfox:springfox-swagger2:2.5.0'
+        generatedCompile 'io.springfox:springfox-swagger-ui:2.5.0'
 
         testCompile 'io.github.robwin:assertj-swagger:0.6.0'
         testCompile 'org.assertj:assertj-core:3.8.0'
@@ -90,6 +98,7 @@ project(':boardservice') {
 
     bootRun {
         addResources = false
+//        classpath += sourceSets.generated.output
     }
 
     task stage(dependsOn: 'bootRepackage') {
@@ -123,6 +132,7 @@ project(':boardservice') {
             config.setAdditionalProperties([
                     'interfaceOnly' : 'true',
                     'apiPackage'    : apiPackage,
+                    'importMappings': 'board_container=com.workingbit.share.domain.impl.BoardContainer',
 //                    'modelPackage'  : 'com.dturan.model',
                     'sourceFolder'  : swaggerTargetFolder
             ])
@@ -133,6 +143,25 @@ project(':boardservice') {
     clean.doFirst {
         delete("${projectDir}/$swaggerTargetFolder")
     }
+
+    sourceSets {
+        generated {
+            compileClasspath = configurations.generatedCompile
+        }
+        main {
+            compileClasspath += generated.output
+            runtimeClasspath += generated.output
+        }
+        test {
+            compileClasspath += generated.output
+            runtimeClasspath += generated.output
+        }
+    }
+
+    compileGeneratedJava.dependsOn generateApi
+    classes.dependsOn generatedClasses
+    compileJava.dependsOn compileGeneratedJava
+    ideaModule.dependsOn generateApi
 }
 
 project(':wikiservice') {
@@ -150,6 +179,7 @@ project(':wikiservice') {
 
     bootRun {
         addResources = false
+//        classpath += sourceSets.generated.output
     }
 
     dependencies {
@@ -204,20 +234,25 @@ project(':wikiservice') {
     clean.doFirst {
         delete("${projectDir}/$swaggerTargetFolder")
     }
-}
 
-sourceSets {
-    generated {
-        compileClasspath = configurations.generatedCompile
+    sourceSets {
+        generated {
+            compileClasspath = configurations.generatedCompile
+        }
+        main {
+            compileClasspath += generated.output
+            runtimeClasspath += generated.output
+        }
+        test {
+            compileClasspath += generated.output
+            runtimeClasspath += generated.output
+        }
     }
-    main {
-        compileClasspath += generated.output
-        runtimeClasspath += generated.output
-    }
-    test {
-        compileClasspath += generated.output
-        runtimeClasspath += generated.output
-    }
+
+    compileGeneratedJava.dependsOn generateApi
+    classes.dependsOn generatedClasses
+    compileJava.dependsOn compileGeneratedJava
+    ideaModule.dependsOn generateApi
 }
 
 sourceCompatibility=1.8
@@ -242,7 +277,7 @@ buildscript {
 
         classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
 
-        classpath 'io.swagger:swagger-codegen:2.2.2'
+        classpath 'io.swagger:swagger-codegen:2.2.3'
     }
 }
 
@@ -266,3 +301,6 @@ task wrapper(type: Wrapper) {
 
 bootRepackage.enabled = false
 //ideaModule.dependsOn generateApi
+
+//classes.dependsOn generatedClasses
+//compileJava.dependsOn compileGeneratedJava

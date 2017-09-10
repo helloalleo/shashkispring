@@ -18,7 +18,7 @@ import static com.workingbit.wiki.common.EnumResponse.*;
  */
 @RestController
 @RequestMapping(ResourceConstants.ARTICLE)
-public class ArticleResource {
+public class ArticleResource  {
 
   private final ArticleService articleService;
 

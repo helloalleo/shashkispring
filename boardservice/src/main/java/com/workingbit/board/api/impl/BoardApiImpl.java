@@ -1,5 +1,6 @@
 package com.workingbit.board.api.impl;
 
+import com.workingbit.api.BoardApi;
 import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
@@ -24,7 +25,7 @@ import static com.workingbit.board.common.EnumResponse.ok;
  */
 @RestController
 @RequestMapping(ResourceConstants.BOARD)
-public class BoardApiImpl {
+public class BoardApiImpl implements BoardApi {
 
   private final BoardService boardService;
 
