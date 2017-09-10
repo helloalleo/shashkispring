@@ -1,69 +1,79 @@
-group 'com.workingbit.board'
-version '1.0-SNAPSHOT'
-
-//apply plugin: 'java'
-//apply plugin: 'eclipse'
-//apply plugin: 'application'
+//plugins {
+//    id 'org.detoeuf.swagger-codegen' version '1.7.4'
+//    id 'java'
+//}
 //
-//mainClassName = 'com.workingbit.board.LocalBoardApplication'
-
-// tag::repositories[]
+//apply plugin: 'org.detoeuf.swagger-codegen'
+//
 //repositories {
 //    mavenCentral()
+//    jcenter()
 //}
-// end::repositories[]
-//project(':boardservice') {
-//    apply plugin: 'application'
 //
-//    bootRepackage {
-//        mainClass = 'com.workingbit.board.LocalBoardApplication'
-//    }
+//def swaggerTargetFolder = file('swagger')
 //
-//    springBoot {
-//        mainClass = 'com.workingbit.board.LocalBoardApplication'
-//        executable = true
-//        buildInfo()
-//    }
+//swagger {
+//    inputSpec = "file://$projectDir/src/main/resources/boardservice-api.yaml"
+//    outputDir = swaggerTargetFolder
+//    lang = 'spring'
+//    ignoreFileOverride = "$projectDir/.swagger-codegen-ignore2"
 //
-//    bootRun {
-//        addResources = false
-//    }
+//    additionalProperties = [
+//            'interfaceOnly' : 'true',
+//            'apiPackage'    : 'com.workingbit.board.api',
+//            'dateLibrary'   : 'java8'
+//    ]
+//    importMappings = [
+//            'BoardContainer': 'com.workingbit.share.domain.impl.BoardContainer'
+//    ]
+//}
 //
-//    task stage(dependsOn: 'bootRepackage') {
-//    }
+//clean.doFirst {
+//    delete("$swaggerTargetFolder")
+//}
 //
-//    dependencies {
-//        compile project(':sharedmodule')
-//        compile project(':historymodule')
-//    }
-//
-//    task copyRuntimeLibs(type: Copy) {
-//        into "$buildDir/libs/deps/lib"
-//        from configurations.runtime
-//    }
-//
-//    task batchZip(type: Zip) {
-//        from sourceSets.main.output, "$buildDir/libs/deps"
+//sourceSets {
+//    swagger {
+//        java {
+//            srcDir file("${projectDir}/swagger/src/main/java")
+//        }
 //    }
 //}
-
-// tag::jar[]
-//jar {
-//    baseName = 'boardservice'
-//    version = '0.1.0'
+//
+//classes.dependsOn('swagger')
+//
+//ext {
+//    spring_boot_version = '1.5.6.RELEASE'
+//    jackson_version = '2.4.2'
+//    jersey_version = '1.18'
+//    jodatime_version = '2.3'
+//    junit_version = '4.8.1'
 //}
-// end::jar[]
-
-// tag::dependencies[]
-//sourceCompatibility = 1.8
-//targetCompatibility = 1.8
 //
 //dependencies {
-//    compile rootProject
+//    swaggerCompile "org.springframework.boot:spring-boot-starter-web:$spring_boot_version"
+//    swaggerCompile 'io.swagger:swagger-annotations:1.5.16'
+//    swaggerCompile 'com.squareup.okhttp:okhttp:2.7.5'
+//    swaggerCompile 'com.squareup.okhttp:logging-interceptor:2.7.5'
+//    swaggerCompile 'com.google.code.gson:gson:2.8.1'
 //
-//    testCompile rootProject
+//    compile sourceSets.swagger.output
+//
+//    compile "com.sun.jersey:jersey-client:$jersey_version"
+//    compile "com.sun.jersey.contribs:jersey-multipart:$jersey_version"
+//    compile "com.fasterxml.jackson.core:jackson-core:$jackson_version"
+//    compile "com.fasterxml.jackson.core:jackson-annotations:$jackson_version"
+//    compile "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
+//    compile "com.fasterxml.jackson.datatype:jackson-datatype-joda:2.1.5"
+//    compile "joda-time:joda-time:$jodatime_version"
+//    compile 'io.swagger:swagger-codegen:2.2.3'
+//
+//    testCompile "junit:junit:$junit_version"
+//
+//    runtime 'com.squareup.okhttp:okhttp:2.7.5'
+//    runtime 'com.squareup.okhttp:logging-interceptor:2.7.5'
+//    runtime 'com.google.code.gson:gson:2.8.1'
 //}
-// end::dependencies[]
 
-// tag::wrapper[]
-// end::wrapper[]
+group 'com.workingbit.board'
+version '1.0-SNAPSHOT'
