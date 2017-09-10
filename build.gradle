@@ -1,3 +1,6 @@
+import io.swagger.codegen.DefaultGenerator
+import io.swagger.codegen.config.CodegenConfigurator
+
 group 'com.workingbit.core'
 version '1.0-SNAPSHOT'
 
@@ -24,7 +27,6 @@ subprojects {
         maven { url 'https://oss.sonatype.org/content/repositories/releases' }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url 'http://repo.maven.apache.org/maven2' }
-        maven { url "http://dl.bintray.com/helloalleo/shashkionline" }
     }
 
     dependencyManagement {
@@ -38,17 +40,30 @@ subprojects {
         compile 'org.springframework.boot:spring-boot-starter-web'
         compile 'org.springframework.boot:spring-boot-starter-jersey'
         compile 'org.springframework.boot:spring-boot-devtools'
+
         compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
         compile 'com.amazonaws.serverless:aws-serverless-java-container-spring:0.5.1'
         compile 'com.amazonaws:aws-java-sdk-dynamodb'
+
         compile 'org.apache.commons:commons-lang3:3.5'
         compile 'org.apache.commons:commons-collections4:4.1'
+
         compile 'org.projectlombok:lombok:1.16.16'
+
+        compile "org.springframework.boot:spring-boot-starter-data-rest:${spring_boot_version}"
+
+        compile 'io.springfox:springfox-swagger2:2.5.0'
+        compile 'io.springfox:springfox-swagger-ui:2.5.0'
+
+        testCompile 'io.github.robwin:assertj-swagger:0.6.0'
+        testCompile 'org.assertj:assertj-core:3.8.0'
 
         testCompile 'org.springframework.boot:spring-boot-starter-test'
 //    testCompile group: 'junit', name: 'junit', version: '4.12'
     }
 }
+
+def apiPackage = 'com.workingbit.api'
 
 project(':sharedmodule') {
     bootRepackage.enabled = false
@@ -93,6 +108,31 @@ project(':boardservice') {
     task batchZip(type: Zip) {
         from sourceSets.main.output, "$buildDir/libs/deps"
     }
+
+    def swaggerSourceFile = "src/main/resources/boardservice-api.yaml"
+    def swaggerTargetFolder = 'src/generated/java'
+
+    task generateApi {
+        inputs.file("$projectDir/$swaggerSourceFile")
+        outputs.dir("$projectDir/$swaggerTargetFolder")
+        doLast {
+            def config = new CodegenConfigurator()
+            config.setInputSpec("file:///$projectDir/$swaggerSourceFile")
+            config.setOutputDir("$projectDir")
+            config.setLang('spring')
+            config.setAdditionalProperties([
+                    'interfaceOnly' : 'true',
+                    'apiPackage'    : apiPackage,
+//                    'modelPackage'  : 'com.dturan.model',
+                    'sourceFolder'  : swaggerTargetFolder
+            ])
+            new DefaultGenerator().opts(config.toClientOptInput()).generate()
+        }
+    }
+
+    clean.doFirst {
+        delete("${projectDir}/$swaggerTargetFolder")
+    }
 }
 
 project(':wikiservice') {
@@ -118,7 +158,12 @@ project(':wikiservice') {
 
     bootRun {
         addResources = false
+//        classpath += sourceSets.generated.output
     }
+
+//    jar {
+//        from sourceSets.generated.output
+//    }
 
     task stage(dependsOn: 'bootRepackage') {
     }
@@ -134,6 +179,44 @@ project(':wikiservice') {
 
     task batchZip(type: Zip) {
         from sourceSets.main.output, "$buildDir/libs/deps"
+    }
+    def swaggerSourceFile = "src/main/resources/wikiservice-api.yaml"
+    def swaggerTargetFolder = 'src/generated/java'
+
+    task generateApi {
+        inputs.file("$projectDir/$swaggerSourceFile")
+        outputs.dir("$projectDir/$swaggerTargetFolder")
+        doLast {
+            def config = new CodegenConfigurator()
+            config.setInputSpec("file:///$projectDir/$swaggerSourceFile")
+            config.setOutputDir("$projectDir")
+            config.setLang('spring')
+            config.setAdditionalProperties([
+                    'interfaceOnly' : 'true',
+                    'apiPackage'    : apiPackage,
+//                    'modelPackage'  : 'com.dturan.model',
+                    'sourceFolder'  : swaggerTargetFolder
+            ])
+            new DefaultGenerator().opts(config.toClientOptInput()).generate()
+        }
+    }
+
+    clean.doFirst {
+        delete("${projectDir}/$swaggerTargetFolder")
+    }
+}
+
+sourceSets {
+    generated {
+        compileClasspath = configurations.generatedCompile
+    }
+    main {
+        compileClasspath += generated.output
+        runtimeClasspath += generated.output
+    }
+    test {
+        compileClasspath += generated.output
+        runtimeClasspath += generated.output
     }
 }
 
@@ -151,14 +234,17 @@ buildscript {
     }
     dependencies {
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.5"
+
         classpath "net.ltgt.gradle:gradle-apt-plugin:0.9"
+
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
         classpath "org.springframework.build.gradle:propdeps-plugin:0.0.7"
+
         classpath "io.spring.gradle:dependency-management-plugin:0.6.1.RELEASE"
-        //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
+
+        classpath 'io.swagger:swagger-codegen:2.2.2'
     }
 }
-
 
 defaultTasks 'bootRun'
 
@@ -179,3 +265,4 @@ task wrapper(type: Wrapper) {
 }
 
 bootRepackage.enabled = false
+//ideaModule.dependsOn generateApi

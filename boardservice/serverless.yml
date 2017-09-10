@@ -99,10 +99,10 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
   Resources:
-    DynamoDbTableBoard:
+    DynamoDbTableBoardContainer:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: Board
+        TableName: BoardContainer
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -125,9 +125,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-    DynamoDBIamPolicyBoard:
+    DynamoDBIamPolicyBoardContainer:
       Type: AWS::IAM::Policy
-      DependsOn: DynamoDbTableBoard
+      DependsOn: DynamoDbTableBoardContainer
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -140,7 +140,7 @@ resources:
                 - dynamodb:PutItem
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
-              Resource: arn:aws:dynamodb:*:*:table/Board
+              Resource: arn:aws:dynamodb:*:*:table/BoardContainer
         Roles:
           - Ref: IamRoleLambdaExecution
     DynamoDBIamPolicyBoardHistory:
