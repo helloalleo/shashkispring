@@ -45,19 +45,26 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
       post:
         summary: Create a board
-        operationId: createBoards
+        operationId: createBoard
         tags:
-          - boards
+          - board
+        parameters:
+          - name: createBoardRequest
+            in: body
+            schema:
+              $ref: '#/definitions/CreateBoardRequest'
         responses:
           "201":
             description: Null response
+            schema:
+              $ref: '#/definitions/BoardContainer'
           default:
             description: unexpected error
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
     /board/{boardId}:
       get:
         summary: Info for a specific board
@@ -78,11 +85,83 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
+      delete:
+        summary: Delete a specific board
+        operationId: deleteBoardById
+        tags:
+          - board
+        parameters:
+          - name: boardId
+            in: path
+            required: true
+            description: The id of the board to delete
+            type: string
+        responses:
+          "200":
+            description: OK
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/ResponseError'
+    /board/{boardId}/highlight:
+      post:
+        summary: Info for a specific board
+        operationId: highlightSquare
+        tags:
+          - board
+        parameters:
+          - name: boardId
+            in: path
+            required: true
+            description: The id of the board to retrieve
+            type: string
+          - name: toHighlight
+            in: body
+            required: true
+            description: A square for wich highlight moves
+            schema:
+              $ref: '#/definitions/Square'
+        responses:
+          "200":
+            description: Expected response to a valid request
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/BeatenAndAllowedSquareMap'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/ResponseError'
   definitions:
+    # Mapped
     BoardContainer:
       type: object
-    Error:
+    Square:
+      type: object
+    # Defined here
+    CreateBoardRequest:
+      required:
+        - fillBoard
+        - black
+        - squareSize
+        - rules
+      properties:
+        fillBoard:
+          type: boolean
+        black:
+          type: boolean
+        squareSize:
+          type: integer
+          format: int32
+        rules:
+          type: string
+          enum:
+            - RUSSIAN
+            - RUSSIAN_GIVEAWAY
+            - INTERNATIONAL
+            - INTERNATIONAL_GIVEAWAY
+    ResponseError:
       required:
         - code
         - message
@@ -92,3 +171,22 @@
           format: int32
         message:
           type: string
+    SquareList:
+      properties:
+        allowed:
+          type: array
+          items:
+            $ref: '#/definitions/Square'
+        beaten:
+          type: array
+          items:
+            $ref: '#/definitions/Square'
+    BeatenAndAllowedSquareMap:
+      description: a (key, BeatenAndAllowedItem) map. `default` is an example key
+      properties:
+        default:
+          $ref: '#/definitions/Square'
+      additionalProperties:
+        type: array
+        items:
+          $ref: '#/definitions/Square'

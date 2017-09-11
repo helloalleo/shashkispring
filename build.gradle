@@ -102,8 +102,6 @@ project(':sharedmodule') {
 }
 
 project(':boardservice') {
-//    apply plugin: 'application'
-
     bootRepackage {
         mainClass = 'com.workingbit.board.LocalBoardApplication'
     }
@@ -116,7 +114,6 @@ project(':boardservice') {
 
     bootRun {
         addResources = false
-//        classpath += sourceSets.generated.output
     }
 
     task stage(dependsOn: 'bootRepackage') {
@@ -147,7 +144,8 @@ project(':boardservice') {
                     'dateLibrary'  : 'java8'
             ])
             config.setImportMappings([
-                    'BoardContainer': 'com.workingbit.share.domain.impl.BoardContainer'
+                    'BoardContainer': 'com.workingbit.share.domain.impl.BoardContainer',
+                    'Square': 'com.workingbit.share.domain.impl.Square'
             ])
             config.setIgnoreFileOverride("$projectDir/.swagger-codegen-ignore")
             new DefaultGenerator().opts(config.toClientOptInput()).generate()

@@ -113,7 +113,7 @@ public class BoardServiceTest extends BaseServiceTest {
       put(selectedSquare.name(), square);
       put(boardId.name(), board.getId());
     }};
-    Map<String, Object> highlight = boardService.highlight(hl);
+    Map<String, Object> highlight = boardService.highlight(boardId, hl);
     // find allowed and beaten
 //    List<Square> allowedMoves = (List<Square>) highlight.get(allowed.name());
 //    List<Draught> beatenMoves = (List<Draught>) highlight.get(beaten.name());
@@ -132,7 +132,7 @@ public class BoardServiceTest extends BaseServiceTest {
       put(selectedSquare.name(), newSource);
       put(boardId.name(), board.getId());
     }};
-    highlight = boardService.highlight(hl);
+    highlight = boardService.highlight(boardId, hl);
     // find allowed and beaten
 //    allowedMoves = (List<Square>) highlight.get(allowed.name());
 //    beatenMoves = (List<Draught>) highlight.get(beaten.name());

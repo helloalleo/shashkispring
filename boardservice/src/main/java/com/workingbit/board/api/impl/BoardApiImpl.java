@@ -1,23 +1,25 @@
 package com.workingbit.board.api.impl;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
+import com.workingbit.board.api.BoardApi;
 import com.workingbit.board.common.ResourceConstants;
+import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.model.BeatenAndAllowedSquareMap;
+import com.workingbit.board.model.CreateBoardRequest;
+import com.workingbit.board.model.ResponseError;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Square;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static com.workingbit.board.common.EnumResponse.message;
-import static com.workingbit.board.common.EnumResponse.ok;
 
 /**
  * Created by Aleksey Popryaduhin on 13:22 09/08/2017.
@@ -33,41 +35,43 @@ public class BoardApiImpl implements BoardApi {
     this.boardService = boardService;
   }
 
-//  @GetMapping()
-//  public Map<String, Object> findAll() {
-//    PaginatedScanList<BoardContainer> boards = boardService.findAll();
-//    return new HashMap<String, Object>() {{
-//      put(ok.name(), true);
-//      put(data.name(), boards);
-//    }};
-//  }
-
-  @GetMapping(path = "/{id}")
-  public ResponseEntity findById(@PathVariable("id") String articleId) {
-    Optional<BoardContainer> boardOptional = boardService.findById(articleId);
-    return boardOptional
-        .<ResponseEntity>map(boardContainer -> new ResponseEntity<>(boardContainer, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>("Board not found", HttpStatus.NOT_FOUND));
+  @Override
+  public ResponseEntity<List<BoardContainer>> listBoards(Integer limit) {
+    PaginatedScanList<BoardContainer> boardContainers = boardService.findAll();
+    return new ResponseEntity<>(boardContainers, HttpStatus.OK);
   }
 
-//  @PostMapping()
-//  public Map<String, Object> create(@RequestBody NewBoardRequest newBoardRequest) {
-//    BoardContainer board = boardService.createBoard(newBoardRequest);
-//    return new HashMap<String, Object>() {{
-//      put(ok.name(), true);
-//      put(data.name(), board);
-//    }};
-//  }
+  @Override
+  public ResponseEntity<BoardContainer> createBoard(CreateBoardRequest createBoardRequest) {
+    BoardContainer board = boardService.createBoard(createBoardRequest);
+    return new ResponseEntity<>(board, HttpStatus.OK);
+  }
 
-//  @DeleteMapping()
-//  public Map<String, Object> delete(String boardId) {
-//    boardService.delete(boardId);
-//    return new HashMap<String, Object>() {{
-//      put(ok.name(), true);
-//    }};
-//  }
-//
-//  @PostMapping(ResourceConstants.HIGHLIGHT)
+  @Override
+  public ResponseEntity<BoardContainer> findBoardById(String boardId) {
+    Optional<BoardContainer> boardContainerOptional = boardService.findById(boardId);
+    if (boardContainerOptional.isPresent()) {
+      return new ResponseEntity<>(boardContainerOptional.get(), HttpStatus.OK);
+    }
+    throw new BoardServiceError("Board not found");
+  }
+
+  @Override
+  public ResponseEntity<Void> deleteBoardById(String boardId) {
+    boardService.delete(boardId);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @Override
+  public ResponseEntity<List<BeatenAndAllowedSquareMap>> highlightSquare(String boardId, Square toHighlight) {
+    try {
+      BeatenAndAllowedSquareMap highlight = boardService.highlight(boardId, toHighlight);
+    } catch (BoardServiceException e) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  //  @PostMapping(ResourceConstants.HIGHLIGHT)
 //  public Map<String, Object> highlight(@RequestBody Map<String, Object> highlightFor) {
 //    try {
 //      Map<String, Object> highlighted = boardService.highlight(highlightFor);
@@ -106,17 +110,4 @@ public class BoardApiImpl implements BoardApi {
 //      return getErrorResponse(e);
 //    }
 //  }
-
-
-  // TOD Move to shared
-  private Map<String, Object> getErrorResponse(String msg) {
-    return new HashMap<String, Object>() {{
-      put(ok.name(), false);
-      put(message.name(), msg);
-    }};
-  }
-
-  private Map<String, Object> getErrorResponse(BoardServiceException e) {
-    return getErrorResponse(e.getMessage());
-  }
 }
