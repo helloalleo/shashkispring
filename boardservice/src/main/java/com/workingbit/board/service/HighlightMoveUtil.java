@@ -2,6 +2,7 @@ package com.workingbit.board.service;
 
 import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.model.BeatenAndAllowedSquareMap;
 import com.workingbit.share.common.Utils;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -31,20 +32,16 @@ class HighlightMoveUtil {
 //    board.setSelectedSquare(selectedSquare);
   }
 
-  static Optional<Map<String, Object>> highlight(BoardContainer board, Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
-    try {
+  static BeatenAndAllowedSquareMap highlight(BoardContainer board, Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
       // highlight moves for the selected square
       HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board, selectedSquare);
-      return Optional.of(highlightMoveUtil.findAllMoves());
-    } catch (BoardServiceException e) {
-      return Optional.empty();
-    }
+      return highlightMoveUtil.findAllMoves();
   }
 
   /**
    * Entry point for initially selected square
    */
-  private Map<String, Object> findAllMoves() throws BoardServiceException {
+  private BeatenAndAllowedSquareMap findAllMoves() throws BoardServiceException {
     List<Square> allowedMoves = new ArrayList<>();
     List<Square> beatenMoves = new ArrayList<>();
     Draught draught = selectedSquare.getDraught();
@@ -54,10 +51,10 @@ class HighlightMoveUtil {
     if (beatenMoves.isEmpty()) {
       findAllowedMoves(selectedSquare, allowedMoves, black, queen);
     }
-    Map<String, Object> allowedAndBeatenMap = new HashMap<>();
-    allowedAndBeatenMap.put(allowed.name(), allowedMoves);
-    allowedAndBeatenMap.put(beaten.name(), beatenMoves);
-    return allowedAndBeatenMap;
+    BeatenAndAllowedSquareMap beatenAndAllowedSquareMap = new BeatenAndAllowedSquareMap();
+    beatenAndAllowedSquareMap.put(allowed.name(), allowedMoves);
+    beatenAndAllowedSquareMap.put(beaten.name(), beatenMoves);
+    return beatenAndAllowedSquareMap;
   }
 
   private void findAllowedMoves(Square selectedSquare, List<Square> allowedMoves, boolean down, boolean queen) {

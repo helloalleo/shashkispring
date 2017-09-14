@@ -2,7 +2,7 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.impl.*;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.After;

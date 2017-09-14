@@ -1,6 +1,6 @@
 package com.workingbit.wiki.service;
 
-import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.share.domain.impl.NewBoardRequest;
 import com.workingbit.wiki.common.EnumResponse;

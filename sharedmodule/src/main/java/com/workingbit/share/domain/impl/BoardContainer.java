@@ -3,7 +3,7 @@ package com.workingbit.share.domain.impl;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.board.common.DBConstants;
-import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.BaseDomain;
 import lombok.AllArgsConstructor;

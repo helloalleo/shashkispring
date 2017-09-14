@@ -126,9 +126,8 @@
           "200":
             description: Expected response to a valid request
             schema:
-              type: array
-              items:
-                $ref: '#/definitions/BeatenAndAllowedSquareMap'
+              type: object
+              $ref: '#/definitions/BeatenAndAllowedSquareMap'
           default:
             description: unexpected error
             schema:
@@ -141,36 +140,9 @@
       type: object
     # Defined here
     CreateBoardRequest:
-      required:
-        - fillBoard
-        - black
-        - squareSize
-        - rules
-      properties:
-        fillBoard:
-          type: boolean
-        black:
-          type: boolean
-        squareSize:
-          type: integer
-          format: int32
-        rules:
-          type: string
-          enum:
-            - RUSSIAN
-            - RUSSIAN_GIVEAWAY
-            - INTERNATIONAL
-            - INTERNATIONAL_GIVEAWAY
+      type: object
     ResponseError:
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
+      type: object
     SquareList:
       properties:
         allowed:
@@ -185,8 +157,8 @@
       description: a (key, BeatenAndAllowedItem) map. `default` is an example key
       properties:
         default:
-          $ref: '#/definitions/Square'
+          $ref: '#/definitions/SquareList'
       additionalProperties:
         type: array
         items:
-          $ref: '#/definitions/Square'
+          $ref: '#/definitions/SquareList'

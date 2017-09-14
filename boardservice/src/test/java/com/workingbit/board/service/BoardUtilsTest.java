@@ -1,7 +1,7 @@
 package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.common.EnumRules;
+import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;

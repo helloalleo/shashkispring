@@ -79,6 +79,8 @@ subprojects {
         compile 'io.springfox:springfox-swagger2:2.5.0'
         compile 'io.springfox:springfox-swagger-ui:2.5.0'
 
+        compile 'ch.qos.logback:logback-classic:1.1.11'
+
         testCompile 'io.github.robwin:assertj-swagger:0.6.0'
         testCompile 'org.assertj:assertj-core:3.8.0'
 
@@ -102,9 +104,12 @@ project(':sharedmodule') {
 }
 
 project(':boardservice') {
-    bootRepackage {
-        mainClass = 'com.workingbit.board.LocalBoardApplication'
-    }
+    bootRepackage.enabled = false
+    findMainClass.enabled = false
+
+//    bootRepackage {
+//        mainClass = 'com.workingbit.board.LocalBoardApplication'
+//    }
 
     springBoot {
         mainClass = 'com.workingbit.board.LocalBoardApplication'
@@ -112,9 +117,9 @@ project(':boardservice') {
         buildInfo()
     }
 
-    bootRun {
-        addResources = false
-    }
+//    bootRun {
+//        addResources = false
+//    }
 
     task stage(dependsOn: 'bootRepackage') {
     }
@@ -145,7 +150,9 @@ project(':boardservice') {
             ])
             config.setImportMappings([
                     'BoardContainer': 'com.workingbit.share.domain.impl.BoardContainer',
-                    'Square': 'com.workingbit.share.domain.impl.Square'
+                    'Square': 'com.workingbit.share.domain.impl.Square',
+                    'CreateBoardRequest': 'com.workingbit.share.model.CreateBoardRequest',
+                    'ResponseError': 'com.workingbit.share.model.ResponseError'
             ])
             config.setIgnoreFileOverride("$projectDir/.swagger-codegen-ignore")
             new DefaultGenerator().opts(config.toClientOptInput()).generate()

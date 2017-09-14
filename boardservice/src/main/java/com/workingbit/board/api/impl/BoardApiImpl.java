@@ -6,8 +6,7 @@ import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.model.BeatenAndAllowedSquareMap;
-import com.workingbit.board.model.CreateBoardRequest;
-import com.workingbit.board.model.ResponseError;
+import com.workingbit.share.model.CreateBoardRequest;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -63,27 +61,15 @@ public class BoardApiImpl implements BoardApi {
   }
 
   @Override
-  public ResponseEntity<List<BeatenAndAllowedSquareMap>> highlightSquare(String boardId, Square toHighlight) {
+  public ResponseEntity<BeatenAndAllowedSquareMap> highlightSquare(String boardId, Square toHighlight) {
     try {
-      BeatenAndAllowedSquareMap highlight = boardService.highlight(boardId, toHighlight);
+      BeatenAndAllowedSquareMap highlighted = boardService.highlight(boardId, toHighlight);
+      return new ResponseEntity<>(highlighted, HttpStatus.OK);
     } catch (BoardServiceException e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  //  @PostMapping(ResourceConstants.HIGHLIGHT)
-//  public Map<String, Object> highlight(@RequestBody Map<String, Object> highlightFor) {
-//    try {
-//      Map<String, Object> highlighted = boardService.highlight(highlightFor);
-//      return new HashMap<String, Object>() {{
-//        put(ok.name(), true);
-//        put(data.name(), highlighted);
-//      }};
-//    } catch (BoardServiceException e) {
-//      return getErrorResponse(e);
-//    }
-//  }
-//
 //  @PostMapping(ResourceConstants.MOVE)
 //  public Map<String, Object> move(@RequestBody Map<String, Object> moveTo) {
 //    try {

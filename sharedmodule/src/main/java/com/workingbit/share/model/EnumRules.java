@@ -1,4 +1,4 @@
-package com.workingbit.share.common;
+package com.workingbit.share.model;
 
 /**
  * Created by Aleksey Popryaduhin on 09:32 10/08/2017.
