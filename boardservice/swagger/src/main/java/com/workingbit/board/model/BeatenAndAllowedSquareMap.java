@@ -16,7 +16,7 @@ import javax.validation.constraints.*;
  * a (key, BeatenAndAllowedItem) map. &#x60;default&#x60; is an example key
  */
 @ApiModel(description = "a (key, BeatenAndAllowedItem) map. `default` is an example key")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T18:21:44.143+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T21:06:54.348+03:00")
 
 public class BeatenAndAllowedSquareMap extends HashMap<String, List>  {
   @JsonProperty("default")

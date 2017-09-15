@@ -11,6 +11,8 @@ import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
@@ -29,13 +31,13 @@ public class BoardApiImpl implements BoardApi {
   }
 
   @Override
-  public ResponseEntity<BoardContainer> createBoard(CreateBoardRequest createBoardRequest) {
+  public ResponseEntity<BoardContainer> createBoard(@RequestBody CreateBoardRequest createBoardRequest) {
     BoardContainer board = boardService.createBoard(createBoardRequest);
     return new ResponseEntity<>(board, HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<BoardContainer> findBoardById(String boardId) {
+  public ResponseEntity<BoardContainer> findBoardById(@PathVariable String boardId) {
     Optional<BoardContainer> boardContainerOptional = boardService.findById(boardId);
     if (boardContainerOptional.isPresent()) {
       return new ResponseEntity<>(boardContainerOptional.get(), HttpStatus.OK);
@@ -44,13 +46,13 @@ public class BoardApiImpl implements BoardApi {
   }
 
   @Override
-  public ResponseEntity<Void> deleteBoardById(String boardId) {
+  public ResponseEntity<Void> deleteBoardById(@PathVariable String boardId) {
     boardService.delete(boardId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @Override
-  public ResponseEntity<BeatenAndAllowedSquareMap> highlightSquare(String boardId, Square toHighlight) {
+  public ResponseEntity<BeatenAndAllowedSquareMap> highlightSquare(@PathVariable String boardId, @RequestBody Square toHighlight) {
     try {
       BeatenAndAllowedSquareMap highlighted = boardService.highlight(boardId, toHighlight);
       return new ResponseEntity<>(highlighted, HttpStatus.OK);

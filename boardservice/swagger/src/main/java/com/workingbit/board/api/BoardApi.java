@@ -6,7 +6,7 @@
 package com.workingbit.board.api;
 
 import com.workingbit.board.model.BeatenAndAllowedSquareMap;
-import com.workingbit.board.model.ComponentsschemasError;
+import com.workingbit.board.model.Error;
 
 import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
@@ -23,32 +23,18 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T18:21:44.143+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T21:06:54.348+03:00")
 
 @Api(value = "board", description = "the board API")
 public interface BoardApi {
 
-    @ApiOperation(value = "Gets a board by ID.", notes = "", response = Void.class, tags={  })
-    @ApiResponses(value = {  })
-    
-    @RequestMapping(value = "/board/{boardId}",
-        produces = { "application/json" }, 
-        consumes = { "application/json" },
-        method = RequestMethod.GET)
-    default ResponseEntity<Void> boardBoardIdGet() {
-        // do some magic!
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
-
-
     @ApiOperation(value = "Create a board", notes = "", response = com.workingbit.share.domain.impl.BoardContainer.class, tags={ "board", })
     @ApiResponses(value = { 
         @ApiResponse(code = 201, message = "Null response", response = com.workingbit.share.domain.impl.BoardContainer.class),
-        @ApiResponse(code = 200, message = "unexpected error", response = ComponentsschemasError.class) })
+        @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     
     @RequestMapping(value = "/board",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.POST)
     default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> createBoard(@ApiParam(value = ""  )  @Valid @RequestBody com.workingbit.share.model.CreateBoardRequest createBoardRequest) {
         // do some magic!
@@ -59,11 +45,10 @@ public interface BoardApi {
     @ApiOperation(value = "Delete a specific board", notes = "", response = Void.class, tags={ "board", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "OK", response = Void.class),
-        @ApiResponse(code = 200, message = "unexpected error", response = ComponentsschemasError.class) })
+        @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     
     @RequestMapping(value = "/board/{boardId}",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.DELETE)
     default ResponseEntity<Void> deleteBoardById(@ApiParam(value = "The id of the board to delete",required=true ) @PathVariable("boardId") String boardId) {
         // do some magic!
@@ -71,14 +56,27 @@ public interface BoardApi {
     }
 
 
+    @ApiOperation(value = "Info for a specific board", notes = "", response = com.workingbit.share.domain.impl.BoardContainer.class, tags={ "board", })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Expected response to a valid request", response = com.workingbit.share.domain.impl.BoardContainer.class),
+        @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
+    
+    @RequestMapping(value = "/board/{boardId}",
+        produces = { "application/json" }, 
+        method = RequestMethod.GET)
+    default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> findBoardById(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId) {
+        // do some magic!
+        return new ResponseEntity<com.workingbit.share.domain.impl.BoardContainer>(HttpStatus.OK);
+    }
+
+
     @ApiOperation(value = "Info for a specific board", notes = "", response = BeatenAndAllowedSquareMap.class, tags={ "board", })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "Expected response to a valid request", response = BeatenAndAllowedSquareMap.class),
-        @ApiResponse(code = 200, message = "unexpected error", response = ComponentsschemasError.class) })
+        @ApiResponse(code = 200, message = "unexpected error", response = Error.class) })
     
     @RequestMapping(value = "/board/{boardId}/highlight",
         produces = { "application/json" }, 
-        consumes = { "application/json" },
         method = RequestMethod.POST)
     default ResponseEntity<BeatenAndAllowedSquareMap> highlightSquare(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId,@ApiParam(value = "A square for wich highlight moves" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.Square toHighlight) {
         // do some magic!

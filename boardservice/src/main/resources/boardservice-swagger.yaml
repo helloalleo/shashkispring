@@ -13,8 +13,8 @@
   basePath: "/v1"
   schemes:
     - "http"
-  consumes:
-    - "application/json"
+#  consumes:
+#    - "application/json"
   produces:
     - "application/json"
   paths:
@@ -37,41 +37,28 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/components/schemas/Error'
+              $ref: '#/definitions/Error'
     /board/{boardId}:
       get:
-        summary: Gets a board by ID.
-        response:
-          '200':
-            description: OK
-#            content:
-#              application/json:
+        summary: Info for a specific board
+        operationId: findBoardById
+        tags:
+          - board
+        parameters:
+          - name: boardId
+            in: path
+            required: true
+            description: The id of the board to retrieve
+            type: string
+        responses:
+          "200":
+            description: Expected response to a valid request
             schema:
               $ref: '#/definitions/BoardContainer'
-          '401':
-            $ref: '#/components/responses/Unauthorized'
-          '404':
-            $ref: '#/components/responses/NotFound'
-#      get:
-#        summary: Info for a specific board
-#        operationId: findBoardById
-#        tags:
-#          - board
-#        parameters:
-#          - name: boardId
-#            in: path
-#            required: true
-#            description: The id of the board to retrieve
-#            type: string
-#        responses:
-#          "200":
-#            description: Expected response to a valid request
-#            schema:
-#              $ref: '#/definitions/BoardContainer'
-#          default:
-#            description: unexpected error
-#            schema:
-#              $ref: '#/components/schemas/Error'
+          default:
+            description: unexpected error
+            schema:
+              $ref: '#/definitions/Error'
       delete:
         summary: Delete a specific board
         operationId: deleteBoardById
@@ -89,7 +76,7 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/components/schemas/Error'
+              $ref: '#/definitions/Error'
     /board/{boardId}/highlight:
       post:
         summary: Info for a specific board
@@ -117,7 +104,7 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/components/schemas/Error'
+              $ref: '#/definitions/Error'
     schemas:
       # Schema for error response body
       Error:
@@ -159,26 +146,18 @@
         type: array
         items:
           $ref: '#/definitions/MovesList'
-
-  components:
-    responses:
-      NotFound:
-        description: The specified resource was not found
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Error'
-      Unauthorized:
-        description: Unauthorized
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Error'
-    schemas:
-      Error:
-        type: object
-        properties:
-          code:
-            type: integer
-          message:
-            type: string
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    NotFound:
+      description: The specified resource was not found
+      schema:
+        $ref: '#/definitions/Error'
+    Unauthorized:
+      description: Unauthorized
+      schema:
+        $ref: '#/definitions/Error'
