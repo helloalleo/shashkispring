@@ -1,5 +1,9 @@
 package com.workingbit.board.api.impl;
 
+import com.workingbit.board.service.BaseServiceTest;
+import com.workingbit.board.service.BoardService;
+import com.workingbit.share.domain.impl.BoardContainer;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by Aleksey Popryaduhin on 09:26 15/09/2017.
@@ -21,17 +23,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BoardApiImplTest {
+public class BoardApiImplTest extends BaseServiceTest {
 
   @Autowired
   private MockMvc mockMvc;
 
+  @Autowired
+  private BoardService boardService;
+
+  private BoardContainer board;
+
+  @Before
+  public void setUp() {
+    this.board = boardService.createBoard(getCreateBoardRequest());
+  }
+
+  public void tearDown() {
+    boardService.delete(board.getId());
+  }
+
   @Test
   public void checkHealth_returnsTenants() throws Exception {
-    mockMvc.perform(get("/board/1"))
-        .andExpect(content().contentType(APPLICATION_JSON))
+    mockMvc.perform(get("/board/" + board.getId()))
+        .andExpect(content().contentType(APPLICATION_JSON_UTF8))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.statusCode").value(equalTo(200)));
+        .andExpect(jsonPath("$.id").value(equalTo(board.getId())));
 //        .andExpect(jsonPath("$.tenants").value(Matchers.containsInAnyOrder(MAIN_TEST_TENANT_NAME, SECOND_TEST_TENANT_NAME)));
   }
 

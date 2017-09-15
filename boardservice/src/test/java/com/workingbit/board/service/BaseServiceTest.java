@@ -3,6 +3,7 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.config.AppProperties;
 import com.workingbit.board.dao.BoardDao;
+import com.workingbit.share.model.CreateBoardRequest;
 import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -68,5 +69,14 @@ public class BaseServiceTest {
     when(appProperties.getRegion()).thenReturn("eu-central-1");
     BoardDao boardDao = new BoardDao(appProperties);
     return new BoardService(boardDao, objectMapper, boardHistoryService);
+  }
+
+  protected CreateBoardRequest getCreateBoardRequest() {
+    CreateBoardRequest createBoardRequest = new CreateBoardRequest();
+    createBoardRequest.setBlack(false);
+    createBoardRequest.setFillBoard(false);
+    createBoardRequest.setRules(EnumRules.RUSSIAN);
+    createBoardRequest.setSquareSize(60);
+    return createBoardRequest;
   }
 }

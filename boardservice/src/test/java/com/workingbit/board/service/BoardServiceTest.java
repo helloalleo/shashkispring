@@ -4,7 +4,6 @@ import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
-import com.workingbit.share.model.EnumRules;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -179,14 +178,5 @@ public class BoardServiceTest extends BaseServiceTest {
 //    board.getCurrentBoard().setSelectedSquare(square);
 //    boardDao.save(board);
     return board;
-  }
-
-  protected CreateBoardRequest getCreateBoardRequest() {
-    CreateBoardRequest createBoardRequest = new CreateBoardRequest();
-    createBoardRequest.setBlack(false);
-    createBoardRequest.setFillBoard(false);
-    createBoardRequest.setRules(EnumRules.RUSSIAN);
-    createBoardRequest.setSquareSize(60);
-    return createBoardRequest;
   }
 }
