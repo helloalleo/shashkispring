@@ -26,23 +26,26 @@ public class BoardContainer implements BaseDomain {
   private String id;
 
 //  @DynamoDBTypeConvertedJson(targetType = BoardHistory.class)
-//  @DynamoDBAttribute(attributeName = "boardHistory", mappedBy = "")
+  @DynamoDBAttribute(attributeName = "boardHistoryId")
   private String boardHistoryId;
 
   /**
    * Board diagonals
    */
+  @DynamoDBIgnore
   @JsonIgnore
   private List<List<Square>> diagonals = new ArrayList<>();
 
   /**
    * Squares for API
    */
+  @DynamoDBIgnore
   private List<Square> squares = new ArrayList<>();
 
   /**
    * Squares without nulls
    */
+  @DynamoDBIgnore
   @JsonIgnore
   private List<Square> boardSquares = new ArrayList<>();
 

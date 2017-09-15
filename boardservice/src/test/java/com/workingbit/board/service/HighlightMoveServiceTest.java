@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Aleksey Popryaduhin on 20:01 10/08/2017.
  */
-public class HighlightMoveUtilTest {
+public class HighlightMoveServiceTest {
   @Before
   public void setUp() throws Exception {
   }
@@ -33,7 +33,7 @@ public class HighlightMoveUtilTest {
   public void findAllowedMoves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
     Square square = getSquareByVHWithDraught(board, "c3"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("d4,b4", highlight, allowed);
   }
 
@@ -42,7 +42,7 @@ public class HighlightMoveUtilTest {
     BoardContainer board = getBoard();
     Square square = getSquareByVHWithDraught(board, "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("d4", highlight, beaten);
     testCollection("e5", highlight, allowed);
   }
@@ -54,7 +54,7 @@ public class HighlightMoveUtilTest {
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("d4,d6,b6", highlight, beaten);
     testCollection("c7,e5,a5", highlight, allowed);
   }
@@ -68,7 +68,7 @@ public class HighlightMoveUtilTest {
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e7"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e5"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("c3,b6,e7,e5", highlight, beaten);
     testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6", highlight, allowed);
   }
@@ -83,7 +83,7 @@ public class HighlightMoveUtilTest {
     squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "f6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "f4"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("b2,b4,d4,d6,f6,f4", highlight, beaten);
     testCollection("a3,c5,e3,g5,e7", highlight, allowed);
   }
@@ -96,7 +96,7 @@ public class HighlightMoveUtilTest {
     Square squareBlack = getSquareByVHWithBlackDraught(board, "c3"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e5"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("c3,b6,e5", highlight, beaten);
     testCollection("h2,g3,c7,f4,a5", highlight, allowed);
   }
@@ -109,7 +109,7 @@ public class HighlightMoveUtilTest {
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d2"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e7"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("d2,b6,e7", highlight, beaten);
     testCollection("b4,a5,d8,f8,f6,g5,h4", highlight, allowed);
   }
@@ -120,7 +120,7 @@ public class HighlightMoveUtilTest {
     Square square = getSquareByVHWithDraught(board, "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("d4,d6", highlight, beaten);
     testCollection("c7,e5", highlight, allowed);
   }
@@ -130,7 +130,7 @@ public class HighlightMoveUtilTest {
     BoardContainer board = getBoard();
     Square square = getSquareByVHWithDraught(board, "c3");
     square.getDraught().setQueen(true);
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("d4,e5,f6,g7,h8,b2,a1,b4,a5,d2,e1", highlight, allowed);
   }
 
@@ -140,7 +140,7 @@ public class HighlightMoveUtilTest {
     Square square = getSquareByVHWithDraught(board, "c3");
     square.getDraught().setQueen(true);
     Square blackSquare = getSquareByVHWithBlackDraught(board, "e5");
-    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
     testCollection("e5", highlight, beaten);
     testCollection("f6,g7,h8", highlight, allowed);
   }

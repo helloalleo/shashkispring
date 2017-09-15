@@ -71,7 +71,7 @@ public class ArticleService {
   }
 
   public List<Article> findAll() {
-    return articleDao.findAll();
+    return articleDao.findAll(limit);
   }
 
   public Optional<Article> findById(String articleId) {

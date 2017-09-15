@@ -19,7 +19,7 @@ public class CreateBoardRequest   {
   private Boolean black = null;
 
   @JsonProperty("squareSize")
-  private Integer squareSize = null;
+  private Integer squareSize = 1;
 
   @JsonProperty("rules")
   private EnumRules rules = null;

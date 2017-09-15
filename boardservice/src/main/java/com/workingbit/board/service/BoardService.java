@@ -51,8 +51,8 @@ public class BoardService {
     return boardContainer;
   }
 
-  public PaginatedScanList<BoardContainer> findAll() {
-    return boardDao.findAll();
+  public PaginatedScanList<BoardContainer> findAll(Integer limit) {
+    return boardDao.findAll(limit);
   }
 
   public Optional<BoardContainer> findById(String boardId) {
@@ -87,7 +87,7 @@ public class BoardService {
 //        board.setSelectedSquare(square);
         boardDao.save(board);
         // highlight moves for the selected square
-        return HighlightMoveUtil.highlight(board, toHighlight);
+        return HighlightMoveService.highlight(board, toHighlight);
       } catch (BoardServiceException | InterruptedException | ExecutionException e) {
         e.printStackTrace();
         return null;
@@ -125,10 +125,10 @@ public class BoardService {
     }).orElseThrow(getBoardServiceExceptionSupplier("Move not allowed"));
   }
 
-  public Map<String, Object> undo(String boardId) throws BoardServiceException {
-    Map<String, Object> undoMove = boardHistoryService.undo(boardId);
-    return move(undoMove);
-  }
+//  public Map<String, Object> undo(String boardId) throws BoardServiceException {
+//    Map<String, Object> undoMove = boardHistoryService.undo(boardId);
+//    return move(undoMove);
+//  }
 
   public void save(BoardContainer board) {
     boardDao.save(board);

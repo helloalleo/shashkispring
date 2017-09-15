@@ -5,8 +5,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.config.AppProperties;
-import com.workingbit.history.domain.impl.BoardHistory;
 import com.workingbit.share.dao.BaseDao;
+import com.workingbit.share.domain.impl.BoardHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

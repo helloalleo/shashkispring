@@ -152,8 +152,7 @@ project(':boardservice') {
             config.setImportMappings([
                     'BoardContainer': 'com.workingbit.share.domain.impl.BoardContainer',
                     'Square': 'com.workingbit.share.domain.impl.Square',
-                    'CreateBoardRequest': 'com.workingbit.share.model.CreateBoardRequest',
-                    'ResponseError': 'com.workingbit.share.model.ResponseError'
+                    'CreateBoardRequest': 'com.workingbit.share.model.CreateBoardRequest'
             ])
             config.setIgnoreFileOverride("$projectDir/.swagger-codegen-ignore")
             new DefaultGenerator().opts(config.toClientOptInput()).generate()
@@ -182,8 +181,9 @@ project(':boardservice') {
     }
 
     dependencies {
+        compile 'com.github.rutledgepaulv:prune:1.3'
+
         compile project(':sharedmodule')
-        compile project(':historymodule')
 
         swaggerCompile "org.springframework.boot:spring-boot-starter-web"
         swaggerCompile 'io.swagger:swagger-annotations:1.5.16'

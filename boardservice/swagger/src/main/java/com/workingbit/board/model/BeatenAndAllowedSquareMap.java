@@ -3,7 +3,7 @@ package com.workingbit.board.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.workingbit.board.model.SquareList;
+import com.workingbit.board.model.MovesList;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.HashMap;
@@ -16,13 +16,13 @@ import javax.validation.constraints.*;
  * a (key, BeatenAndAllowedItem) map. &#x60;default&#x60; is an example key
  */
 @ApiModel(description = "a (key, BeatenAndAllowedItem) map. `default` is an example key")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T10:40:44.226+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T18:21:44.143+03:00")
 
 public class BeatenAndAllowedSquareMap extends HashMap<String, List>  {
   @JsonProperty("default")
-  private SquareList _default = null;
+  private MovesList _default = null;
 
-  public BeatenAndAllowedSquareMap _default(SquareList _default) {
+  public BeatenAndAllowedSquareMap _default(MovesList _default) {
     this._default = _default;
     return this;
   }
@@ -35,11 +35,11 @@ public class BeatenAndAllowedSquareMap extends HashMap<String, List>  {
 
   @Valid
 
-  public SquareList getDefault() {
+  public MovesList getDefault() {
     return _default;
   }
 
-  public void setDefault(SquareList _default) {
+  public void setDefault(MovesList _default) {
     this._default = _default;
   }
 

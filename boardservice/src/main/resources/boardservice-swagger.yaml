@@ -10,7 +10,7 @@
     license:
       name: "MIT"
   host: "localhost:8002"
-  basePath: "/board"
+  basePath: "/v1"
   schemes:
     - "http"
   consumes:
@@ -19,33 +19,6 @@
     - "application/json"
   paths:
     /board:
-      get:
-        summary: List all boards
-        operationId: listBoards
-        tags:
-          - boards
-        parameters:
-          - name: limit
-            in: query
-            description: How many items to return at one time (max 100)
-            required: false
-            type: integer
-            format: int32
-        responses:
-          "200":
-            description: An paged array of boards
-            headers:
-              x-next:
-                type: string
-                description: A link to the next page of responses
-            schema:
-              type: array
-              items:
-                $ref: '#/definitions/BoardContainer'
-          default:
-            description: unexpected error
-            schema:
-              $ref: '#/definitions/ResponseError'
       post:
         summary: Create a board
         operationId: createBoard
@@ -64,28 +37,41 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/definitions/ResponseError'
+              $ref: '#/components/schemas/Error'
     /board/{boardId}:
       get:
-        summary: Info for a specific board
-        operationId: findBoardById
-        tags:
-          - board
-        parameters:
-          - name: boardId
-            in: path
-            required: true
-            description: The id of the board to retrieve
-            type: string
-        responses:
-          "200":
-            description: Expected response to a valid request
+        summary: Gets a board by ID.
+        response:
+          '200':
+            description: OK
+#            content:
+#              application/json:
             schema:
               $ref: '#/definitions/BoardContainer'
-          default:
-            description: unexpected error
-            schema:
-              $ref: '#/definitions/ResponseError'
+          '401':
+            $ref: '#/components/responses/Unauthorized'
+          '404':
+            $ref: '#/components/responses/NotFound'
+#      get:
+#        summary: Info for a specific board
+#        operationId: findBoardById
+#        tags:
+#          - board
+#        parameters:
+#          - name: boardId
+#            in: path
+#            required: true
+#            description: The id of the board to retrieve
+#            type: string
+#        responses:
+#          "200":
+#            description: Expected response to a valid request
+#            schema:
+#              $ref: '#/definitions/BoardContainer'
+#          default:
+#            description: unexpected error
+#            schema:
+#              $ref: '#/components/schemas/Error'
       delete:
         summary: Delete a specific board
         operationId: deleteBoardById
@@ -103,7 +89,7 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/definitions/ResponseError'
+              $ref: '#/components/schemas/Error'
     /board/{boardId}/highlight:
       post:
         summary: Info for a specific board
@@ -131,7 +117,20 @@
           default:
             description: unexpected error
             schema:
-              $ref: '#/definitions/ResponseError'
+              $ref: '#/components/schemas/Error'
+    schemas:
+      # Schema for error response body
+      Error:
+        type: object
+        properties:
+          code:
+            type: string
+          message:
+            type: string
+        required:
+          - code
+          - message
+
   definitions:
     # Mapped
     BoardContainer:
@@ -141,9 +140,7 @@
     # Defined here
     CreateBoardRequest:
       type: object
-    ResponseError:
-      type: object
-    SquareList:
+    MovesList:
       properties:
         allowed:
           type: array
@@ -157,8 +154,31 @@
       description: a (key, BeatenAndAllowedItem) map. `default` is an example key
       properties:
         default:
-          $ref: '#/definitions/SquareList'
+          $ref: '#/definitions/MovesList'
       additionalProperties:
         type: array
         items:
-          $ref: '#/definitions/SquareList'
+          $ref: '#/definitions/MovesList'
+
+  components:
+    responses:
+      NotFound:
+        description: The specified resource was not found
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+      Unauthorized:
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Error'
+    schemas:
+      Error:
+        type: object
+        properties:
+          code:
+            type: integer
+          message:
+            type: string

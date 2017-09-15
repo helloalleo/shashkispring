@@ -1,8 +1,8 @@
 package com.workingbit.wiki.service;
 
-import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.domain.impl.NewBoardRequest;
+import com.workingbit.share.model.CreateBoardRequest;
+import com.workingbit.share.model.EnumRules;
 import com.workingbit.wiki.common.EnumResponse;
 import org.junit.After;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class ArticleServiceTest {
 
   @Test
   public void delete() throws Exception {
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getNewBoardRequest()));
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getCreateBoardRequest()));
     Article iArticle = (Article) save.get(EnumResponse.article.name());
     articleService.delete(iArticle.getId());
     Optional<Article> byId = articleService.findById(iArticle.getId());
@@ -33,7 +33,7 @@ public class ArticleServiceTest {
 
   @Test
   public void findById() throws Exception {
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getNewBoardRequest()));
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getCreateBoardRequest()));
     Article iArticle = (Article) save.get(EnumResponse.article.name());
     toDelete(iArticle);
     Optional<Article> byId = articleService.findById(iArticle.getId());
@@ -44,7 +44,7 @@ public class ArticleServiceTest {
   public void publishArticle() throws Exception {
     Article article = getArticle();
     article.setNewAdded(true);
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
     Article iArticle = (Article) save.get(EnumResponse.article.name());
     toDelete(iArticle);
     boolean publishArticle = articleService.publishArticle(iArticle);
@@ -58,7 +58,7 @@ public class ArticleServiceTest {
   public void findPublishedArticles() throws Exception {
     Article article = getArticle();
     article.setNewAdded(true);
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
     Article iArticle = (Article) save.get(EnumResponse.article.name());
     toDelete(iArticle);
     boolean publishArticle = articleService.publishArticle(iArticle);
@@ -79,7 +79,7 @@ public class ArticleServiceTest {
   @Test
   public void save() throws Exception {
     Article article = getArticle();
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
     Article iArticle = (Article) save.get(EnumResponse.article.name());
     Optional<Article> articleOptional = articleService.findById(iArticle.getId());
     assertTrue(articleOptional.isPresent());
@@ -91,16 +91,16 @@ public class ArticleServiceTest {
   @Test
   public void findAll() throws Exception {
     Article article = getArticle();
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getNewBoardRequest()));
+    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
     Article iArticle = (Article) save.get(EnumResponse.article.name());
     toDelete(iArticle);
     assertTrue(articleService.findAll().contains(iArticle));
   }
 
-  private Map<String, Object> getArticleAndBoard(Article article, NewBoardRequest newBoardRequest) {
+  private Map<String, Object> getArticleAndBoard(Article article, CreateBoardRequest newBoardRequest) {
     return new HashMap<String, Object>() {{
       put(EnumResponse.article.name(), article);
-      put(EnumResponse.board.name(), getNewBoardRequest());
+      put(EnumResponse.board.name(), getCreateBoardRequest());
     }};
   }
 
@@ -114,7 +114,11 @@ public class ArticleServiceTest {
     return new Article("alex", "test1", "article1");
   }
 
-  private NewBoardRequest getNewBoardRequest() {
-    return new NewBoardRequest(true, false, EnumRules.RUSSIAN, 60);
+  private CreateBoardRequest getCreateBoardRequest() {
+    CreateBoardRequest createBoardRequest = new CreateBoardRequest();
+    createBoardRequest.setFillBoard(true);
+    createBoardRequest.setBlack(false);
+    createBoardRequest.setRules(EnumRules.RUSSIAN);
+    return createBoardRequest;
   }
 }

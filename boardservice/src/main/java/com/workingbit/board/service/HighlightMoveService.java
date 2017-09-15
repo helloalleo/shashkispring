@@ -3,6 +3,7 @@ package com.workingbit.board.service;
 import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.model.BeatenAndAllowedSquareMap;
+import com.workingbit.board.model.MovesList;
 import com.workingbit.share.common.Utils;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -12,18 +13,16 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static com.workingbit.board.common.EnumSearch.allowed;
-import static com.workingbit.board.common.EnumSearch.beaten;
 import static com.workingbit.board.service.BoardUtils.isSubDiagonal;
 
 /**
  * Created by Aleksey Popryaduhin on 19:39 10/08/2017.
  */
-class HighlightMoveUtil {
+class HighlightMoveService {
 
   private Square selectedSquare;
 
-  private HighlightMoveUtil(BoardContainer board, Square selectedSquare) throws BoardServiceException {
+  private HighlightMoveService(BoardContainer board, Square selectedSquare) throws BoardServiceException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
@@ -34,8 +33,8 @@ class HighlightMoveUtil {
 
   static BeatenAndAllowedSquareMap highlight(BoardContainer board, Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
       // highlight moves for the selected square
-      HighlightMoveUtil highlightMoveUtil = new HighlightMoveUtil(board, selectedSquare);
-      return highlightMoveUtil.findAllMoves();
+      HighlightMoveService highlightMoveService = new HighlightMoveService(board, selectedSquare);
+      return highlightMoveService.findAllMoves();
   }
 
   /**
@@ -51,9 +50,13 @@ class HighlightMoveUtil {
     if (beatenMoves.isEmpty()) {
       findAllowedMoves(selectedSquare, allowedMoves, black, queen);
     }
+    MovesList movesList = new MovesList();
+    movesList.setBeaten(beatenMoves);
+    movesList.setAllowed(allowedMoves);
+
     BeatenAndAllowedSquareMap beatenAndAllowedSquareMap = new BeatenAndAllowedSquareMap();
-    beatenAndAllowedSquareMap.put(allowed.name(), allowedMoves);
-    beatenAndAllowedSquareMap.put(beaten.name(), beatenMoves);
+    beatenAndAllowedSquareMap.setDefault(movesList);
+
     return beatenAndAllowedSquareMap;
   }
 

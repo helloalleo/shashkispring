@@ -1,6 +1,5 @@
 package com.workingbit.board.api.impl;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.workingbit.board.api.BoardApi;
 import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.board.exception.BoardServiceException;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,12 +26,6 @@ public class BoardApiImpl implements BoardApi {
   @Autowired
   public BoardApiImpl(BoardService boardService) {
     this.boardService = boardService;
-  }
-
-  @Override
-  public ResponseEntity<List<BoardContainer>> listBoards(Integer limit) {
-    PaginatedScanList<BoardContainer> boardContainers = boardService.findAll();
-    return new ResponseEntity<>(boardContainers, HttpStatus.OK);
   }
 
   @Override

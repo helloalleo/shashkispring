@@ -51,8 +51,11 @@ public class BaseDao<T> {
     dynamoDBMapper.save(entity);
   }
 
-  public PaginatedScanList<T> findAll() {
+  public PaginatedScanList<T> findAll(Integer limit) {
     DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression();
+    if (limit != null) {
+      dynamoDBQueryExpression.setLimit(limit);
+    }
     return dynamoDBMapper.scan(clazz, dynamoDBQueryExpression);
   }
 

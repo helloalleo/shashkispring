@@ -1,17 +1,10 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.dao.BoardHistoryDao;
-import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.history.domain.impl.BoardHistory;
-import com.workingbit.history.service.BoardHistoryManager;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -40,7 +33,7 @@ public class BoardHistoryService {
 //    boardHistoryManager.addBoard(currentBoard);
 //    boardHistoryDao.save(boardHistoryManager.getBoardHistory());
 //  }
-
+/*
   public Map<String, Object> undo(String boardId) throws BoardServiceException {
     // find history for given board
     Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findByBoardId(boardId);
@@ -68,7 +61,7 @@ public class BoardHistoryService {
     }
     return Collections.emptyMap();
   }
-
+*/
   public Optional<BoardHistory> getHistory(String boardId) {
     return boardHistoryDao.findByBoardId(boardId);
   }

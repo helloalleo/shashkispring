@@ -22,7 +22,7 @@ public class MoveUtilTest extends BaseServiceTest {
 //    ISquare square = getSquareByVH(board, 5, 2);
 //    square.setDraught(draught);
 //    ISquare target = getSquareByVH(board, 4, 3);
-//    HighlightMoveUtil highlightMoveService = new HighlightMoveUtil(board, square, getRules());
+//    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
 //    Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
 //    List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
 //    List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());
