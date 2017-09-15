@@ -13,7 +13,7 @@ import javax.validation.constraints.*;
 /**
  * SquareList
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-14T22:31:52.798+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-15T10:40:44.226+03:00")
 
 public class SquareList   {
   @JsonProperty("allowed")

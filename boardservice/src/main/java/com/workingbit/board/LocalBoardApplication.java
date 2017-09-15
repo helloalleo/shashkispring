@@ -1,12 +1,15 @@
 package com.workingbit.board;
 
+import com.workingbit.board.config.LambdaConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
  * Created by Aleksey Popryaduhin on 14:03 10/08/2017.
  */
+@EnableSwagger2
 @SpringBootApplication
 public class LocalBoardApplication {
 

@@ -61,9 +61,10 @@ subprojects {
 
     dependencies {
         compile 'org.springframework.boot:spring-boot-starter-web'
+        compile 'org.springframework.boot:spring-boot-starter-web-services'
         compile 'org.springframework.boot:spring-boot-starter-jersey'
         compile 'org.springframework.boot:spring-boot-devtools'
-        compile "org.springframework.boot:spring-boot-starter-data-rest"
+//        compile "org.springframework.boot:spring-boot-starter-data-rest"
 
         compile 'com.amazonaws:aws-lambda-java-core:1.1.0'
         compile 'com.amazonaws.serverless:aws-serverless-java-container-spring:0.5.1'
@@ -76,8 +77,8 @@ subprojects {
 
         compile 'io.swagger:swagger-codegen:2.2.3'
 
-        compile 'io.springfox:springfox-swagger2:2.5.0'
-        compile 'io.springfox:springfox-swagger-ui:2.5.0'
+        compile 'io.springfox:springfox-swagger2:2.7.0'
+        compile 'io.springfox:springfox-swagger-ui:2.7.0'
 
         compile 'ch.qos.logback:logback-classic:1.1.11'
 
@@ -133,7 +134,7 @@ project(':boardservice') {
         from sourceSets.main.output, "$buildDir/libs/deps"
     }
 
-    def swaggerSourceFile = 'src/main/resources/boardservice-api.yaml'
+    def swaggerSourceFile = 'src/main/resources/boardservice-swagger.yaml'
     task generateApi {
         inputs.file("$projectDir/$swaggerSourceFile")
         outputs.dir("$projectDir/$swaggerTargetFolder")

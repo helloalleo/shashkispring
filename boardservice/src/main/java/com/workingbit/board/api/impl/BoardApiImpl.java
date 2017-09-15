@@ -2,18 +2,16 @@ package com.workingbit.board.api.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.workingbit.board.api.BoardApi;
-import com.workingbit.board.common.ResourceConstants;
 import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.model.BeatenAndAllowedSquareMap;
-import com.workingbit.share.model.CreateBoardRequest;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,7 +21,6 @@ import java.util.Optional;
  * Created by Aleksey Popryaduhin on 13:22 09/08/2017.
  */
 @RestController
-@RequestMapping(ResourceConstants.BOARD)
 public class BoardApiImpl implements BoardApi {
 
   private final BoardService boardService;

@@ -2,17 +2,16 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.common.EnumSearch;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.model.EnumRules;
+import com.workingbit.board.model.BeatenAndAllowedSquareMap;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.EnumRules;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
@@ -34,9 +33,8 @@ public class HighlightMoveUtilTest {
   public void findAllowedMoves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
     Square square = getSquareByVHWithDraught(board, "c3"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("d4,b4", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("d4,b4", highlight, allowed);
   }
 
   @Test
@@ -44,10 +42,9 @@ public class HighlightMoveUtilTest {
     BoardContainer board = getBoard();
     Square square = getSquareByVHWithDraught(board, "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("d4", highlight.get(), beaten);
-    testCollection("e5", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("d4", highlight, beaten);
+    testCollection("e5", highlight, allowed);
   }
 
   @Test
@@ -57,10 +54,9 @@ public class HighlightMoveUtilTest {
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("d4,d6,b6", highlight.get(), beaten);
-    testCollection("c7,e5,a5", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("d4,d6,b6", highlight, beaten);
+    testCollection("c7,e5,a5", highlight, allowed);
   }
 
   @Test
@@ -72,10 +68,9 @@ public class HighlightMoveUtilTest {
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e7"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e5"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("c3,b6,e7,e5", highlight.get(), beaten);
-    testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("c3,b6,e7,e5", highlight, beaten);
+    testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6", highlight, allowed);
   }
 
   @Test
@@ -88,10 +83,9 @@ public class HighlightMoveUtilTest {
     squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "f6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "f4"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("b2,b4,d4,d6,f6,f4", highlight.get(), beaten);
-    testCollection("a3,c5,e3,g5,e7", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("b2,b4,d4,d6,f6,f4", highlight, beaten);
+    testCollection("a3,c5,e3,g5,e7", highlight, allowed);
   }
 
   @Test
@@ -102,10 +96,9 @@ public class HighlightMoveUtilTest {
     Square squareBlack = getSquareByVHWithBlackDraught(board, "c3"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e5"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("c3,b6,e5", highlight.get(), beaten);
-    testCollection("h2,g3,c7,f4,a5", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("c3,b6,e5", highlight, beaten);
+    testCollection("h2,g3,c7,f4,a5", highlight, allowed);
   }
 
   @Test
@@ -116,10 +109,9 @@ public class HighlightMoveUtilTest {
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d2"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "e7"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("d2,b6,e7", highlight.get(), beaten);
-    testCollection("b4,a5,d8,f8,f6,g5,h4", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("d2,b6,e7", highlight, beaten);
+    testCollection("b4,a5,d8,f8,f6,g5,h4", highlight, allowed);
   }
 
   @Test
@@ -128,10 +120,9 @@ public class HighlightMoveUtilTest {
     Square square = getSquareByVHWithDraught(board, "c3"); // c3
     Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
     squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    testCollection("d4,d6", highlight.get(), beaten);
-    testCollection("c7,e5", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("d4,d6", highlight, beaten);
+    testCollection("c7,e5", highlight, allowed);
   }
 
   @Test
@@ -139,10 +130,8 @@ public class HighlightMoveUtilTest {
     BoardContainer board = getBoard();
     Square square = getSquareByVHWithDraught(board, "c3");
     square.getDraught().setQueen(true);
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    List<String> collect = ((List<Square>) highlight.get().get(allowed.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
-    assertEquals("[d4, e5, f6, g7, h8, b2, a1, b4, a5, d2, e1]", collect.toString());
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("d4,e5,f6,g7,h8,b2,a1,b4,a5,d2,e1", highlight, allowed);
   }
 
   @Test
@@ -151,11 +140,9 @@ public class HighlightMoveUtilTest {
     Square square = getSquareByVHWithDraught(board, "c3");
     square.getDraught().setQueen(true);
     Square blackSquare = getSquareByVHWithBlackDraught(board, "e5");
-    Optional<Map<String, Object>> highlight = HighlightMoveUtil.highlight(board, square);
-    assertTrue(highlight.isPresent());
-    List<String> collect = ((List<Square>) highlight.get().get(beaten.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
-    testCollection("e5", highlight.get(), beaten);
-    testCollection("f6,g7,h8", highlight.get(), allowed);
+    BeatenAndAllowedSquareMap highlight = HighlightMoveUtil.highlight(board, square);
+    testCollection("e5", highlight, beaten);
+    testCollection("f6,g7,h8", highlight, allowed);
   }
 
   BoardContainer getBoard() {
@@ -182,8 +169,14 @@ public class HighlightMoveUtilTest {
     return BoardUtils.addDraught(currentBoard, notation, true);
   }
 
-  private void testCollection(String notations, Map<String, Object> highlight, EnumSearch key) {
-    List<String> collection = ((List<Square>) highlight.get(key.name())).stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+  private void testCollection(String notations, BeatenAndAllowedSquareMap highlight, EnumSearch key) {
+    List<Square> items;
+    if (key.equals(EnumSearch.allowed)) {
+      items = highlight.getDefault().getAllowed();
+    } else {
+      items = highlight.getDefault().getBeaten();
+    }
+    List<String> collection = items.stream().map(ICoordinates::toNotation).collect(Collectors.toList());
     String[] notation = notations.split(",");
     Arrays.stream(notation).forEach(n -> {
       assertTrue(collection.toString(), collection.contains(n));

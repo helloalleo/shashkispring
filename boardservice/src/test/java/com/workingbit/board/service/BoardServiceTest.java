@@ -2,8 +2,11 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.common.EnumBaseKeys;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Draught;
+import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.CreateBoardRequest;
 import com.workingbit.share.model.EnumRules;
-import com.workingbit.share.domain.impl.*;
 import org.apache.commons.collections4.MapUtils;
 import org.junit.After;
 import org.junit.Test;
@@ -28,9 +31,9 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void createBoard() throws Exception {
-    BoardContainer board = getNewBoard();
-    toDelete(board);
-    assertNotNull(board.getId());
+    BoardContainer boardContainer = boardService.createBoard(getCreateBoardRequest());
+    toDelete(boardContainer);
+    assertNotNull(boardContainer.getId());
   }
 
   @Test
@@ -109,11 +112,7 @@ public class BoardServiceTest extends BaseServiceTest {
     Square square = getSquareByVH(board, 5, 2);
     Square target = getSquareByVH(board, 4, 3);
 
-    Map<String, Object> hl = new HashMap<String, Object>() {{
-      put(selectedSquare.name(), square);
-      put(boardId.name(), board.getId());
-    }};
-    Map<String, Object> highlight = boardService.highlight(boardId, hl);
+//    Map<String, Object> highlight = boardService.highlight(boardId, square);
     // find allowed and beaten
 //    List<Square> allowedMoves = (List<Square>) highlight.get(allowed.name());
 //    List<Draught> beatenMoves = (List<Draught>) highlight.get(beaten.name());
@@ -128,11 +127,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
     // next move
     Object newSource = newMoveCoords.get(EnumBaseKeys.targetSquare.name());
-    hl = new HashMap<String, Object>() {{
-      put(selectedSquare.name(), newSource);
-      put(boardId.name(), board.getId());
-    }};
-    highlight = boardService.highlight(boardId, hl);
+//    highlight = boardService.highlight(boardId, newSource);
     // find allowed and beaten
 //    allowedMoves = (List<Square>) highlight.get(allowed.name());
 //    beatenMoves = (List<Draught>) highlight.get(beaten.name());
@@ -172,8 +167,8 @@ public class BoardServiceTest extends BaseServiceTest {
   }
 
   private BoardContainer getNewBoard() {
-    NewBoardRequest newBoardRequest = new NewBoardRequest(false,false, EnumRules.RUSSIAN, 40);
-    BoardContainer board = boardService.createBoard(newBoardRequest);
+    CreateBoardRequest createBoardRequest = getCreateBoardRequest();
+    BoardContainer board = boardService.createBoard(createBoardRequest);
 
     // place initial draught on the desk
 //    Draught draught = getDraught(5, 2);
@@ -183,5 +178,14 @@ public class BoardServiceTest extends BaseServiceTest {
 //    board.getCurrentBoard().setSelectedSquare(square);
 //    boardDao.save(board);
     return board;
+  }
+
+  protected CreateBoardRequest getCreateBoardRequest() {
+    CreateBoardRequest createBoardRequest = new CreateBoardRequest();
+    createBoardRequest.setBlack(false);
+    createBoardRequest.setFillBoard(false);
+    createBoardRequest.setRules(EnumRules.RUSSIAN);
+    createBoardRequest.setSquareSize(60);
+    return createBoardRequest;
   }
 }

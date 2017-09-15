@@ -1,4 +1,4 @@
-package com.workingbit.board;
+package com.workingbit.board.config;
 
 import com.workingbit.board.common.AppConstants;
 import org.springframework.context.annotation.Bean;
