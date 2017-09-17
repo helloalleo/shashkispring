@@ -8,14 +8,10 @@ import com.workingbit.share.model.CreateArticleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import static com.workingbit.article.common.EnumResponse.*;
 
 /**
  * Created by Aleksey Popryaduhin on 13:22 09/08/2017.
@@ -30,57 +26,41 @@ public class ArticleApiImpl implements ArticleApi {
     this.articleService = articleService;
   }
 
-  @GetMapping()
-  public Map<String, Object> findAll(Integer limit) {
-    List<Article> articles = articleService.findAll(limit);
-    return new HashMap<String, Object>() {{
-      put(ok.name(), true);
-      put(data.name(), articles);
-    }};
-  }
-
-  @GetMapping(path = "/{id}")
-  public Map<String, Object> findById(@PathVariable("id") String articleId) {
+  @Override
+  public ResponseEntity<Article> findArticleById(@PathVariable String articleId) {
     Optional<Article> articleOptional = articleService.findById(articleId);
-    return articleOptional.<Map<String, Object>>map(iArticle -> new HashMap<String, Object>() {{
-        put(ok.name(), true);
-        put(data.name(), iArticle);
-      }}
-    ).orElseGet(() -> new HashMap<String, Object>() {{
-      put(ok.name(), false);
-      put(message.name(), "Article not found");
-    }});
+    return articleOptional
+        .map(article -> new ResponseEntity<>(article, HttpStatus.OK))
+        .orElse(null);
   }
 
-  @PostMapping()
-  public ResponseEntity<CreateArticleResponse> create(@RequestBody CreateArticleRequest articleBody) {
-    CreateArticleResponse articleAndBoard = articleService.createArticleAndBoard(articleBody);
+  @Override
+  public ResponseEntity<CreateArticleResponse> createArticle(CreateArticleRequest createArticleRequest) {
+    CreateArticleResponse articleAndBoard = articleService.createArticleAndBoard(createArticleRequest);
     return new ResponseEntity<>(articleAndBoard, HttpStatus.OK);
   }
 
-  @DeleteMapping()
-  public Map<String, Object> delete(String articleId) {
+  @Override
+  public ResponseEntity<Void> deleteArticleById(@PathVariable String articleId) {
     articleService.delete(articleId);
-    return new HashMap<String, Object>() {{
-      put(ok.name(), true);
-    }};
+    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-  @PutMapping(path = "/publish")
-  public Map<String, Object> publishArticle(@RequestBody Article request) {
-    boolean published = articleService.publishArticle(request);
-    return new HashMap<String, Object>() {{
-      put(ok.name(), true);
-      put(data.name(), published);
-    }};
-  }
-
-  @GetMapping(path = "/published")
-  public Map<String, Object> findPublishedArticles() {
-    List<Article> publishedArticles = articleService.findPublishedArticles();
-    return new HashMap<String, Object>() {{
-      put(ok.name(), true);
-      put(data.name(), publishedArticles);
-    }};
-  }
+//  @PutMapping(path = "/publish")
+//  public Map<String, Object> publishArticle(@RequestBody Article request) {
+//    boolean published = articleService.publishArticle(request);
+//    return new HashMap<String, Object>() {{
+//      put(ok.name(), true);
+//      put(data.name(), published);
+//    }};
+//  }
+//
+//  @GetMapping(path = "/published")
+//  public Map<String, Object> findPublishedArticles() {
+//    List<Article> publishedArticles = articleService.findPublishedArticles();
+//    return new HashMap<String, Object>() {{
+//      put(ok.name(), true);
+//      put(data.name(), publishedArticles);
+//    }};
+//  }
 }

@@ -1,7 +1,9 @@
 package com.workingbit.article.service;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.article.dao.ArticleDao;
+import com.workingbit.article.model.Articles;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.model.CreateArticleRequest;
@@ -56,8 +58,11 @@ public class ArticleService {
     return createArticleResponse;
   }
 
-  public List<Article> findAll(Integer limit) {
-    return articleDao.findAll(limit);
+  public Articles findAll(Integer limit) {
+    PaginatedScanList<Article> articleList = articleDao.findAll(limit);
+    Articles articles = new Articles();
+    articles.addAll(articleList);
+    return articles;
   }
 
   public Optional<Article> findById(String articleId) {
