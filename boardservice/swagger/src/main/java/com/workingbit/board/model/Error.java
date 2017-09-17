@@ -1,4 +1,4 @@
-package com.workingbit.article.model;
+package com.workingbit.board.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 /**
  * Error
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-17T19:30:18.808+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-17T19:20:01.849+03:00")
 
 public class Error   {
   @JsonProperty("code")
