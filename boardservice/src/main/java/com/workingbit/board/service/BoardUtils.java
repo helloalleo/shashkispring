@@ -29,6 +29,7 @@ public class BoardUtils {
    */
   static BoardContainer initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
     BoardContainer boardContainer = new BoardContainer();
+    boardContainer.setRules(rules);
 
     List<Draught> whiteDraughts = new ArrayList<>();
     List<Draught> blackDraughts = new ArrayList<>();

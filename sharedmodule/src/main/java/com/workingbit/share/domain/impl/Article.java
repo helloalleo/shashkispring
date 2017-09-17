@@ -30,8 +30,7 @@ public class Article implements BaseDomain {
   @DynamoDBAttribute(attributeName = "content")
   private String content;
 
-  @DynamoDBTypeConvertedJson(targetType = List.class)
-  @DynamoDBAttribute(attributeName = "boardIds")
+  @DynamoDBAttribute(attributeName = "boardId")
   private String boardId;
 
   @DynamoDBTypeConvertedEnum

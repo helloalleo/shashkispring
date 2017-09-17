@@ -3,6 +3,7 @@ package com.workingbit.article.service;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.article.dao.ArticleDao;
+import com.workingbit.article.exception.ArticleServiceException;
 import com.workingbit.article.model.Articles;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.share.domain.impl.BoardContainer;
@@ -10,6 +11,7 @@ import com.workingbit.share.model.CreateArticleRequest;
 import com.workingbit.share.model.CreateArticleResponse;
 import com.workingbit.share.model.CreateBoardRequest;
 import com.workingbit.share.model.EnumArticleState;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,15 +45,18 @@ public class ArticleService {
    */
   public CreateArticleResponse createArticleAndBoard(CreateArticleRequest articleAndBoard) {
     Article article = articleAndBoard.getArticle();
+    article.setId(null);
     CreateBoardRequest boardRequest = articleAndBoard.getBoardRequest();
     CreateArticleResponse createArticleResponse = new CreateArticleResponse();
-    if (article.getBoardId().isEmpty()) {
+    if (StringUtils.isBlank(article.getBoardId())) {
       Optional<BoardContainer> boardOptional = boardRemoteService.createBoard(boardRequest);
       if (boardOptional.isPresent()) {
         article.setBoardId(boardOptional.get().getId());
         createArticleResponse.setArticle(article);
         createArticleResponse.setBoardContainer(boardOptional.get());
       }
+    } else {
+      throw new ArticleServiceException("boardId must not be specified");
     }
     article.setState(EnumArticleState.newcoming);
     articleDao.save(article);

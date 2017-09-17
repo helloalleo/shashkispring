@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class ArticleApiImpl implements ArticleApi {
   }
 
   @Override
-  public ResponseEntity<CreateArticleResponse> createArticle(CreateArticleRequest createArticleRequest) {
+  public ResponseEntity<CreateArticleResponse> createArticle(@RequestBody CreateArticleRequest createArticleRequest) {
     CreateArticleResponse articleAndBoard = articleService.createArticleAndBoard(createArticleRequest);
     return new ResponseEntity<>(articleAndBoard, HttpStatus.OK);
   }
