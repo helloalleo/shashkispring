@@ -1,0 +1,9 @@
+server:
+  port: 8001
+
+BOARD_API_URL: http://localhost:8002/v1
+BOARD_RESOURCE: /board
+
+TEST: true
+AWS_ENDPOINT: http://localhost:8081
+AWS_DEFAULT_REGION: eu-central-1

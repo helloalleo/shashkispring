@@ -31,7 +31,7 @@
               $ref: '#/definitions/CreateBoardRequest'
         responses:
           "201":
-            description: Null response
+            description: Board response
             schema:
               $ref: '#/definitions/BoardContainer'
           default:
@@ -105,18 +105,6 @@
             description: unexpected error
             schema:
               $ref: '#/definitions/Error'
-    schemas:
-      # Schema for error response body
-      Error:
-        type: object
-        properties:
-          code:
-            type: string
-          message:
-            type: string
-        required:
-          - code
-          - message
 
   definitions:
     # Mapped
@@ -154,7 +142,7 @@
         message:
           type: string
     NotFound:
-      description: The specified resource was not found
+      description: The specified api was not found
       schema:
         $ref: '#/definitions/Error'
     Unauthorized:

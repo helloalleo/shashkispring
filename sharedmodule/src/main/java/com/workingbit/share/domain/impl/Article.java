@@ -3,11 +3,11 @@ package com.workingbit.share.domain.impl;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.workingbit.board.common.DBConstants;
 import com.workingbit.share.domain.BaseDomain;
+import com.workingbit.share.model.EnumArticleState;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Created by Aleksey Popryaduhin on 18:31 09/08/2017.
@@ -30,27 +30,13 @@ public class Article implements BaseDomain {
   @DynamoDBAttribute(attributeName = "content")
   private String content;
 
-  @DynamoDBTypeConvertedJson(targetType = Set.class)
+  @DynamoDBTypeConvertedJson(targetType = List.class)
   @DynamoDBAttribute(attributeName = "boardIds")
-  private Set<String> boardIds = new HashSet<>();
+  private String boardId;
 
-  /**
-   * New article not viewed by moderator
-   */
-  @DynamoDBAttribute(attributeName = "newAdded")
-  private boolean newAdded;
-
-  /**
-   * Article viewed by moderator and didn't pass it
-   */
-  @DynamoDBAttribute(attributeName = "banned")
-  private boolean banned;
-
-  /**
-   * Article published
-   */
-  @DynamoDBAttribute(attributeName = "published")
-  private boolean published;
+  @DynamoDBTypeConvertedEnum
+  @DynamoDBAttribute(attributeName = "state")
+  private EnumArticleState state;
 
   public Article(String author, String title, String content) {
     this.author = author;
