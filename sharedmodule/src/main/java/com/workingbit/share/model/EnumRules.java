@@ -18,7 +18,7 @@ public enum EnumRules {
   }
 
   public int getDimension() {
-    return dimension;
+    return Math.abs(dimension);
   }
 
   public int getRowsForDraughts() {

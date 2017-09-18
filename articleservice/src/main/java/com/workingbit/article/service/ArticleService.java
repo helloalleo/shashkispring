@@ -1,6 +1,5 @@
 package com.workingbit.article.service;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.article.dao.ArticleDao;
 import com.workingbit.article.exception.ArticleServiceException;
@@ -53,7 +52,7 @@ public class ArticleService {
       if (boardOptional.isPresent()) {
         article.setBoardId(boardOptional.get().getId());
         createArticleResponse.setArticle(article);
-        createArticleResponse.setBoardContainer(boardOptional.get());
+        createArticleResponse.setBoard(boardOptional.get());
       }
     } else {
       throw new ArticleServiceException("boardId must not be specified");
@@ -64,7 +63,7 @@ public class ArticleService {
   }
 
   public Articles findAll(Integer limit) {
-    PaginatedScanList<Article> articleList = articleDao.findAll(limit);
+    List<Article> articleList = articleDao.findAll(limit);
     Articles articles = new Articles();
     articles.addAll(articleList);
     return articles;

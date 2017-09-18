@@ -5,9 +5,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.workingbit.share.common.Utils.isBlank;
@@ -51,12 +51,10 @@ public class BaseDao<T> {
     dynamoDBMapper.save(entity);
   }
 
-  public PaginatedScanList<T> findAll(Integer limit) {
-    DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression();
-    if (limit != null) {
-      dynamoDBQueryExpression.setLimit(limit);
-    }
-    return dynamoDBMapper.scan(clazz, dynamoDBQueryExpression);
+  public List<T> findAll(Integer limit) {
+    DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression()
+        .withLimit(limit);
+    return dynamoDBMapper.scanPage(clazz, dynamoDBQueryExpression).getResults();
   }
 
   public Optional<T> findById(String entityId) {

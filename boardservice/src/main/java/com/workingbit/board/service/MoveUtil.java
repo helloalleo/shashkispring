@@ -61,11 +61,11 @@ public class MoveUtil {
     targetSquare.getDraught().setH(targetSquare.getH());
     targetSquare.getDraught().setHighlighted(true);
     sourceSquare.setDraught(null);
-//    getBoardContainer().setSelectedSquare((Square) targetSquare);
+//    getBoard().setSelectedSquare((Square) targetSquare);
     Pair<Integer, Integer> distanceVH = getDistanceVH(sourceSquare, targetSquare);
     int vMove = distanceVH.getLeft() * sourceSquare.getSize();
     int hMove = distanceVH.getRight() * sourceSquare.getSize();
-//    getBoardContainer().setSelectedSquare(targetSquare);
+//    getBoard().setSelectedSquare(targetSquare);
     return new HashMap<String, Object>() {{
       put(moveDist.name(), new HashMap<String, Object>() {{
         put(v.name(), vMove);

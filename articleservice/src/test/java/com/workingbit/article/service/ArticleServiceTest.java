@@ -1,10 +1,7 @@
 package com.workingbit.article.service;
 
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.model.CreateBoardRequest;
-import com.workingbit.share.model.EnumArticleState;
-import com.workingbit.share.model.EnumRules;
-import com.workingbit.article.common.EnumResponse;
+import com.workingbit.share.model.*;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -25,8 +24,8 @@ public class ArticleServiceTest {
 
   @Test
   public void delete() throws Exception {
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getCreateBoardRequest()));
-    Article iArticle = (Article) save.get(EnumResponse.article.name());
+    CreateArticleResponse save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getCreateBoardRequest()));
+    Article iArticle = (Article) save.getArticle();
     articleService.delete(iArticle.getId());
     Optional<Article> byId = articleService.findById(iArticle.getId());
     assertFalse(byId.isPresent());
@@ -34,8 +33,8 @@ public class ArticleServiceTest {
 
   @Test
   public void findById() throws Exception {
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getCreateBoardRequest()));
-    Article iArticle = (Article) save.get(EnumResponse.article.name());
+    CreateArticleResponse save = articleService.createArticleAndBoard(getArticleAndBoard(getArticle(), getCreateBoardRequest()));
+    Article iArticle = (Article) save.getArticle();
     toDelete(iArticle);
     Optional<Article> byId = articleService.findById(iArticle.getId());
     assertTrue(byId.isPresent());
@@ -45,8 +44,8 @@ public class ArticleServiceTest {
   public void publishArticle() throws Exception {
     Article article = getArticle();
     article.setState(EnumArticleState.published);
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
-    Article iArticle = (Article) save.get(EnumResponse.article.name());
+    CreateArticleResponse save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
+    Article iArticle = (Article) save.getArticle();
     toDelete(iArticle);
     boolean publishArticle = articleService.publishArticle(iArticle);
     assertTrue(publishArticle);
@@ -59,8 +58,8 @@ public class ArticleServiceTest {
   public void findPublishedArticles() throws Exception {
     Article article = getArticle();
     article.setState(EnumArticleState.published);
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
-    Article iArticle = (Article) save.get(EnumResponse.article.name());
+    CreateArticleResponse save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
+    Article iArticle = (Article) save.getArticle();
     toDelete(iArticle);
     boolean publishArticle = articleService.publishArticle(iArticle);
     assertTrue(publishArticle);
@@ -80,8 +79,8 @@ public class ArticleServiceTest {
   @Test
   public void save() throws Exception {
     Article article = getArticle();
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
-    Article iArticle = (Article) save.get(EnumResponse.article.name());
+    CreateArticleResponse save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
+    Article iArticle = (Article) save.getArticle();
     Optional<Article> articleOptional = articleService.findById(iArticle.getId());
     assertTrue(articleOptional.isPresent());
     toDelete(articleOptional.get());
@@ -92,17 +91,17 @@ public class ArticleServiceTest {
   @Test
   public void findAll() throws Exception {
     Article article = getArticle();
-    HashMap<String, Object> save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
-    Article iArticle = (Article) save.get(EnumResponse.article.name());
+    CreateArticleResponse save = articleService.createArticleAndBoard(getArticleAndBoard(article, getCreateBoardRequest()));
+    Article iArticle = (Article) save.getArticle();
     toDelete(iArticle);
     assertTrue(articleService.findAll(10).contains(iArticle));
   }
 
-  private Map<String, Object> getArticleAndBoard(Article article, CreateBoardRequest newBoardRequest) {
-    return new HashMap<String, Object>() {{
-      put(EnumResponse.article.name(), article);
-      put(EnumResponse.board.name(), getCreateBoardRequest());
-    }};
+  private CreateArticleRequest getArticleAndBoard(Article article, CreateBoardRequest newBoardRequest) {
+    CreateArticleRequest createArticleRequest = new CreateArticleRequest();
+    createArticleRequest.setArticle(article);
+    createArticleRequest.setBoardRequest(newBoardRequest);
+    return createArticleRequest;
   }
 
   private List<Article> articles = new ArrayList<>();

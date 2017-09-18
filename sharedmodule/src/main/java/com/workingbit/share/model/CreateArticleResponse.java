@@ -17,8 +17,8 @@ public class CreateArticleResponse {
   @JsonProperty("article")
   private Article article = null;
 
-  @JsonProperty("boardContainer")
-  private BoardContainer boardContainer = null;
+  @JsonProperty("board")
+  private BoardContainer board = null;
 
   public CreateArticleResponse fillBoard(Article fillBoard) {
     this.article = fillBoard;
@@ -42,24 +42,24 @@ public class CreateArticleResponse {
   }
 
   public CreateArticleResponse black(BoardContainer black) {
-    this.boardContainer = black;
+    this.board = black;
     return this;
   }
 
    /**
-   * Get boardContainer
-   * @return boardContainer
+   * Get board
+   * @return board
   **/
   @ApiModelProperty(required = true, value = "")
   @NotNull
 
 
-  public BoardContainer getBoardContainer() {
-    return boardContainer;
+  public BoardContainer getBoard() {
+    return board;
   }
 
-  public void setBoardContainer(BoardContainer boardContainer) {
-    this.boardContainer = boardContainer;
+  public void setBoard(BoardContainer board) {
+    this.board = board;
   }
 
   @Override
@@ -72,12 +72,12 @@ public class CreateArticleResponse {
     }
     CreateArticleResponse createBoardRequest = (CreateArticleResponse) o;
     return Objects.equals(this.article, createBoardRequest.article) &&
-        Objects.equals(this.boardContainer, createBoardRequest.boardContainer);
+        Objects.equals(this.board, createBoardRequest.board);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(article, boardContainer);
+    return Objects.hash(article, board);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class CreateArticleResponse {
     sb.append("class CreateBoardRequest {\n");
 
     sb.append("    article: ").append(toIndentedString(article)).append("\n");
-    sb.append("    boardContainer: ").append(toIndentedString(boardContainer)).append("\n");
+    sb.append("    board: ").append(toIndentedString(board)).append("\n");
     sb.append("}");
     return sb.toString();
   }

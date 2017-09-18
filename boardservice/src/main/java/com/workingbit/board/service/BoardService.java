@@ -1,6 +1,5 @@
 package com.workingbit.board.service;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
@@ -51,7 +50,7 @@ public class BoardService {
     return boardContainer;
   }
 
-  public PaginatedScanList<BoardContainer> findAll(Integer limit) {
+  public List<BoardContainer> findAll(Integer limit) {
     return boardDao.findAll(limit);
   }
 
