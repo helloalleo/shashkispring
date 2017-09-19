@@ -1,7 +1,7 @@
 package com.workingbit.article.service;
 
-import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.article.config.RestProperties;
+import com.workingbit.share.domain.impl.BoardContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +21,11 @@ public class RestTemplateService extends BaseRestService {
     this.restTemplate = restTemplate;
   }
 
-  public BoardContainer post(Object request) {
-    return restTemplate.postForObject(boardResource(), request, BoardContainer.class);
+  public BoardContainer post(String url, Object request) {
+    return restTemplate.postForObject(url, request, BoardContainer.class);
+  }
+
+  public BoardContainer get(String url) {
+    return restTemplate.getForObject(url, BoardContainer.class);
   }
 }

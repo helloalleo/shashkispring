@@ -72,7 +72,7 @@ public class ArticleService {
   }
 
   public Optional<Article> findById(String articleId) {
-    return articleDao.findById(articleId);
+    return articleDao.findByKey(articleId);
   }
 
   public void delete(String articleId) {
@@ -98,5 +98,13 @@ public class ArticleService {
    */
   public List<Article> findPublishedArticles() {
     return articleDao.findPublished();
+  }
+
+  public Optional<BoardContainer> findBoardByArticleId(String articleId) {
+    Optional<Article> articleOptional = findById(articleId);
+    return articleOptional.map(article -> {
+      Optional<BoardContainer> boardContainer = boardRemoteService.findBoardById(article.getBoardId());
+      return boardContainer.orElse(null);
+    });
   }
 }

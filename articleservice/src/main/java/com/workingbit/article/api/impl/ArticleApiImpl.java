@@ -1,8 +1,10 @@
 package com.workingbit.article.api.impl;
 
 import com.workingbit.article.api.ArticleApi;
+import com.workingbit.article.exception.ArticleServiceException;
 import com.workingbit.article.service.ArticleService;
 import com.workingbit.share.domain.impl.Article;
+import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.model.CreateArticleRequest;
 import com.workingbit.share.model.CreateArticleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,7 @@ public class ArticleApiImpl implements ArticleApi {
     Optional<Article> articleOptional = articleService.findById(articleId);
     return articleOptional
         .map(article -> new ResponseEntity<>(article, HttpStatus.OK))
-        .orElse(null);
+        .orElseThrow(() -> new ArticleServiceException("Article not found"));
   }
 
   @Override
@@ -47,7 +49,15 @@ public class ArticleApiImpl implements ArticleApi {
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
-//  @PutMapping(path = "/publish")
+  @Override
+  public ResponseEntity<BoardContainer> findBoardByArticleId(@PathVariable String articleId) {
+    Optional<BoardContainer> boardContainerOptional = articleService.findBoardByArticleId(articleId);
+    return boardContainerOptional
+        .map(boardContainer -> new ResponseEntity<>(boardContainer, HttpStatus.OK))
+        .orElseThrow(() -> new ArticleServiceException("Board not found"));
+  }
+
+  //  @PutMapping(path = "/publish")
 //  public Map<String, Object> publishArticle(@RequestBody Article request) {
 //    boolean published = articleService.publishArticle(request);
 //    return new HashMap<String, Object>() {{

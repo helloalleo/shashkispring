@@ -18,6 +18,26 @@
   produces:
     - "application/json"
   paths:
+    /boards:
+      post:
+        summary: Get boards by ids
+        operationId: listBoardsByIds
+        tags:
+          - boards
+        parameters:
+          - name: boardIds
+            in: body
+            schema:
+              $ref: '#/definitions/Strings'
+        responses:
+          "201":
+            description: Boards loaded
+            schema:
+              $ref: '#/definitions/Boards'
+          default:
+            description: unexpected ResponseError
+            schema:
+              $ref: '#/definitions/ResponseError'
     /board:
       post:
         summary: Create a board
@@ -35,9 +55,9 @@
             schema:
               $ref: '#/definitions/BoardContainer'
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
     /board/{boardId}:
       get:
         summary: Info for a specific board
@@ -56,9 +76,9 @@
             schema:
               $ref: '#/definitions/BoardContainer'
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
       delete:
         summary: Delete a specific board
         operationId: deleteBoardById
@@ -74,9 +94,9 @@
           "200":
             description: OK
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
     /board/{boardId}/highlight:
       post:
         summary: Info for a specific board
@@ -102,9 +122,9 @@
               type: object
               $ref: '#/definitions/BeatenAndAllowedSquareMap'
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
 
   definitions:
     # Mapped
@@ -112,9 +132,17 @@
       type: object
     Square:
       type: object
-    # Defined here
     CreateBoardRequest:
       type: object
+    # Defined here
+    Boards:
+      type: array
+      items:
+        $ref: '#/definitions/BoardContainer'
+    Strings:
+      type: array
+      items:
+        type: string
     MovesList:
       properties:
         allowed:
@@ -134,7 +162,7 @@
         type: array
         items:
           $ref: '#/definitions/MovesList'
-    Error:
+    ResponseError:
       type: object
       properties:
         code:
@@ -144,8 +172,8 @@
     NotFound:
       description: The specified api was not found
       schema:
-        $ref: '#/definitions/Error'
+        $ref: '#/definitions/ResponseError'
     Unauthorized:
       description: Unauthorized
       schema:
-        $ref: '#/definitions/Error'
+        $ref: '#/definitions/ResponseError'

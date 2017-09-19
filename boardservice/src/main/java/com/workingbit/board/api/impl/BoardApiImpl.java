@@ -61,7 +61,7 @@ public class BoardApiImpl implements BoardApi {
     }
   }
 
-//  @PostMapping(ResourceConstants.MOVE)
+  //  @PostMapping(ResourceConstants.MOVE)
 //  public Map<String, Object> move(@RequestBody Map<String, Object> moveTo) {
 //    try {
 //      Map<String, Object> move = boardService.move(moveTo);

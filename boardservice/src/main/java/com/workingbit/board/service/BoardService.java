@@ -4,19 +4,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.model.BeatenAndAllowedSquareMap;
-import com.workingbit.share.model.CreateBoardRequest;
-import com.workingbit.share.model.EnumRules;
+import com.workingbit.board.model.Boards;
+import com.workingbit.board.model.Strings;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.CreateBoardRequest;
+import com.workingbit.share.model.EnumRules;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import static com.workingbit.board.common.EnumBaseKeys.*;
 import static com.workingbit.board.common.EnumSearch.allowed;
@@ -137,5 +141,17 @@ public class BoardService {
 
   public void save(BoardContainer board) {
     boardDao.save(board);
+  }
+
+  public Boards findByIds(Strings boardIds) {
+    List<String> ids = new ArrayList<>(boardIds.size());
+    ids.addAll(boardIds);
+    List<BoardContainer> boardList = boardDao.findByIds(ids)
+        .stream()
+        .map(this::initBoardContainer)
+        .collect(Collectors.toList());
+    Boards boards = new Boards();
+    boards.addAll(boardList);
+    return boards;
   }
 }

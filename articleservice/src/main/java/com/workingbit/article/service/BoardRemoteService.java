@@ -25,7 +25,12 @@ public class BoardRemoteService {
   }
 
   public Optional<BoardContainer> createBoard(CreateBoardRequest createBoardRequest) {
-    BoardContainer boardContainer = restTemplateService.post(createBoardRequest);
+    BoardContainer boardContainer = restTemplateService.post(restTemplateService.boardResource(), createBoardRequest);
+    return Optional.ofNullable(boardContainer);
+  }
+
+  public Optional<BoardContainer> findBoardById(String boardId) {
+    BoardContainer boardContainer = restTemplateService.get(restTemplateService.boardResource() + "/" + boardId);
     return Optional.ofNullable(boardContainer);
   }
 }

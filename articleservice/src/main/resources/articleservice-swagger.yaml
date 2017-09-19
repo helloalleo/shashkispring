@@ -39,9 +39,9 @@
             schema:
               $ref: '#/definitions/Articles'
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
     /article:
       post:
         summary: Create a article
@@ -59,9 +59,9 @@
             schema:
               $ref: '#/definitions/CreateArticleResponse'
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
     /article/{articleId}:
       get:
         summary: Info for a specific article
@@ -80,9 +80,9 @@
             schema:
               $ref: '#/definitions/Article'
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
       delete:
         summary: Delete a specific article
         operationId: deleteArticleById
@@ -98,9 +98,30 @@
           "200":
             description: OK
           default:
-            description: unexpected error
+            description: unexpected ResponseError
             schema:
-              $ref: '#/definitions/Error'
+              $ref: '#/definitions/ResponseError'
+    /article/{articleId}/board:
+      get:
+        summary: Info for a specific board
+        operationId: findBoardByArticleId
+        tags:
+          - board
+        parameters:
+          - name: articleId
+            in: path
+            required: true
+            description: The id of the board to retrieve
+            type: string
+        responses:
+          "200":
+            description: Expected response to a valid request
+            schema:
+              $ref: '#/definitions/BoardContainer'
+          default:
+            description: unexpected ResponseError
+            schema:
+              $ref: '#/definitions/ResponseError'
 
   definitions:
     # Defined here
@@ -110,7 +131,9 @@
       type: object
     Article:
       type: object
-    Error:
+    BoardContainer:
+      type: object
+    ResponseError:
       type: object
       properties:
         code:
@@ -124,8 +147,8 @@
     NotFound:
       description: The specified api was not found
       schema:
-        $ref: '#/definitions/Error'
+        $ref: '#/definitions/ResponseError'
     Unauthorized:
       description: Unauthorized
       schema:
-        $ref: '#/definitions/Error'
+        $ref: '#/definitions/ResponseError'

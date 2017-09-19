@@ -3,13 +3,12 @@ package com.workingbit.share.dao;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.workingbit.share.common.Utils.isBlank;
 
@@ -86,11 +85,38 @@ public class BaseDao<T> {
     return Optional.empty();
   }
 
+  public Optional<T> findByKey(String entityKey) {
+    Map<String, AttributeValue> eav = new HashMap<>();
+    eav.put(":entityKey", new AttributeValue().withS(entityKey));
+
+    DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+        .withKeyConditionExpression("id = :entityKey")
+        .withExpressionAttributeValues(eav);
+
+    PaginatedQueryList<T> queryList = dynamoDBMapper.query(clazz, queryExpression);
+    if (!queryList.isEmpty()) {
+      return Optional.of(queryList.get(0));
+    }
+    return Optional.empty();
+  }
+
   public void delete(final String entityId) {
     if (isBlank(entityId)) {
       return;
     }
     findById(entityId)
         .ifPresent(dynamoDBMapper::delete);
+  }
+
+  public List<T> findByIds(List<String> ids) {
+    Map<Class<?>, List<KeyPair>> itemsToGet = new HashMap<>(ids.size());
+    itemsToGet.put(clazz, ids.stream()
+        .map(id -> new KeyPair().withHashKey(id))
+        .collect(Collectors.toList()));
+    Map<String, List<Object>> batchLoad = dynamoDBMapper.batchLoad(itemsToGet);
+    if (!batchLoad.isEmpty()) {
+      return (List<T>) batchLoad.get(clazz.getSimpleName());
+    }
+    return Collections.emptyList();
   }
 }

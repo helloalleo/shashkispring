@@ -92,7 +92,7 @@ subprojects {
 
 def apiPackage = 'com.workingbit.api'
 
-def swaggerTargetFolder = 'swagger'
+def swaggerTargetFolder = 'src/swagger'
 
 project(':sharedmodule') {
     bootRepackage.enabled = false
@@ -238,7 +238,7 @@ project(':articleservice') {
     task batchZip(type: Zip) {
         from sourceSets.main.output, "$buildDir/libs/deps"
     }
-    def swaggerSourceFile = "src/main/resources/articleservice-api.yaml"
+    def swaggerSourceFile = "src/main/resources/articleservice-swagger.yaml"
     task generateApi {
         inputs.file("$projectDir/$swaggerSourceFile")
         outputs.dir("$projectDir/$swaggerTargetFolder")
@@ -255,6 +255,7 @@ project(':articleservice') {
             ])
             config.setImportMappings([
                     'Article': 'com.workingbit.share.domain.impl.Article',
+                    'BoardContainer': 'com.workingbit.share.domain.impl.BoardContainer',
                     'CreateArticleRequest': 'com.workingbit.share.model.CreateArticleRequest',
                     'CreateArticleResponse': 'com.workingbit.share.model.CreateArticleResponse'
             ])
