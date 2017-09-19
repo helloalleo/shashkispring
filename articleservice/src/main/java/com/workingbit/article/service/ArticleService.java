@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +59,7 @@ public class ArticleService {
       throw new ArticleServiceException("boardId must not be specified");
     }
     article.setState(EnumArticleState.newcoming);
+    article.setCreatedAt(new Date());
     articleDao.save(article);
     return createArticleResponse;
   }
