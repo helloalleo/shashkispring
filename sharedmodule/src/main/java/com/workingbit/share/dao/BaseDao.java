@@ -4,9 +4,12 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +55,18 @@ public class BaseDao<T> {
   }
 
   public List<T> findAll(Integer limit) {
+    try {
+      T hashKObject = clazz.newInstance();
+      Method setId = hashKObject.getClass().getMethod("setId", String.class);
+      setId.invoke(hashKObject, "");
+      DynamoDBQueryExpression<T> dynamoDBQueryExpression = new DynamoDBQueryExpression<T>()
+          .withHashKeyValues(hashKObject)
+          .withLimit(limit)
+          .withScanIndexForward(true);
+      return dynamoDBMapper.queryPage(clazz, dynamoDBQueryExpression).getResults();
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      e.printStackTrace();
+    }
     DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression()
         .withLimit(limit);
     return dynamoDBMapper.scanPage(clazz, dynamoDBQueryExpression).getResults();

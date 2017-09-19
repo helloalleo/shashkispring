@@ -55,7 +55,13 @@ public class BoardService {
   }
 
   public Optional<BoardContainer> findById(String boardId) {
-    return boardDao.findById(boardId);
+    return boardDao.findById(boardId)
+        .map(this::initBoardContainer);
+  }
+
+  private BoardContainer initBoardContainer(BoardContainer boardContainer) {
+    BoardContainer initBoard = initBoard(false, boardContainer.isBlack(), boardContainer.getRules(), boardContainer.getSquareSize());
+    return boardContainer.init(initBoard);
   }
 
   public void delete(String boardId) {

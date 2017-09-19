@@ -30,13 +30,6 @@ public class BoardContainer implements BaseDomain {
   private String boardHistoryId;
 
   /**
-   * Board diagonals
-   */
-  @DynamoDBIgnore
-  @JsonIgnore
-  private List<List<Square>> diagonals = new ArrayList<>();
-
-  /**
    * Squares for API
    */
   @DynamoDBIgnore
@@ -47,7 +40,7 @@ public class BoardContainer implements BaseDomain {
    */
   @DynamoDBIgnore
   @JsonIgnore
-  private List<Square> boardSquares = new ArrayList<>();
+  private List<Square> assignedSquares = new ArrayList<>();
 
   /**
    * Is player on the black side?
@@ -111,11 +104,16 @@ public class BoardContainer implements BaseDomain {
   public Object clone() throws CloneNotSupportedException {
     return new BoardContainer(id,
         boardHistoryId,
-        diagonals,
         squares,
-        boardSquares,
+        assignedSquares,
         black,
         rules,
         squareSize);
+  }
+
+  public BoardContainer init(BoardContainer initBoard) {
+    setSquares(initBoard.getSquares());
+    setAssignedSquares(initBoard.getAssignedSquares());
+    return this;
   }
 }

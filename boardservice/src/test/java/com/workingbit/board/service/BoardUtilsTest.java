@@ -64,7 +64,7 @@ public class BoardUtilsTest {
 
   @Test
   public void test_all_diagonals() {
-//    List<List<Square>> diagonals = BoardUtils.getBoardSquares(8, getSquareSize());
+//    List<List<Square>> diagonals = BoardUtils.getAssignSquares(8, getSquareSize());
 //    String stringStream = diagonals.stream().map(squares -> squares.stream().map(Square::toNotation).collect(Collectors.joining(","))).collect(Collectors.joining(";"));
 //    assertEquals("a3,b2,c1;a5,b4,c3,d2,e1;a7,b6,c5,d4,e3,f2,g1;b8,c7,d6,e5,f4,g3,h2;d8,e7,f6,g5,h4;f8,g7,h6;b8,a7;d8,c7,b6,a5;f8,e7,d6,c5,b4,a3;h8,g7,f6,e5,d4,c3,b2,a1;h6,g5,f4,e3,d2,c1;h4,g3,f2,e1;h2,g1", stringStream);
   }
@@ -72,7 +72,7 @@ public class BoardUtilsTest {
   @Test
   public void test_init_board() {
     BoardContainer boardContainer = BoardUtils.initBoard(true, false, EnumRules.RUSSIAN, getSquareSize());
-    boardContainer.getBoardSquares().forEach(square -> {
+    boardContainer.getAssignedSquares().forEach(square -> {
       if (square.toNotation().equals("a1") || square.toNotation().equals("h8")) {
         assertEquals(1, square.getDiagonals().size());
       } else {
@@ -99,7 +99,7 @@ public class BoardUtilsTest {
   @Test
   public void test_main_diagonal() {
     BoardContainer boardContainer = BoardUtils.initBoard(true, false, EnumRules.RUSSIAN, getSquareSize());
-    Square square = boardContainer.getBoardSquares().get(4);
+    Square square = boardContainer.getAssignedSquares().get(4);
     List<Square> diagonal0 = square.getDiagonals().get(0);
     System.out.println(diagonal0);
     List<Square> diagonal1 = square.getDiagonals().get(1);

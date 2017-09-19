@@ -33,7 +33,7 @@ public class BoardUtils {
 
     List<Draught> whiteDraughts = new ArrayList<>();
     List<Draught> blackDraughts = new ArrayList<>();
-    List<Square> boardSquares = getBoardSquares(rules.getDimension(), squareSize);
+    List<Square> boardSquares = getAssignSquares(rules.getDimension(), squareSize);
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
       if (fillBoard) {
@@ -46,7 +46,7 @@ public class BoardUtils {
     }
 //    boardContainer.setBlackDraughts(blackDraughts);
 //    boardContainer.setWhiteDraughts(whiteDraughts);
-    boardContainer.setBoardSquares(boardSquares);
+    boardContainer.setAssignedSquares(boardSquares);
     List<Square> board = getSquares(boardSquares, rules.getDimension());
     boardContainer.setSquares(board);
     return boardContainer;
@@ -92,21 +92,27 @@ public class BoardUtils {
     return subDiagonal.stream().allMatch(diagonal::contains);
   }
 
-  static List<Square> getBoardSquares(int dim, int squareSize) {
-    List<List<Square>> main = getDiagonals(dim, squareSize, true);
-    List<List<Square>> sub = getDiagonals(dim, squareSize, false);
+  /**
+   * Assign square subdiagonal and main diagonal. Assign diagonal's squares link to squares
+   * @param dim
+   * @param squareSize
+   * @return
+   */
+  private static List<Square> getAssignSquares(int dim, int squareSize) {
+    List<List<Square>> mainDiagonals = getDiagonals(dim, squareSize, true);
+    List<List<Square>> subDiagonals = getDiagonals(dim, squareSize, false);
 
     List<Square> squares = new ArrayList<>();
-    for (List<Square> diagonal : sub) {
-      for (Square ss : diagonal) {
-        ss.addDiagonal(diagonal);
-        squares.add(ss);
-        diagonal.set(diagonal.indexOf(ss), ss);
-        for (List<Square> m : main) {
-          for (Square sm : m) {
-            if (ss.equals(sm)) {
-              ss.addDiagonal(m);
-              m.set(m.indexOf(ss), ss);
+    for (List<Square> subDiagonal : subDiagonals) {
+      for (Square subSquare : subDiagonal) {
+        subSquare.addDiagonal(subDiagonal);
+        squares.add(subSquare);
+        subDiagonal.set(subDiagonal.indexOf(subSquare), subSquare);
+        for (List<Square> mainDiagonal : mainDiagonals) {
+          for (Square mainSquare : mainDiagonal) {
+            if (subSquare.equals(mainSquare)) {
+              subSquare.addDiagonal(mainDiagonal);
+              mainDiagonal.set(mainDiagonal.indexOf(subSquare), subSquare);
             }
           }
         }
@@ -155,7 +161,7 @@ public class BoardUtils {
   }
 
   static Optional<Square> findSquareByVH(BoardContainer board, int v, int h) {
-    for (Square square : board.getBoardSquares()) {
+    for (Square square : board.getAssignedSquares()) {
       if (square.getH() == h && square.getV() == v) {
         return Optional.of(square);
       }
@@ -167,7 +173,7 @@ public class BoardUtils {
     if (StringUtils.isBlank(notation)) {
       return Optional.empty();
     }
-    for (Square square : board.getBoardSquares()) {
+    for (Square square : board.getAssignedSquares()) {
       if (square.toNotation().equals(notation)) {
         return Optional.of(square);
       }
