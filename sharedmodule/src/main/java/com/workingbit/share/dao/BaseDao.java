@@ -67,7 +67,7 @@ public class BaseDao<T> {
     DynamoDBScanExpression dynamoDBQueryExpression = new DynamoDBScanExpression();
     List<T> result = dynamoDBMapper.scanPage(clazz, dynamoDBQueryExpression)
         .getResults();
-    if (limit < result.size()) {
+    if (limit != null && limit < result.size()) {
       result = result.subList(0, limit);
     }
     Collections.reverse(result);
