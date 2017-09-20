@@ -3,7 +3,6 @@ package com.workingbit.board.api.impl;
 import com.workingbit.board.api.BoardApi;
 import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.model.BeatenAndAllowedSquareMap;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;
@@ -52,9 +51,9 @@ public class BoardApiImpl implements BoardApi {
   }
 
   @Override
-  public ResponseEntity<BeatenAndAllowedSquareMap> highlightSquare(@PathVariable String boardId, @RequestBody Square toHighlight) {
+  public ResponseEntity<BoardContainer> highlightSquare(@PathVariable String boardId, @RequestBody Square toHighlight) {
     try {
-      BeatenAndAllowedSquareMap highlighted = boardService.highlight(boardId, toHighlight);
+      BoardContainer highlighted = boardService.highlight(boardId, toHighlight);
       return new ResponseEntity<>(highlighted, HttpStatus.OK);
     } catch (BoardServiceException e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

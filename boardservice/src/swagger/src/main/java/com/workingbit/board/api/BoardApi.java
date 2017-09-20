@@ -5,7 +5,6 @@
  */
 package com.workingbit.board.api;
 
-import com.workingbit.board.model.BeatenAndAllowedSquareMap;
 import com.workingbit.board.model.ResponseError;
 
 import io.swagger.annotations.*;
@@ -23,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-19T23:30:23.706+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-20T20:55:26.664+03:00")
 
 @Api(value = "board", description = "the board API")
 public interface BoardApi {
@@ -70,17 +69,17 @@ public interface BoardApi {
     }
 
 
-    @ApiOperation(value = "Info for a specific board", notes = "", response = BeatenAndAllowedSquareMap.class, tags={ "board", })
+    @ApiOperation(value = "Info for a specific board", notes = "", response = com.workingbit.share.domain.impl.BoardContainer.class, tags={ "board", })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Expected response to a valid request", response = BeatenAndAllowedSquareMap.class),
+        @ApiResponse(code = 200, message = "Expected response to a valid request", response = com.workingbit.share.domain.impl.BoardContainer.class),
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/board/{boardId}/highlight",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
-    default ResponseEntity<BeatenAndAllowedSquareMap> highlightSquare(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId,@ApiParam(value = "A square for wich highlight moves" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.Square toHighlight) {
+    default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> highlightSquare(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId,@ApiParam(value = "A square for wich highlight moves" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.Square toHighlight) {
         // do some magic!
-        return new ResponseEntity<BeatenAndAllowedSquareMap>(HttpStatus.OK);
+        return new ResponseEntity<com.workingbit.share.domain.impl.BoardContainer>(HttpStatus.OK);
     }
 
 }

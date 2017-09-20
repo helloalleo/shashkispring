@@ -33,7 +33,7 @@ public class BaseServiceTest {
   BoardDao boardDao;
 
   BoardContainer getBoard() {
-    BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN, 60);
+    BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
 //    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
 //    BoardContainer currentBoard = board.getCurrentBoard();
 //    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
@@ -49,7 +49,7 @@ public class BaseServiceTest {
   }
 
   Square getSquare(Draught draught, int v, int h) {
-    return new Square(v, h, getRules().getDimension(), true, 60, draught);
+    return new Square(v, h, getRules().getDimension(), true, draught);
   }
 
   Draught getDraughtBlack(int v, int h) {

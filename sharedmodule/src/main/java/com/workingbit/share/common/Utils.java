@@ -21,10 +21,6 @@ public class Utils {
     add("h");
   }};
 
-  public static <T> List<T> cloneList(List<T> src) {
-    return new ArrayList<>(src);
-  }
-
   public static boolean isBlank(String s) {
     if (s == null) {
       return true;

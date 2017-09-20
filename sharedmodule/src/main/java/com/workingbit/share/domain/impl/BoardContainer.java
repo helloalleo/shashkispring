@@ -2,16 +2,15 @@ package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.rits.cloning.Cloner;
 import com.workingbit.board.common.DBConstants;
-import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.BaseDomain;
+import com.workingbit.share.model.EnumRules;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -28,6 +27,17 @@ public class BoardContainer implements BaseDomain {
 //  @DynamoDBTypeConvertedJson(targetType = BoardHistory.class)
   @DynamoDBAttribute(attributeName = "boardHistoryId")
   private String boardHistoryId;
+
+  /**
+   * Black draughts associated with owner square
+   */
+  @DynamoDBTypeConvertedJson(targetType = Map.class)
+  @DynamoDBAttribute(attributeName = "blackDraughts")
+  private Map<Square, Draught> blackDraughts = new HashMap<>();
+
+  @DynamoDBTypeConvertedJson(targetType = Map.class)
+  @DynamoDBAttribute(attributeName = "whiteDraughts")
+  private Map<Square, Draught> whiteDraughts = new HashMap<>();
 
   /**
    * Squares for API
@@ -52,19 +62,12 @@ public class BoardContainer implements BaseDomain {
   @DynamoDBAttribute(attributeName = "rules")
   private EnumRules rules;
 
-  /**
-   * Size of one square
-   */
-  @DynamoDBAttribute(attributeName = "squareSize")
-  private int squareSize;
-
   public BoardContainer() {
   }
 
-  public BoardContainer(boolean black, EnumRules rules, int squareSize) {
+  public BoardContainer(boolean black, EnumRules rules) {
     this.black = black;
     this.rules = rules;
-    this.squareSize = squareSize;
   }
 
   public BoardContainer undo() {
@@ -101,14 +104,9 @@ public class BoardContainer implements BaseDomain {
   }
 
   @Override
-  public Object clone() throws CloneNotSupportedException {
-    return new BoardContainer(id,
-        boardHistoryId,
-        squares,
-        assignedSquares,
-        black,
-        rules,
-        squareSize);
+  public Object deepClone() {
+    Cloner cloner = new Cloner();
+    return cloner.deepClone(this);
   }
 
   public BoardContainer init(BoardContainer initBoard) {

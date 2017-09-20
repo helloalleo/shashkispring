@@ -71,7 +71,7 @@ public class Draught implements ICoordinates, BaseDomain {
   }
 
   @Override
-  public Object clone() throws CloneNotSupportedException {
+  public Object deepClone() {
     return new Draught(v, h, getDim(), black, queen, beaten, highlighted);
   }
 }

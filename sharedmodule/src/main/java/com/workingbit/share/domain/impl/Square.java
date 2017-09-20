@@ -40,28 +40,27 @@ public class Square implements ICoordinates, BaseDomain {
    * on the main part where we have the draughts
    */
   private boolean main;
+
   /**
    * if square highlighted for allowing to move
    */
   private boolean highlighted;
-  private int size;
 
   private Draught draught;
 
   @JsonIgnore
   private List<List<Square>> diagonals = new ArrayList<>();
 
-  public Square(int v, int h, int dim, boolean main, int size, Draught draught) {
+  public Square(int v, int h, int dim, boolean main, Draught draught) {
     this.v = v;
     this.h = h;
     this.dim = dim;
     this.main = main;
-    this.size = size;
     this.draught = draught;
   }
 
-  public Square(int v, int h, int dim, boolean prime, int squareSize) {
-    this(v, h, dim, prime, squareSize, null);
+  public Square(int v, int h, int dim, boolean main) {
+    this(v, h, dim, main, null);
   }
 
   public boolean isOccupied() {
@@ -78,8 +77,8 @@ public class Square implements ICoordinates, BaseDomain {
   }
 
   @Override
-  public Object clone() throws CloneNotSupportedException {
-    return new Square(v, h, getDim(), main, highlighted, size, ObjectUtils.clone(draught), ObjectUtils.clone(diagonals));
+  public Object deepClone() {
+    return new Square(v, h, getDim(), main, highlighted, ObjectUtils.clone(draught), ObjectUtils.clone(diagonals));
   }
 
   public void addDiagonal(List<Square> diagonal) {

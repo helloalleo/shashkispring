@@ -1,12 +1,11 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.common.EnumSearch;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.model.BeatenAndAllowedSquareMap;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.EnumRules;
+import com.workingbit.share.model.MovesList;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,8 +15,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static com.workingbit.board.common.EnumSearch.allowed;
-import static com.workingbit.board.common.EnumSearch.beaten;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -30,123 +27,161 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void findAllowedMoves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void draught_simple_moves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c3"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("d4,b4", highlight, allowed);
+    System.out.println(board);
+    BoardContainer updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
+    System.out.println(board);
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard,"c3"));
+    System.out.println(highlight);
+    testCollection("d4,b4", highlight.getAllowed());
   }
 
   @Test
   public void draught_one_beat() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c3"); // c3
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("d4", highlight, beaten);
-    testCollection("e5", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard,"c3"));
+    testCollection("d4", highlight.getBeaten());
+    testCollection("e5", highlight.getAllowed());
   }
 
   @Test
   public void draught_beat_sequence() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c3"); // c3
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("d4,d6,b6", highlight, beaten);
-    testCollection("c7,e5,a5", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d6"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b6"); // c3
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard, "c3"));
+    testCollection("d4,d6,b6", highlight.getBeaten());
+    testCollection("c7,e5,a5", highlight.getAllowed());
   }
 
   @Test
-  public void turk_stroke_for_queen() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void queen_turk_stroke() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "e1"); // c3
-    square.getDraught().setQueen(true);
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "c3"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "e7"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "e5"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("c3,b6,e7,e5", highlight, beaten);
-    testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraughtQueen(board, "e1", false); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "c3"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b6"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e7"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e5"); // c3
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard,"e1"));
+    testCollection("c3,b6,e7,e5", highlight.getBeaten());
+    testCollection("b4,f8,a5,c7,d8,d4,f4,g3,h2,f6", highlight.getAllowed());
   }
 
   @Test
-  public void turk_stroke_for_draught() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void draught_turk_stroke() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c1"); // c3
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "b2"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "b4"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "f6"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "f4"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("b2,b4,d4,d6,f6,f4", highlight, beaten);
-    testCollection("a3,c5,e3,g5,e7", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraught(board, "c1"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b2"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b4"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d6"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "f6"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "f4"); // c3
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard,"c1"));
+    testCollection("b2,b4,d4,d6,f6,f4", highlight.getBeaten());
+    testCollection("a3,c5,e3,g5,e7", highlight.getAllowed());
   }
 
   @Test
   public void queen_beats_sequence() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "e1"); // c3
-    square.getDraught().setQueen(true);
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "c3"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "e5"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("c3,b6,e5", highlight, beaten);
-    testCollection("h2,g3,c7,f4,a5", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraughtQueen(board, "e1", false); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "c3"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b6"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e5"); // c3
+    updatedBoard.getAssignedSquares()
+        .stream()
+        .filter(square -> square.getDraught() != null)
+        .map(Square::toNotation)
+        .forEach(System.out::println);
+    System.out.println(updatedBoard);
+    Square e1 = getSquare(updatedBoard, "e1");
+    System.out.println(e1);
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, e1);
+    System.out.println(highlight);
+    testCollection("c3,b6,e5", highlight.getBeaten());
+    testCollection("h2,g3,c7,f4,a5", highlight.getAllowed());
   }
+
 
   @Test
   public void queen_beats_sequence2() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "e1"); // c3
-    square.getDraught().setQueen(true);
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "d2"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "b6"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "e7"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("d2,b6,e7", highlight, beaten);
-    testCollection("b4,a5,d8,f8,f6,g5,h4", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraughtQueen(board, "e1", false); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d2"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b6"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e7"); // c3
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard,"e1"));
+    testCollection("d2,b6,e7", highlight.getBeaten());
+    testCollection("b4,a5,d8,f8,f6,g5,h4", highlight.getAllowed());
   }
 
   @Test
   public void draught_two_beaten() throws BoardServiceException, ExecutionException, InterruptedException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c3"); // c3
-    Square squareBlack = getSquareByVHWithBlackDraught(board, "d4"); // c3
-    squareBlack = getSquareByVHWithBlackDraught(board, "d6"); // c3
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("d4,d6", highlight, beaten);
-    testCollection("c7,e5", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
+    System.out.println(updatedBoard);
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
+    System.out.println(updatedBoard);
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d6"); // c3
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard, "c3"));
+    testCollection("d4,d6", highlight.getBeaten());
+    testCollection("c7,e5", highlight.getAllowed());
   }
+
 
   @Test
   public void queen_moves_on_empty_desk() throws BoardServiceException, ExecutionException, InterruptedException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c3");
-    square.getDraught().setQueen(true);
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("d4,e5,f6,g7,h8,b2,a1,b4,a5,d2,e1", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraughtQueen(board, "c3", false);
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard, "c3"));
+    testCollection("d4,e5,f6,g7,h8,b2,a1,b4,a5,d2,e1", highlight.getAllowed());
   }
 
   @Test
   public void queen_moves_with_beat() throws BoardServiceException, ExecutionException, InterruptedException {
     BoardContainer board = getBoard();
-    Square square = getSquareByVHWithDraught(board, "c3");
-    square.getDraught().setQueen(true);
-    Square blackSquare = getSquareByVHWithBlackDraught(board, "e5");
-    BeatenAndAllowedSquareMap highlight = HighlightMoveService.highlight(board, square);
-    testCollection("e5", highlight, beaten);
-    testCollection("f6,g7,h8", highlight, allowed);
+    BoardContainer updatedBoard = getSquareByVHWithDraughtQueen(board, "c3", false);
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e5");
+    MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, getSquare(updatedBoard,"c3"));
+    testCollection("e5", highlight.getBeaten());
+    testCollection("f6,g7,h8", highlight.getAllowed());
+  }
+
+  private BoardContainer getSquareByVHWithDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
+    return BoardUtils.addDraught(currentBoard, notation, false);
+  }
+
+  private BoardContainer getSquareByVHWithBlackDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
+    return BoardUtils.addDraught(currentBoard, notation, true);
+  }
+
+  private BoardContainer getSquareByVHWithDraughtQueen(BoardContainer board, String notation, boolean black) throws BoardServiceException {
+    return BoardUtils.addDraught(board, notation, black, true);
+  }
+
+  private void testCollection(String notations, List<Square> items) {
+    List<String> collection = items.stream().map(ICoordinates::toNotation).collect(Collectors.toList());
+    String[] notation = notations.split(",");
+    Arrays.stream(notation).forEach(n -> {
+      assertTrue(collection.toString(), collection.contains(n));
+    });
+    assertEquals(collection.toString(), notation.length, collection.size());
+  }
+
+  private Square getSquare(BoardContainer board, String notation) {
+    Square square = BoardUtils.findSquareByNotation(board, notation).get();
+    System.out.println(square.toNotation());
+    return square;
   }
 
   BoardContainer getBoard() {
-    BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN, 60);
+    BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
 //    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
 //    BoardContainer currentBoard = board;
 //    Optional<Square> squareByVH = BoardUtils.findSquareByNotation(currentBoard, "c3"); // 5,2
@@ -160,27 +195,5 @@ public class HighlightMoveServiceTest {
   protected EnumRules getRules() {
     return EnumRules.RUSSIAN;
   }
-
-  private Square getSquareByVHWithDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
-    return BoardUtils.addDraught(currentBoard, notation, false);
-  }
-
-  private Square getSquareByVHWithBlackDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
-    return BoardUtils.addDraught(currentBoard, notation, true);
-  }
-
-  private void testCollection(String notations, BeatenAndAllowedSquareMap highlight, EnumSearch key) {
-    List<Square> items;
-    if (key.equals(EnumSearch.allowed)) {
-      items = highlight.getDefault().getAllowed();
-    } else {
-      items = highlight.getDefault().getBeaten();
-    }
-    List<String> collection = items.stream().map(ICoordinates::toNotation).collect(Collectors.toList());
-    String[] notation = notations.split(",");
-    Arrays.stream(notation).forEach(n -> {
-      assertTrue(collection.toString(), collection.contains(n));
-    });
-    assertEquals(collection.toString(), notation.length, collection.size());
-  }
+  
 }

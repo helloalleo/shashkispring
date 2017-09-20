@@ -3,14 +3,13 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.model.BeatenAndAllowedSquareMap;
 import com.workingbit.board.model.Boards;
 import com.workingbit.board.model.Strings;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
-import com.workingbit.share.model.EnumRules;
+import com.workingbit.share.model.MovesList;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +25,7 @@ import static com.workingbit.board.common.EnumBaseKeys.*;
 import static com.workingbit.board.common.EnumSearch.allowed;
 import static com.workingbit.board.common.EnumSearch.beaten;
 import static com.workingbit.board.service.BoardUtils.*;
+import static com.workingbit.board.service.HighlightMoveService.getHighlightedMoves;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.
@@ -48,7 +48,7 @@ public class BoardService {
 
   public BoardContainer createBoard(CreateBoardRequest newBoardRequest) {
     BoardContainer boardContainer = initBoard(newBoardRequest.getFillBoard(), newBoardRequest.getBlack(),
-        EnumRules.valueOf(newBoardRequest.getRules().name()), newBoardRequest.getSquareSize());
+        newBoardRequest.getRules());
     save(boardContainer);
 //    boardHistoryService.addBoardAndSave(board);
     return boardContainer;
@@ -64,7 +64,7 @@ public class BoardService {
   }
 
   private BoardContainer initBoardContainer(BoardContainer boardContainer) {
-    BoardContainer initBoard = initBoard(false, boardContainer.isBlack(), boardContainer.getRules(), boardContainer.getSquareSize());
+    BoardContainer initBoard = initBoard(false, boardContainer.isBlack(), boardContainer.getRules());
     return boardContainer.init(initBoard);
   }
 
@@ -89,14 +89,14 @@ public class BoardService {
    * @return map of {allowed, beaten}
    * @throws BoardServiceException
    */
-  public BeatenAndAllowedSquareMap highlight(String boardId, Square toHighlight) throws BoardServiceException {
+  public BoardContainer highlight(String boardId, Square toHighlight) throws BoardServiceException {
     return boardDao.findById(boardId).map(board -> {
       try {
         // remember selected square
-//        board.setSelectedSquare(square);
-        boardDao.save(board);
-        // highlight moves for the selected square
-        return HighlightMoveService.highlight(board, toHighlight);
+//        boardDao.save(board);
+        // getHighlightedMoves moves for the selected square
+        MovesList highlighted = getHighlightedMoves(board, toHighlight);
+        return highlightBoard(board, highlighted);
       } catch (BoardServiceException | InterruptedException | ExecutionException e) {
         e.printStackTrace();
         return null;

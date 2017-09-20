@@ -120,7 +120,7 @@
             description: Expected response to a valid request
             schema:
               type: object
-              $ref: '#/definitions/BeatenAndAllowedSquareMap'
+              $ref: '#/definitions/BoardContainer'
           default:
             description: unexpected ResponseError
             schema:
@@ -143,25 +143,6 @@
       type: array
       items:
         type: string
-    MovesList:
-      properties:
-        allowed:
-          type: array
-          items:
-            $ref: '#/definitions/Square'
-        beaten:
-          type: array
-          items:
-            $ref: '#/definitions/Square'
-    BeatenAndAllowedSquareMap:
-      description: a (key, BeatenAndAllowedItem) map. `default` is an example key
-      properties:
-        default:
-          $ref: '#/definitions/MovesList'
-      additionalProperties:
-        type: array
-        items:
-          $ref: '#/definitions/MovesList'
     ResponseError:
       type: object
       properties:

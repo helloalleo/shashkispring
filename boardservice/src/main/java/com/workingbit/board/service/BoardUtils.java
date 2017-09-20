@@ -6,6 +6,7 @@ import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.MovesList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -22,21 +23,40 @@ public class BoardUtils {
    * Fill board with draughts
    *
    * @param fillBoard
-   * @param black      is player plays black?
+   * @param black     is player plays black?
    * @param rules
-   * @param squareSize size of one square
    * @return
    */
-  static BoardContainer initBoard(boolean fillBoard, boolean black, EnumRules rules, Integer squareSize) {
-    BoardContainer boardContainer = new BoardContainer();
-    boardContainer.setRules(rules);
+  static BoardContainer initBoard(boolean fillBoard, boolean black, EnumRules rules) {
+    BoardContainer boardContainer = new BoardContainer(black, rules);
+    return updateBoard(fillBoard, false, boardContainer);
+  }
 
-    List<Draught> whiteDraughts = new ArrayList<>();
+  static BoardContainer updateBoard(BoardContainer boardContainer) {
+    return updateBoard(false, true, boardContainer);
+  }
+
+  private static BoardContainer updateBoard(boolean fillBoard, boolean update, BoardContainer boardContainer) {
+    BoardContainer boardClone = (BoardContainer) boardContainer.deepClone();
+    EnumRules rules = boardClone.getRules();
+    boolean black = boardClone.isBlack();
+
     List<Draught> blackDraughts = new ArrayList<>();
-    List<Square> boardSquares = getAssignSquares(rules.getDimension(), squareSize);
+    List<Draught> whiteDraughts = new ArrayList<>();
+    Map<Square, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
+    Map<Square, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
+    List<Square> boardSquares = getAssignSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
-      if (fillBoard) {
+      if (update) {
+        Draught blackDraught = blackDraughtsExisted.get(square);
+        Draught whiteDraught = whiteDraughtsExisted.get(square);
+        if (blackDraught != null) {
+          square.setDraught(blackDraught);
+        } else if (whiteDraught != null) {
+          square.setDraught(whiteDraught);
+        }
+      } else if (fillBoard) {
         if (v < rules.getRowsForDraughts()) {
           placeDraught(!black, rules, blackDraughts, square, v, h);
         } else if (v >= rules.getDimension() - rules.getRowsForDraughts() && v < rules.getDimension()) {
@@ -46,10 +66,26 @@ public class BoardUtils {
     }
 //    boardContainer.setBlackDraughts(blackDraughts);
 //    boardContainer.setWhiteDraughts(whiteDraughts);
-    boardContainer.setAssignedSquares(boardSquares);
+    boardClone.setAssignedSquares(boardSquares);
     List<Square> board = getSquares(boardSquares, rules.getDimension());
-    boardContainer.setSquares(board);
-    return boardContainer;
+    boardClone.setSquares(board);
+    return boardClone;
+  }
+
+  static BoardContainer highlightBoard(BoardContainer boardContainer, MovesList highlight) {
+    BoardContainer clone = (BoardContainer) boardContainer.deepClone();
+    clone = updateBoard(clone);
+    List<Square> moves = highlight.getAllowed().isEmpty() ? highlight.getAllowed() : highlight.getBeaten();
+    System.out.println(moves);
+    List<Square> squareList = clone.getAssignedSquares()
+        .stream()
+        .map(square -> {
+          int index = moves.indexOf(square);
+          return index != -1 ? moves.get(index) : square;
+        })
+        .collect(Collectors.toList());
+    clone.setAssignedSquares(squareList);
+    return clone;
   }
 
   private static void placeDraught(boolean black, EnumRules rules, List<Draught> draughts, Square square, int v, int h) {
@@ -59,14 +95,14 @@ public class BoardUtils {
     square.setDraught(draught);
   }
 
-  static List<Square> getSquareArray(int offset, int dim, int squareSize, boolean prime) {
+  static List<Square> getSquareArray(int offset, int dim, boolean main) {
     List<Square> squares = new ArrayList<>();
     for (int v = 0; v < dim; v++) {
       for (int h = 0; h < dim; h++) {
         if (((v + h + 1) % 2 == 0)
-            && (prime && (v - h + offset) == 0
-            || !prime && (v + h - offset) == dim - 1)) {
-          Square square = new Square(v, h, dim, prime, squareSize);
+            && (main && (v - h + offset) == 0
+            || !main && (v + h - offset) == dim - 1)) {
+          Square square = new Square(v, h, dim, main);
           squares.add(square);
         }
       }
@@ -74,13 +110,13 @@ public class BoardUtils {
     return squares;
   }
 
-  static List<List<Square>> getDiagonals(int dim, int squareSize, boolean main) {
+  static List<List<Square>> getDiagonals(int dim, boolean main) {
     List<List<Square>> diagonals = new ArrayList<>(dim - 2);
     for (int i = -dim; i < dim - 1; i++) {
       if ((i == 1 - dim) && main) {
         continue;
       }
-      List<Square> diagonal = BoardUtils.getSquareArray(i, dim, squareSize, main);
+      List<Square> diagonal = BoardUtils.getSquareArray(i, dim, main);
       if (!diagonal.isEmpty()) {
         diagonals.add(diagonal);
       }
@@ -94,13 +130,13 @@ public class BoardUtils {
 
   /**
    * Assign square subdiagonal and main diagonal. Assign diagonal's squares link to squares
+   *
    * @param dim
-   * @param squareSize
    * @return
    */
-  private static List<Square> getAssignSquares(int dim, int squareSize) {
-    List<List<Square>> mainDiagonals = getDiagonals(dim, squareSize, true);
-    List<List<Square>> subDiagonals = getDiagonals(dim, squareSize, false);
+  private static List<Square> getAssignSquares(int dim) {
+    List<List<Square>> mainDiagonals = getDiagonals(dim, true);
+    List<List<Square>> subDiagonals = getDiagonals(dim, false);
 
     List<Square> squares = new ArrayList<>();
     for (List<Square> subDiagonal : subDiagonals) {
@@ -211,16 +247,17 @@ public class BoardUtils {
     return newSquares;
   }
 
-  public static Square addDraught(BoardContainer boardContainer, String newSquare, boolean black) throws BoardServiceException {
+  public static BoardContainer addDraught(BoardContainer boardContainer, String newSquare, boolean black) throws BoardServiceException {
     return addDraught(boardContainer, newSquare, black, false);
   }
 
-  public static Square addDraught(BoardContainer currentBoard, String notation, boolean black, boolean queen) throws BoardServiceException {
-    Optional<Square> squareOptional = findSquareByNotation(currentBoard, notation);
-    return squareOptional.map(square -> {
+  public static BoardContainer addDraught(BoardContainer boardContainer, String notation, boolean black, boolean queen) throws BoardServiceException {
+    BoardContainer board = (BoardContainer) boardContainer.deepClone();
+    Optional<Square> squareOptional = findSquareByNotation(board, notation);
+    squareOptional.ifPresent(square -> {
       Draught draught = new Draught(square.getV(), square.getH(), square.getDim(), black, queen);
       square.setDraught(draught);
-      return square;
-    }).orElseThrow(getBoardServiceExceptionSupplier("Unable to add draught"));
+    });
+    return board;
   }
 }
