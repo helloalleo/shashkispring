@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -49,11 +50,17 @@ public class ArticleService {
     CreateBoardRequest boardRequest = articleAndBoard.getBoardRequest();
     CreateArticleResponse createArticleResponse = new CreateArticleResponse();
     if (StringUtils.isBlank(article.getBoardId())) {
-      Optional<BoardContainer> boardOptional = boardRemoteService.createBoard(boardRequest);
-      if (boardOptional.isPresent()) {
-        article.setBoardId(boardOptional.get().getId());
-        createArticleResponse.setArticle(article);
-        createArticleResponse.setBoard(boardOptional.get());
+      try {
+        Optional<BoardContainer> boardContainerOptional = boardRemoteService.createBoard(boardRequest);
+        if (boardContainerOptional.isPresent()) {
+          article.setBoardId(boardContainerOptional.get().getId());
+          createArticleResponse.setArticle(article);
+          createArticleResponse.setBoard(boardContainerOptional.get());
+        } else {
+          throw new ArticleServiceException("Unable to create board");
+        }
+      } catch (URISyntaxException e) {
+        throw new ArticleServiceException("Invalid URI");
       }
     } else {
       throw new ArticleServiceException("boardId must not be specified");

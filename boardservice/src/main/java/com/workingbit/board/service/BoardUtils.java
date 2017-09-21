@@ -45,7 +45,7 @@ public class BoardUtils {
     List<Draught> whiteDraughts = new ArrayList<>();
     Map<Square, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
     Map<Square, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
-    List<Square> boardSquares = getAssignSquares(rules.getDimension());
+    List<Square> boardSquares = getAssignedSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
       if (update) {
@@ -74,17 +74,19 @@ public class BoardUtils {
 
   static BoardContainer highlightBoard(BoardContainer boardContainer, MovesList highlight) {
     BoardContainer clone = (BoardContainer) boardContainer.deepClone();
-    clone = updateBoard(clone);
-    List<Square> moves = highlight.getAllowed().isEmpty() ? highlight.getAllowed() : highlight.getBeaten();
-    System.out.println(moves);
-    List<Square> squareList = clone.getAssignedSquares()
+    List<Square> allowedSquares = highlight.getAllowed();
+    List<Square> beatenSquares = highlight.getBeaten();
+    List<Square> squareList = getAssignedSquares(boardContainer.getRules().getDimension())
         .stream()
         .map(square -> {
-          int index = moves.indexOf(square);
-          return index != -1 ? moves.get(index) : square;
+          int allowedIndex = allowedSquares.indexOf(square);
+          int beatenIndex = beatenSquares.indexOf(square);
+          return allowedIndex != -1 ? allowedSquares.get(allowedIndex)
+              : (beatenIndex != -1 ? beatenSquares.get(beatenIndex) : square);
         })
         .collect(Collectors.toList());
     clone.setAssignedSquares(squareList);
+    clone.setSquares(getSquares(squareList, clone.getRules().getDimension()));
     return clone;
   }
 
@@ -134,7 +136,7 @@ public class BoardUtils {
    * @param dim
    * @return
    */
-  private static List<Square> getAssignSquares(int dim) {
+  private static List<Square> getAssignedSquares(int dim) {
     List<List<Square>> mainDiagonals = getDiagonals(dim, true);
     List<List<Square>> subDiagonals = getDiagonals(dim, false);
 
@@ -247,8 +249,8 @@ public class BoardUtils {
     return newSquares;
   }
 
-  public static BoardContainer addDraught(BoardContainer boardContainer, String newSquare, boolean black) throws BoardServiceException {
-    return addDraught(boardContainer, newSquare, black, false);
+  public static BoardContainer addDraught(BoardContainer boardContainer, String notation, boolean black) throws BoardServiceException {
+    return addDraught(boardContainer, notation, black, false);
   }
 
   public static BoardContainer addDraught(BoardContainer boardContainer, String notation, boolean black, boolean queen) throws BoardServiceException {

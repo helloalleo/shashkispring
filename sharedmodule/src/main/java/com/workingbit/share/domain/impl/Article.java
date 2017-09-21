@@ -47,9 +47,4 @@ public class Article implements BaseDomain {
     this.title = title;
     this.content = content;
   }
-
-  @Override
-  public Object deepClone() {
-    return new Article(id, createdAt, author, title, content, boardId, state);
-  }
 }

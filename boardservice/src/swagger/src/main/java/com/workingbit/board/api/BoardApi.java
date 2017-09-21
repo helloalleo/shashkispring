@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-20T20:55:26.664+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T09:28:38.189+03:00")
 
 @Api(value = "board", description = "the board API")
 public interface BoardApi {
@@ -33,7 +33,7 @@ public interface BoardApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/board",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.POST)
     default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> createBoard(@ApiParam(value = ""  )  @Valid @RequestBody com.workingbit.share.model.CreateBoardRequest createBoardRequest) {
         // do some magic!
@@ -47,7 +47,7 @@ public interface BoardApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/board/{boardId}",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.DELETE)
     default ResponseEntity<Void> deleteBoardById(@ApiParam(value = "The id of the board to delete",required=true ) @PathVariable("boardId") String boardId) {
         // do some magic!
@@ -61,7 +61,7 @@ public interface BoardApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/board/{boardId}",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.GET)
     default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> findBoardById(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId) {
         // do some magic!
@@ -75,9 +75,9 @@ public interface BoardApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/board/{boardId}/highlight",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.POST)
-    default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> highlightSquare(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId,@ApiParam(value = "A square for wich highlight moves" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.Square toHighlight) {
+    default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> highlightBoard(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("boardId") String boardId,@ApiParam(value = "A square for wich highlight moves" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.Square toHighlight) {
         // do some magic!
         return new ResponseEntity<com.workingbit.share.domain.impl.BoardContainer>(HttpStatus.OK);
     }

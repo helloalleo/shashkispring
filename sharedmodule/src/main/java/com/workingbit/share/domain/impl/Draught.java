@@ -69,9 +69,4 @@ public class Draught implements ICoordinates, BaseDomain {
         ", highlighted=" + highlighted +
         '}';
   }
-
-  @Override
-  public Object deepClone() {
-    return new Draught(v, h, getDim(), black, queen, beaten, highlighted);
-  }
 }

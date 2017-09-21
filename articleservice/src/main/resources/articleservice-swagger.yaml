@@ -14,7 +14,7 @@
   schemes:
     - "http"
   produces:
-    - "application/json"
+    - "application/json;charset=UTF-8"
   paths:
     /articles:
       get:

@@ -18,9 +18,6 @@ public class CreateBoardRequest   {
   @JsonProperty("black")
   private Boolean black = null;
 
-  @JsonProperty("squareSize")
-  private Integer squareSize = 1;
-
   @JsonProperty("rules")
   private EnumRules rules = null;
 
@@ -66,26 +63,6 @@ public class CreateBoardRequest   {
     this.black = black;
   }
 
-  public CreateBoardRequest squareSize(Integer squareSize) {
-    this.squareSize = squareSize;
-    return this;
-  }
-
-   /**
-   * Get squareSize
-   * @return squareSize
-  **/
-  @ApiModelProperty(required = true, value = "")
-  @NotNull
-
-
-  public Integer getSquareSize() {
-    return squareSize;
-  }
-
-  public void setSquareSize(Integer squareSize) {
-    this.squareSize = squareSize;
-  }
 
   public CreateBoardRequest rules(EnumRules rules) {
     this.rules = rules;
@@ -120,13 +97,12 @@ public class CreateBoardRequest   {
     CreateBoardRequest createBoardRequest = (CreateBoardRequest) o;
     return Objects.equals(this.fillBoard, createBoardRequest.fillBoard) &&
         Objects.equals(this.black, createBoardRequest.black) &&
-        Objects.equals(this.squareSize, createBoardRequest.squareSize) &&
         Objects.equals(this.rules, createBoardRequest.rules);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(fillBoard, black, squareSize, rules);
+    return Objects.hash(fillBoard, black, rules);
   }
 
   @Override
@@ -136,7 +112,6 @@ public class CreateBoardRequest   {
     
     sb.append("    fillBoard: ").append(toIndentedString(fillBoard)).append("\n");
     sb.append("    black: ").append(toIndentedString(black)).append("\n");
-    sb.append("    squareSize: ").append(toIndentedString(squareSize)).append("\n");
     sb.append("    rules: ").append(toIndentedString(rules)).append("\n");
     sb.append("}");
     return sb.toString();

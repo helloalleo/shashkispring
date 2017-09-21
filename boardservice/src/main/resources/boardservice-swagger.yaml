@@ -16,7 +16,7 @@
 #  consumes:
 #    - "application/json"
   produces:
-    - "application/json"
+    - "application/json;charset=UTF-8"
   paths:
     /boards:
       post:
@@ -100,7 +100,7 @@
     /board/{boardId}/highlight:
       post:
         summary: Info for a specific board
-        operationId: highlightSquare
+        operationId: highlightBoard
         tags:
           - board
         parameters:

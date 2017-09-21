@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-20T20:55:26.664+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T09:28:38.189+03:00")
 
 @Api(value = "boards", description = "the boards API")
 public interface BoardsApi {
@@ -35,7 +35,7 @@ public interface BoardsApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/boards",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.POST)
     default ResponseEntity<Boards> listBoardsByIds(@ApiParam(value = ""  )  @Valid @RequestBody Strings boardIds) {
         // do some magic!

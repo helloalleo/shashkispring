@@ -76,7 +76,6 @@ public class BaseServiceTest {
     createBoardRequest.setBlack(false);
     createBoardRequest.setFillBoard(false);
     createBoardRequest.setRules(EnumRules.RUSSIAN);
-    createBoardRequest.setSquareSize(60);
     return createBoardRequest;
   }
 }

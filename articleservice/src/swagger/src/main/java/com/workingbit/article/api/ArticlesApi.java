@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-19T23:27:47.398+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T09:27:32.472+03:00")
 
 @Api(value = "articles", description = "the articles API")
 public interface ArticlesApi {
@@ -34,7 +34,7 @@ public interface ArticlesApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/articles",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.GET)
     default ResponseEntity<Articles> listArticles(@ApiParam(value = "How many items to return at one time (max 100)") @RequestParam(value = "limit", required = false) Integer limit) {
         // do some magic!

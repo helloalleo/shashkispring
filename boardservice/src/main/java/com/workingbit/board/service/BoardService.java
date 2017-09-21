@@ -60,12 +60,7 @@ public class BoardService {
 
   public Optional<BoardContainer> findById(String boardId) {
     return boardDao.findById(boardId)
-        .map(this::initBoardContainer);
-  }
-
-  private BoardContainer initBoardContainer(BoardContainer boardContainer) {
-    BoardContainer initBoard = initBoard(false, boardContainer.isBlack(), boardContainer.getRules());
-    return boardContainer.init(initBoard);
+        .map(BoardUtils::updateBoard);
   }
 
   public void delete(String boardId) {
@@ -91,17 +86,22 @@ public class BoardService {
    */
   public BoardContainer highlight(String boardId, Square toHighlight) throws BoardServiceException {
     return boardDao.findById(boardId).map(board -> {
-      try {
         // remember selected square
 //        boardDao.save(board);
         // getHighlightedMoves moves for the selected square
-        MovesList highlighted = getHighlightedMoves(board, toHighlight);
-        return highlightBoard(board, highlighted);
-      } catch (BoardServiceException | InterruptedException | ExecutionException e) {
-        e.printStackTrace();
-        return null;
-      }
-    }).orElseThrow(getBoardServiceExceptionSupplier("Unable to find allowed moves"));
+        BoardContainer boardContainer = BoardUtils.updateBoard(board);
+        Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardContainer, toHighlight);
+        return squareHighlight.map(square -> {
+          try {
+            square.setDraught(toHighlight.getDraught());
+            MovesList highlighted = getHighlightedMoves(boardContainer, square);
+            return highlightBoard(boardContainer, highlighted);
+          } catch (BoardServiceException | ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+          }
+          return null;
+        }).orElse(null);
+    }).orElseThrow(getBoardServiceExceptionSupplier("Unable to highlight the board"));
   }
 
   /**
@@ -148,7 +148,7 @@ public class BoardService {
     ids.addAll(boardIds);
     List<BoardContainer> boardList = boardDao.findByIds(ids)
         .stream()
-        .map(this::initBoardContainer)
+        .map(BoardUtils::updateBoard)
         .collect(Collectors.toList());
     Boards boards = new Boards();
     boards.addAll(boardList);

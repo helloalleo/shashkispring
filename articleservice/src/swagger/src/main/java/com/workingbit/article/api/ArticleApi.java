@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-19T23:27:47.398+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T09:27:32.472+03:00")
 
 @Api(value = "article", description = "the article API")
 public interface ArticleApi {
@@ -33,7 +33,7 @@ public interface ArticleApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/article",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.POST)
     default ResponseEntity<com.workingbit.share.model.CreateArticleResponse> createArticle(@ApiParam(value = ""  )  @Valid @RequestBody com.workingbit.share.model.CreateArticleRequest createArticleRequest) {
         // do some magic!
@@ -47,7 +47,7 @@ public interface ArticleApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/article/{articleId}",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.DELETE)
     default ResponseEntity<Void> deleteArticleById(@ApiParam(value = "The id of the article to delete",required=true ) @PathVariable("articleId") String articleId) {
         // do some magic!
@@ -61,7 +61,7 @@ public interface ArticleApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/article/{articleId}",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.GET)
     default ResponseEntity<com.workingbit.share.domain.impl.Article> findArticleById(@ApiParam(value = "The id of the article to retrieve",required=true ) @PathVariable("articleId") String articleId) {
         // do some magic!
@@ -75,7 +75,7 @@ public interface ArticleApi {
         @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
     
     @RequestMapping(value = "/article/{articleId}/board",
-        produces = { "application/json" }, 
+        produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.GET)
     default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> findBoardByArticleId(@ApiParam(value = "The id of the board to retrieve",required=true ) @PathVariable("articleId") String articleId) {
         // do some magic!

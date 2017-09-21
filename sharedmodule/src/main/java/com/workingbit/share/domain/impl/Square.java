@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,11 +73,6 @@ public class Square implements ICoordinates, BaseDomain {
         ", highlighted=" + highlighted +
         ", draught=" + draught +
         '}';
-  }
-
-  @Override
-  public Object deepClone() {
-    return new Square(v, h, getDim(), main, highlighted, ObjectUtils.clone(draught), ObjectUtils.clone(diagonals));
   }
 
   public void addDiagonal(List<Square> diagonal) {

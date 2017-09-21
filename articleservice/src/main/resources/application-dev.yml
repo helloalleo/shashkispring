@@ -2,7 +2,7 @@ server:
   port: 8001
 
 BOARD_API_URL: http://localhost:8002/v1
-BOARD_RESOURCE: /board
+BOARD_RESOURCE: ${BOARD_API_URL}/board
 
 TEST: true
 AWS_ENDPOINT: http://localhost:8081

@@ -2,13 +2,13 @@ package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rits.cloning.Cloner;
 import com.workingbit.board.common.DBConstants;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
@@ -16,6 +16,7 @@ import java.util.*;
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @DynamoDBTable(tableName = DBConstants.BOARD_CONTAINER_TABLE)
 public class BoardContainer implements BaseDomain {
@@ -31,10 +32,12 @@ public class BoardContainer implements BaseDomain {
   /**
    * Black draughts associated with owner square
    */
+  @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = Map.class)
   @DynamoDBAttribute(attributeName = "blackDraughts")
   private Map<Square, Draught> blackDraughts = new HashMap<>();
 
+  @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = Map.class)
   @DynamoDBAttribute(attributeName = "whiteDraughts")
   private Map<Square, Draught> whiteDraughts = new HashMap<>();
@@ -61,9 +64,6 @@ public class BoardContainer implements BaseDomain {
   @DynamoDBTypeConvertedEnum
   @DynamoDBAttribute(attributeName = "rules")
   private EnumRules rules;
-
-  public BoardContainer() {
-  }
 
   public BoardContainer(boolean black, EnumRules rules) {
     this.black = black;
@@ -101,17 +101,5 @@ public class BoardContainer implements BaseDomain {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), id);
-  }
-
-  @Override
-  public Object deepClone() {
-    Cloner cloner = new Cloner();
-    return cloner.deepClone(this);
-  }
-
-  public BoardContainer init(BoardContainer initBoard) {
-    setSquares(initBoard.getSquares());
-    setAssignedSquares(initBoard.getAssignedSquares());
-    return this;
   }
 }

@@ -94,16 +94,8 @@ public class HighlightMoveServiceTest {
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "c3"); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b6"); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e5"); // c3
-    updatedBoard.getAssignedSquares()
-        .stream()
-        .filter(square -> square.getDraught() != null)
-        .map(Square::toNotation)
-        .forEach(System.out::println);
-    System.out.println(updatedBoard);
     Square e1 = getSquare(updatedBoard, "e1");
-    System.out.println(e1);
     MovesList highlight = HighlightMoveService.getHighlightedMoves(updatedBoard, e1);
-    System.out.println(highlight);
     testCollection("c3,b6,e5", highlight.getBeaten());
     testCollection("h2,g3,c7,f4,a5", highlight.getAllowed());
   }

@@ -9,7 +9,7 @@ import javax.validation.constraints.*;
 /**
  * Articles
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-19T23:27:47.398+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T09:27:32.472+03:00")
 
 public class Articles extends ArrayList<com.workingbit.share.domain.impl.Article>  {
 
