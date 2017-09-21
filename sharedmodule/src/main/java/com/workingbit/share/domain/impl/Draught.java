@@ -66,7 +66,7 @@ public class Draught implements ICoordinates, BaseDomain {
         ", black=" + black +
         ", queen=" + queen +
         ", beaten=" + beaten +
-        ", highlighted=" + highlighted +
+        ", highlight=" + highlighted +
         '}';
   }
 }

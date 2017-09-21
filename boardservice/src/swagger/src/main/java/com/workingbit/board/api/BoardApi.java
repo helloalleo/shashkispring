@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T12:03:38.706+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-21T19:52:54.325+03:00")
 
 @Api(value = "board", description = "the board API")
 public interface BoardApi {
@@ -78,6 +78,20 @@ public interface BoardApi {
         produces = { "application/json;charset=UTF-8" }, 
         method = RequestMethod.POST)
     default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> highlightBoard(@ApiParam(value = "A board to be highlighted" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.BoardContainer board) {
+        // do some magic!
+        return new ResponseEntity<com.workingbit.share.domain.impl.BoardContainer>(HttpStatus.OK);
+    }
+
+
+    @ApiOperation(value = "Info for a specific board", notes = "", response = com.workingbit.share.domain.impl.BoardContainer.class, tags={ "board", })
+    @ApiResponses(value = { 
+        @ApiResponse(code = 200, message = "Expected response to a valid request", response = com.workingbit.share.domain.impl.BoardContainer.class),
+        @ApiResponse(code = 200, message = "unexpected ResponseError", response = ResponseError.class) })
+    
+    @RequestMapping(value = "/board/move",
+        produces = { "application/json;charset=UTF-8" }, 
+        method = RequestMethod.POST)
+    default ResponseEntity<com.workingbit.share.domain.impl.BoardContainer> move(@ApiParam(value = "A board to be highlighted" ,required=true )  @Valid @RequestBody com.workingbit.share.domain.impl.BoardContainer board) {
         // do some magic!
         return new ResponseEntity<com.workingbit.share.domain.impl.BoardContainer>(HttpStatus.OK);
     }

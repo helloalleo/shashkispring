@@ -120,6 +120,29 @@
             description: unexpected ResponseError
             schema:
               $ref: '#/definitions/ResponseError'
+    /board/move:
+      post:
+        summary: Info for a specific board
+        operationId: move
+        tags:
+          - board
+        parameters:
+          - name: board
+            in: body
+            required: true
+            description: A board to be highlighted
+            schema:
+              $ref: '#/definitions/BoardContainer'
+        responses:
+          "200":
+            description: Expected response to a valid request
+            schema:
+              type: object
+              $ref: '#/definitions/BoardContainer'
+          default:
+            description: unexpected ResponseError
+            schema:
+              $ref: '#/definitions/ResponseError'
 
   definitions:
     # Mapped

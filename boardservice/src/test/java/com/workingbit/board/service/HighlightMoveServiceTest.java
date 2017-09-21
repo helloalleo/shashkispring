@@ -146,15 +146,18 @@ public class HighlightMoveServiceTest {
   }
 
   private BoardContainer getSquareByVHWithDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
-    return BoardUtils.addDraught(currentBoard, notation, false);
+    BoardUtils.addDraught(currentBoard, notation, false);
+    return currentBoard;
   }
 
   private BoardContainer getSquareByVHWithBlackDraught(BoardContainer currentBoard, String notation) throws BoardServiceException {
-    return BoardUtils.addDraught(currentBoard, notation, true);
+    BoardUtils.addDraught(currentBoard, notation, true);
+    return currentBoard;
   }
 
   private BoardContainer getSquareByVHWithDraughtQueen(BoardContainer board, String notation, boolean black) throws BoardServiceException {
-    return BoardUtils.addDraught(board, notation, black, true);
+    BoardUtils.addDraught(board, notation, black, true);
+    return board;
   }
 
   private void testCollection(String notations, List<Square> items) {

@@ -6,7 +6,6 @@ import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.board.service.BoardUtils;
 import com.workingbit.share.domain.impl.BoardContainer;
-import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -42,7 +40,9 @@ public class BoardApiImpl implements BoardApi {
     Optional<BoardContainer> boardContainerOptional = boardService.findById(boardId);
     if (boardContainerOptional.isPresent()) {
       try {
-        return new ResponseEntity<>(BoardUtils.addDraught(boardContainerOptional.get(), "d4", false, true), HttpStatus.OK);
+        BoardContainer boardContainer = boardContainerOptional.get();
+        BoardUtils.addDraught(boardContainer, "d4", false, true);
+        return new ResponseEntity<>(boardContainer, HttpStatus.OK);
       } catch (BoardServiceException ignore) {
       }
     }
@@ -59,13 +59,18 @@ public class BoardApiImpl implements BoardApi {
   public ResponseEntity<BoardContainer> highlightBoard(@RequestBody BoardContainer boardContainer) {
     try {
       BoardContainer highlighted = boardService.highlight(boardContainer);
-      highlighted.getSquares()
-          .stream()
-          .filter(Objects::nonNull)
-          .filter(Square::isHighlighted)
-          .forEach(System.out::println);
-
       return new ResponseEntity<>(highlighted, HttpStatus.OK);
+    } catch (BoardServiceException e) {
+      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Override
+  public ResponseEntity<BoardContainer> move(@RequestBody BoardContainer board) {
+    try {
+      Optional<BoardContainer> move = boardService.move(board);
+      return move.map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
+          .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     } catch (BoardServiceException e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }

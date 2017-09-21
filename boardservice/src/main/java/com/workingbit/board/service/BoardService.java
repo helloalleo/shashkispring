@@ -9,23 +9,15 @@ import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
-import com.workingbit.share.model.MovesList;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static com.workingbit.board.common.EnumBaseKeys.*;
-import static com.workingbit.board.common.EnumSearch.allowed;
-import static com.workingbit.board.common.EnumSearch.beaten;
 import static com.workingbit.board.service.BoardUtils.*;
-import static com.workingbit.board.service.HighlightMoveService.getHighlightedMoves;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.
@@ -84,52 +76,41 @@ public class BoardService {
    */
   public BoardContainer highlight(BoardContainer boardHighlight) throws BoardServiceException {
     String boardId = boardHighlight.getId();
-    Square toHighlight = boardHighlight.getSelectedSquare();
-    return boardDao.findById(boardId).map(board -> {
-        BoardContainer boardContainer = BoardUtils.updateBoard(board);
-        Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardContainer, toHighlight);
-        return squareHighlight.map(square -> {
-          try {
-            square.setDraught(toHighlight.getDraught());
-            boardContainer.setSelectedSquare(square);
-            MovesList highlighted = getHighlightedMoves(square);
-            return highlightBoard(boardContainer, highlighted);
-          } catch (BoardServiceException | ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-          }
-          return null;
-        }).orElse(null);
-    }).orElseThrow(getBoardServiceExceptionSupplier("Unable to highlight the board"));
+    Square selectedSquare = boardHighlight.getSelectedSquare();
+    if (isValidHighlight(boardHighlight, selectedSquare)) {
+      return null;
+    }
+    return boardDao.findById(boardId)
+        .map((board) -> getHighlightedBoard(board, selectedSquare))
+        .orElseThrow(getBoardServiceExceptionSupplier("Unable to highlight the board"));
+  }
+
+  private boolean isValidHighlight(BoardContainer boardHighlight, Square selectedSquare) {
+    return selectedSquare == null
+        || !selectedSquare.isOccupied()
+        || selectedSquare.getDraught().isBlack() != boardHighlight.isBlack();
   }
 
   /**
-   * @param moveTo map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
+   * @param board map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
    * @return Move info:
    * {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
    * h - distance for move horizontal (minus left), targetSquare is a new square with
    * moved draught, queen is a draught has become the queen
    * @throws BoardServiceException
    */
-  public Map<String, Object> move(Map<String, Object> moveTo) throws BoardServiceException {
-    Optional<BoardContainer> boardOptional = findById((String) moveTo.get(boardId.name()));
-    return boardOptional.map(board -> {
-      Square selected = mapper.convertValue(moveTo.get(selectedSquare.name()), Square.class);
-      Square target = mapper.convertValue(moveTo.get(targetSquare.name()), Square.class);
-      List<Square> allowedMoves = mapList((List<Square>) moveTo.get(allowed.name()), mapper, Square.class, Square.class);
-      List<Draught> beatenMoves = mapList((List<Draught>) moveTo.get(beaten.name()), mapper, Draught.class, Draught.class);
-      boolean isUndo = (boolean) moveTo.getOrDefault(undoMove.name(), false);
-      try {
-        // create move service
-        MoveUtil moveUtil = new MoveUtil(board, selected, target, allowedMoves, beatenMoves, isUndo);
-        // do move should update board
-        Pair<BoardContainer, Map<String, Object>> move = moveUtil.moveAndUpdateBoard();
-//        boardHistoryService.addBoardAndSave(board);
-        boardDao.save(board);
-        return move.getRight();
-      } catch (BoardServiceException e) {
-        return null;
-      }
-    }).orElseThrow(getBoardServiceExceptionSupplier("Move not allowed"));
+  public Optional<BoardContainer> move(BoardContainer board) throws BoardServiceException {
+    Square nextSquare = board.getNextSquare();
+    Square selectedSquare = board.getSelectedSquare();
+    if (isValidMove(nextSquare, selectedSquare)) {
+      return Optional.empty();
+    }
+    return boardDao.findById(board.getId()).map(boardContainer ->
+        BoardUtils.moveDraught(selectedSquare, nextSquare, boardContainer));
+  }
+
+  private boolean isValidMove(Square nextSquare, Square selectedSquare) {
+    return nextSquare == null || selectedSquare == null || !selectedSquare.isOccupied() || !nextSquare.isHighlighted();
   }
 
 //  public Map<String, Object> undo(String boardId) throws BoardServiceException {

@@ -50,6 +50,13 @@ public class BoardContainer implements BaseDomain {
   private Square selectedSquare;
 
   /**
+   * Next move for draught
+   */
+  @DynamoDBTypeConvertedJson(targetType = Square.class)
+  @DynamoDBAttribute(attributeName = "nextSquare")
+  private Square nextSquare;
+
+  /**
    * Squares for API
    */
   @DynamoDBIgnore

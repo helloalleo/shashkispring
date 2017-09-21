@@ -41,7 +41,7 @@ public class Square implements ICoordinates, BaseDomain {
   private boolean main;
 
   /**
-   * if square highlighted for allowing to move
+   * if square highlight for allowing to move
    */
   private boolean highlighted;
 
@@ -70,12 +70,17 @@ public class Square implements ICoordinates, BaseDomain {
   public String toString() {
     return "Square{" +
         "notation=" + getNotation() +
-        ", highlighted=" + highlighted +
+        ", highlight=" + highlighted +
         ", draught=" + draught +
         '}';
   }
 
   public void addDiagonal(List<Square> diagonal) {
     this.diagonals.add(diagonal);
+  }
+
+  public Square highlight(boolean highlight) {
+    setHighlighted(highlight);
+    return this;
   }
 }

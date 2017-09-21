@@ -28,7 +28,7 @@
 //    boolean black = node.get("black").booleanValue();
 //    boolean queen = node.get("queen").booleanValue();
 //    boolean beaten = node.get("beaten").booleanValue();
-//    boolean highlighted = node.get("highlighted").booleanValue();
+//    boolean highlight = node.get("highlight").booleanValue();
 //
 //    return new Draught(v, h, black, queen, beaten, highlighted);
 //  }
