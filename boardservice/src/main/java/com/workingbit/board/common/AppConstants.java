@@ -15,4 +15,6 @@ public class AppConstants {
   @Value("${CLIENT_URL}")
   private @Getter
   String clientUrl;
+
+  public static final String INTERNAL_SERVER_ERROR = "500";
 }

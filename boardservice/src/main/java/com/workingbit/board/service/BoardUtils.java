@@ -2,10 +2,10 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.model.MovesList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static com.workingbit.board.common.AppConstants.INTERNAL_SERVER_ERROR;
 import static com.workingbit.board.service.HighlightMoveService.getHighlightedMoves;
 
 /**
@@ -292,19 +293,26 @@ public class BoardUtils {
   }
 
   public static BoardContainer moveDraught(Square selectedSquare, Square nextSquare, BoardContainer boardContainer) {
-      boardContainer.setNextSquare(nextSquare);
-      BoardContainer highlighted = getHighlightedBoard(boardContainer, selectedSquare);
-      try {
-        BoardContainer movedBoard = moveDraught(highlighted);
-        return getHighlightedBoard(movedBoard, nextSquare);
-      } catch (BoardServiceException e) {
-        e.printStackTrace();
-      }
+    BoardContainer highlighted = getHighlightedBoard(boardContainer, selectedSquare);
+    try {
+      nextSquare = BoardUtils.findSquareLink(highlighted, nextSquare)
+          .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
+    } catch (BoardServiceException e) {
+      e.printStackTrace();
       return null;
+    }
+    highlighted.setNextSquare(nextSquare);
+    try {
+      BoardContainer movedBoard = moveDraught(highlighted);
+      return getHighlightedBoard(movedBoard, nextSquare);
+    } catch (BoardServiceException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
-  public static BoardContainer getHighlightedBoard(BoardContainer boardContainer, Square selectedSquare) {
-//    BoardContainer boardContainer = BoardUtils.updateBoard(board);
+  public static BoardContainer getHighlightedBoard(BoardContainer board, Square selectedSquare) {
+    BoardContainer boardContainer = BoardUtils.updateBoard(board);
     Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardContainer, selectedSquare);
     return squareHighlight.map(square -> {
       try {
@@ -332,7 +340,7 @@ public class BoardUtils {
     Draught draught = sourceSquare.getDraught();
     BoardUtils.addDraught(board, targetSquare.getNotation(), draught);
     BoardUtils.removeDraught(board, sourceSquare.getNotation());
-    targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation()).orElseThrow(getBoardServiceExceptionSupplier("Shit"));
+    targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation()).orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
     board.setNextSquare(targetSquare);
     board.setSelectedSquare(targetSquare);
     targetSquare.setHighlighted(true);
