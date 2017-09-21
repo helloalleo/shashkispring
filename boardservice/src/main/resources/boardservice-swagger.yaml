@@ -97,24 +97,19 @@
             description: unexpected ResponseError
             schema:
               $ref: '#/definitions/ResponseError'
-    /board/{boardId}/highlight:
+    /board/highlight:
       post:
         summary: Info for a specific board
         operationId: highlightBoard
         tags:
           - board
         parameters:
-          - name: boardId
-            in: path
-            required: true
-            description: The id of the board to retrieve
-            type: string
-          - name: toHighlight
+          - name: board
             in: body
             required: true
-            description: A square for wich highlight moves
+            description: A board to be highlighted
             schema:
-              $ref: '#/definitions/Square'
+              $ref: '#/definitions/BoardContainer'
         responses:
           "200":
             description: Expected response to a valid request

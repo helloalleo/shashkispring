@@ -1,5 +1,6 @@
 package com.workingbit.article.config;
 
+import com.rits.cloning.Cloner;
 import com.workingbit.article.common.AppConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,5 +36,10 @@ public class LambdaConfiguration {
   @Bean
   public RestTemplate restTemplate() {
     return new RestTemplate();
+  }
+
+  @Bean
+  public Cloner getCloner() {
+    return new Cloner();
   }
 }

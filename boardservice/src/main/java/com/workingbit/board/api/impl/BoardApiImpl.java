@@ -56,9 +56,9 @@ public class BoardApiImpl implements BoardApi {
   }
 
   @Override
-  public ResponseEntity<BoardContainer> highlightBoard(@PathVariable String boardId, @RequestBody Square toHighlight) {
+  public ResponseEntity<BoardContainer> highlightBoard(@RequestBody BoardContainer boardContainer) {
     try {
-      BoardContainer highlighted = boardService.highlight(boardId, toHighlight);
+      BoardContainer highlighted = boardService.highlight(boardContainer);
       highlighted.getSquares()
           .stream()
           .filter(Objects::nonNull)

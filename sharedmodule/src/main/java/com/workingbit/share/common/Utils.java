@@ -19,6 +19,8 @@ public class Utils {
     add("f");
     add("g");
     add("h");
+    add("i");
+    add("j");
   }};
 
   public static boolean isBlank(String s) {

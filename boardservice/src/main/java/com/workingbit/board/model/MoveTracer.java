@@ -17,9 +17,9 @@ public class MoveTracer {
   @Override
   public String toString() {
     return "MoveTracer{" +
-        (allowed != null ? "allowed=" + allowed.toNotation() : "not allowed") +
-        (beaten != null ? ", beaten=" + beaten.toNotation() : ", not beaten") +
-        (previous != null ? ", previous=" + previous.toNotation() : ", no previous") +
+        (allowed != null ? "allowed=" + allowed.getNotation() : "not allowed") +
+        (beaten != null ? ", beaten=" + beaten.getNotation() : ", not beaten") +
+        (previous != null ? ", previous=" + previous.getNotation() : ", no previous") +
         '}';
   }
 }

@@ -69,7 +69,7 @@ public class Square implements ICoordinates, BaseDomain {
   @Override
   public String toString() {
     return "Square{" +
-        "notation=" + toNotation() +
+        "notation=" + getNotation() +
         ", highlighted=" + highlighted +
         ", draught=" + draught +
         '}';

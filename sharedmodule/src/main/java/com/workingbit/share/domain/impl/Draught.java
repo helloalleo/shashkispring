@@ -60,7 +60,7 @@ public class Draught implements ICoordinates, BaseDomain {
   @Override
   public String toString() {
     return "Draught{" +
-        "notation=" + toNotation() +
+        "notation=" + getNotation() +
         ", v=" + v +
         ", h=" + h +
         ", black=" + black +

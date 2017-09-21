@@ -43,6 +43,13 @@ public class BoardContainer implements BaseDomain {
   private Map<Square, Draught> whiteDraughts = new HashMap<>();
 
   /**
+   * Currently selected square
+   */
+  @DynamoDBTypeConvertedJson(targetType = Square.class)
+  @DynamoDBAttribute(attributeName = "selectedSquare")
+  private Square selectedSquare;
+
+  /**
    * Squares for API
    */
   @DynamoDBIgnore

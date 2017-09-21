@@ -79,22 +79,20 @@ public class BoardService {
   }
 
   /**
-   * @param boardId
-   * @param toHighlight map of {boardId, selectedSquare}
    * @return map of {allowed, beaten}
    * @throws BoardServiceException
    */
-  public BoardContainer highlight(String boardId, Square toHighlight) throws BoardServiceException {
+  public BoardContainer highlight(BoardContainer boardHighlight) throws BoardServiceException {
+    String boardId = boardHighlight.getId();
+    Square toHighlight = boardHighlight.getSelectedSquare();
     return boardDao.findById(boardId).map(board -> {
-        // remember selected square
-//        boardDao.save(board);
-        // getHighlightedMoves moves for the selected square
         BoardContainer boardContainer = BoardUtils.updateBoard(board);
         Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardContainer, toHighlight);
         return squareHighlight.map(square -> {
           try {
             square.setDraught(toHighlight.getDraught());
-            MovesList highlighted = getHighlightedMoves(boardContainer, square);
+            boardContainer.setSelectedSquare(square);
+            MovesList highlighted = getHighlightedMoves(square);
             return highlightBoard(boardContainer, highlighted);
           } catch (BoardServiceException | ExecutionException | InterruptedException e) {
             e.printStackTrace();

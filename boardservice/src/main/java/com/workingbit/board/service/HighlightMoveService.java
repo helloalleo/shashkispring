@@ -2,7 +2,6 @@ package com.workingbit.board.service;
 
 import com.github.rutledgepaulv.prune.Tree;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.MovesList;
@@ -20,7 +19,7 @@ class HighlightMoveService {
 
   private Square selectedSquare;
 
-  private HighlightMoveService(BoardContainer board, Square selectedSquare) throws BoardServiceException {
+  private HighlightMoveService(Square selectedSquare) throws BoardServiceException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceException("Selected square without placed draught");
     }
@@ -32,15 +31,17 @@ class HighlightMoveService {
   /**
    * getHighlightedMoves moves for the selected square
    *
-   * @param board
    * @param selectedSquare
    * @return
    * @throws BoardServiceException
    * @throws ExecutionException
    * @throws InterruptedException
    */
-  static MovesList getHighlightedMoves(BoardContainer board, Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
-    HighlightMoveService highlightMoveService = new HighlightMoveService(board, selectedSquare);
+  static MovesList getHighlightedMoves(Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
+    if (selectedSquare == null || selectedSquare.getDraught() == null) {
+      return new MovesList();
+    }
+    HighlightMoveService highlightMoveService = new HighlightMoveService(selectedSquare);
     return highlightMoveService.findAllMoves();
   }
 

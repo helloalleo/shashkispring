@@ -28,7 +28,7 @@ public interface ICoordinates {
 
   void setDim(int dim);
 
-  default String toNotation() {
+  default String getNotation() {
     return Utils.alph.get(getH()) + (getDim() - getV());
   }
 

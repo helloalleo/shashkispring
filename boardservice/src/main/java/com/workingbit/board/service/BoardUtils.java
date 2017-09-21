@@ -212,7 +212,7 @@ public class BoardUtils {
       return Optional.empty();
     }
     for (Square square : board.getAssignedSquares()) {
-      if (square.toNotation().equals(notation)) {
+      if (square.getNotation().equals(notation)) {
         return Optional.of(square);
       }
     }

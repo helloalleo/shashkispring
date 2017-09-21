@@ -15,10 +15,10 @@ import java.util.Objects;
 
 public class MovesList {
   @JsonProperty("allowed")
-  private List<com.workingbit.share.domain.impl.Square> allowed = null;
+  private List<com.workingbit.share.domain.impl.Square> allowed = new ArrayList<>();
 
   @JsonProperty("beaten")
-  private List<com.workingbit.share.domain.impl.Square> beaten = null;
+  private List<com.workingbit.share.domain.impl.Square> beaten = new ArrayList<>();
 
   public MovesList allowed(List<com.workingbit.share.domain.impl.Square> allowed) {
     this.allowed = allowed;
