@@ -266,7 +266,7 @@ public class BoardUtils {
     if (draught == null) {
       return;
     }
-    addDraught(board, notation, draught.isBlack(), draught.isQueen(), false);
+    addDraught(board, notation, draught.isBlack(), draught.isQueen(), draught.isBeaten());
   }
 
   public static void addDraught(Board board, String notation, boolean black) throws BoardServiceException {
