@@ -177,7 +177,7 @@ public class HighlightMoveServiceTest {
 
   Board getBoard() {
     Board board = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
-//    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
+//    Board board = new Board(boardBox, false, EnumRules.RUSSIAN, 60);
 //    Board currentBoard = board;
 //    Optional<Square> squareByVH = BoardUtils.findSquareByNotation(currentBoard, "c3"); // 5,2
 //    Square selectedSquare = squareByVH.get();

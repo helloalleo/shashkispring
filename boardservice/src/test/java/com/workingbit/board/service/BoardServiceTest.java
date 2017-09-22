@@ -30,7 +30,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void createBoard() throws Exception {
-    BoardBox boardBox = boardContainerService.createBoard(getCreateBoardRequest());
+    BoardBox boardBox = boardBoxService.createBoard(getCreateBoardRequest());
     toDelete(boardBox);
     assertNotNull(boardBox.getId());
   }
@@ -40,7 +40,7 @@ public class BoardServiceTest extends BaseServiceTest {
 //    BoardBox board = getNewBoard();
 //    toDelete(board);
 //    assertNotNull(board.getId());
-//    List<BoardBox> all = boardContainerService.findAll(null);
+//    List<BoardBox> all = boardBoxService.findAll(null);
 //    assertTrue(all.contains(board));
 //  }
 
@@ -49,7 +49,7 @@ public class BoardServiceTest extends BaseServiceTest {
     BoardBox board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
-    Optional<BoardBox> byId = boardContainerService.findById(board.getId());
+    Optional<BoardBox> byId = boardBoxService.findById(board.getId());
     assertNotNull(byId.get());
   }
 
@@ -58,8 +58,8 @@ public class BoardServiceTest extends BaseServiceTest {
     BoardBox board = getNewBoard();
     String boardId = board.getId();
     assertNotNull(boardId);
-    boardContainerService.delete(boardId);
-    Optional<BoardBox> byId = boardContainerService.findById(boardId);
+    boardBoxService.delete(boardId);
+    Optional<BoardBox> byId = boardBoxService.findById(boardId);
     assertTrue(!byId.isPresent());
   }
 
@@ -157,7 +157,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @After
   public void tearUp() {
-    boards.forEach(board -> boardContainerService.delete(board.getId()));
+    boards.forEach(board -> boardBoxService.delete(board.getId()));
   }
 
   private List<BoardBox> boards = new ArrayList<>();
@@ -168,7 +168,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   private BoardBox getNewBoard() {
     CreateBoardRequest createBoardRequest = getCreateBoardRequest();
-    BoardBox board = boardContainerService.createBoard(createBoardRequest);
+    BoardBox board = boardBoxService.createBoard(createBoardRequest);
 
     // place initial draught on the desk
 //    Draught draught = getDraught(5, 2);

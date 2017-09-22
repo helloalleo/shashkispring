@@ -1,7 +1,7 @@
 package com.workingbit.board.api.impl;
 
 import com.workingbit.board.service.BaseServiceTest;
-import com.workingbit.board.service.BoardContainerService;
+import com.workingbit.board.service.BoardBoxService;
 import com.workingbit.share.domain.impl.BoardBox;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,17 +29,17 @@ public class BoardApiImplTest extends BaseServiceTest {
   private MockMvc mockMvc;
 
   @Autowired
-  private BoardContainerService boardContainerService;
+  private BoardBoxService boardBoxService;
 
   private BoardBox board;
 
   @Before
   public void setUp() {
-    this.board = boardContainerService.createBoard(getCreateBoardRequest());
+    this.board = boardBoxService.createBoard(getCreateBoardRequest());
   }
 
   public void tearDown() {
-    boardContainerService.delete(board.getId());
+    boardBoxService.delete(board.getId());
   }
 
   @Test

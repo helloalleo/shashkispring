@@ -41,13 +41,13 @@
 //      Optional<BoardBox> undo = boardHistoryManager.undo();
 //      if (undo.isPresent()) {
 //        // do move
-//        BoardBox oldBoardContainer = boardHistoryOptional.get().getCurrent().getData();
-//        BoardBox newBoardContainer = undo.get();
+//        BoardBox oldBoardBox = boardHistoryOptional.get().getCurrent().getData();
+//        BoardBox newBoardBox = undo.get();
 //
 //        Map<String, Object> moveTo = new HashMap<String, Object>() {{
 //          put(EnumBaseKeys.boardId.name(), boardId);
-////          put(selectedSquare.name(), oldBoardContainer.getSelectedSquare());
-////          put(targetSquare.name(), newBoardContainer.getSelectedSquare());
+////          put(selectedSquare.name(), oldBoardBox.getSelectedSquare());
+////          put(targetSquare.name(), newBoardBox.getSelectedSquare());
 //          put(EnumBaseKeys.undoMove.name(), true);
 ////          put(allowed.name(), allowedMoves);
 ////          put(beaten.name(), beatenMoves);

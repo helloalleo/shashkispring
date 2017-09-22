@@ -32,8 +32,8 @@ public class BoardUtils {
    * @return
    */
   static Board initBoard(boolean fillBoard, boolean black, EnumRules rules) {
-    Board boardContainer = new Board(black, rules);
-    return updateBoard(fillBoard, false, boardContainer);
+    Board boardBox = new Board(black, rules);
+    return updateBoard(fillBoard, false, boardBox);
   }
 
   static Board updateBoard(Board board) {
@@ -68,8 +68,8 @@ public class BoardUtils {
         }
       }
     }
-//    boardContainer.setBlackDraughts(blackDraughts);
-//    boardContainer.setWhiteDraughts(whiteDraughts);
+//    boardBox.setBlackDraughts(blackDraughts);
+//    boardBox.setWhiteDraughts(whiteDraughts);
     boardClone.setAssignedSquares(boardSquares);
     List<Square> squares = getSquares(boardSquares, rules.getDimension());
     boardClone.setSquares(squares);

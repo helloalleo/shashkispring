@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
  * Created by Aleksey Popryaduhin on 06:55 22/09/2017.
  */
 @Component
-public class BoardContainerDao extends BaseDao<BoardBox>{
+public class BoardBoxDao extends BaseDao<BoardBox>{
 
   @Autowired
-  protected BoardContainerDao(AppProperties appProperties) {
+  protected BoardBoxDao(AppProperties appProperties) {
     super(BoardBox.class, appProperties.getRegion(), appProperties.getEndpoint(), appProperties.isTest());
   }
 }

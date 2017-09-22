@@ -1,6 +1,6 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.dao.BoardContainerDao;
+import com.workingbit.board.dao.BoardBoxDao;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.domain.impl.Board;
@@ -23,13 +23,13 @@ import static com.workingbit.board.service.BoardUtils.*;
 public class BoardService {
 
   private final BoardDao boardDao;
-  private final BoardContainerDao boardContainerDao;
+  private final BoardBoxDao boardBoxDao;
 
   @Autowired
   public BoardService(BoardDao boardDao,
-                      BoardContainerDao boardContainerDao) {
+                      BoardBoxDao boardBoxDao) {
     this.boardDao = boardDao;
-    this.boardContainerDao = boardContainerDao;
+    this.boardBoxDao = boardBoxDao;
   }
 
   public Board createBoard(CreateBoardRequest newBoardRequest) {
@@ -40,7 +40,7 @@ public class BoardService {
   }
 
   public List<BoardBox> findAll(Integer limit) {
-    return boardContainerDao.findAll(limit);
+    return boardBoxDao.findAll(limit);
   }
 
   public Optional<Board> findById(String boardId) {
@@ -97,8 +97,8 @@ public class BoardService {
     if (isValidMove(nextSquare, selectedSquare)) {
       return null;
     }
-    return boardDao.findById(board.getId()).map(boardContainer ->
-        BoardUtils.moveDraught(selectedSquare, nextSquare, boardContainer))
+    return boardDao.findById(board.getId()).map(boardBox ->
+        BoardUtils.moveDraught(selectedSquare, nextSquare, boardBox))
         .orElseGet(null);
   }
 

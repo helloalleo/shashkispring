@@ -46,10 +46,10 @@
 //  /**
 //   * Adds a Changeable to manage.
 //   *
-//   * @param boardContainer
+//   * @param boardBox
 //   */
-//  public BoardTreeNode addBoard(@NotNull BoardBox boardContainer) {
-//    BoardTreeNode child = new BoardTreeNode(boardContainer);
+//  public BoardTreeNode addBoard(@NotNull BoardBox boardBox) {
+//    BoardTreeNode child = new BoardTreeNode(boardBox);
 //    current.addChild(child);
 //    current = child;
 //    return current;
@@ -100,7 +100,7 @@
 ////  private Tree<Tree.Node<BoardBox>> getTree(Tree.Node<Optional<BoardBox>> node) {
 ////    return node.asTree()
 ////        .mapAsNodes(optionalNode -> Tree.node(optionalNode.getData().orElse(null)))
-////        .deepClone(boardContainerNode -> boardContainerNode);
+////        .deepClone(boardBoxNode -> boardBoxNode);
 ////  }
 //
 //  public String serializeToJsonBoardTreeNode() {
@@ -125,9 +125,9 @@
 //    //set index
 //    moveUp();
 //    //undo
-//    BoardBox boardContainerOptional = getCurrent().getData();
-//    boardContainerOptional.undo();
-//    return Optional.of(boardContainerOptional);
+//    BoardBox boardBoxOptional = getCurrent().getData();
+//    boardBoxOptional.undo();
+//    return Optional.of(boardBoxOptional);
 //  }
 //
 //  /**
@@ -143,9 +143,9 @@
 //    //reset index
 //    moveDown(branch);
 //    //redo
-//    BoardBox boardContainer = getCurrent().getData();
-//    boardContainer.redo();
-//    return Optional.of(boardContainer);
+//    BoardBox boardBox = getCurrent().getData();
+//    boardBox.redo();
+//    return Optional.of(boardBox);
 //  }
 //
 //  public Optional<BoardBox> redo() {
@@ -153,9 +153,9 @@
 //      return Optional.empty();
 //    }
 //    moveDown();
-//    BoardBox boardContainer = getCurrent().getData();
-//    boardContainer.redo();
-//    return Optional.of(boardContainer);
+//    BoardBox boardBox = getCurrent().getData();
+//    boardBox.redo();
+//    return Optional.of(boardBox);
 //  }
 //
 ////  public BoardHistory getHistoryByBoardId(String id) {

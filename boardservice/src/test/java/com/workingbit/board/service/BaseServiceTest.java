@@ -22,7 +22,7 @@ public class BaseServiceTest {
   private ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired
-  BoardContainerService boardContainerService;
+  BoardBoxService boardBoxService;
 
 //  @Autowired
 //  BoardHistoryService boardHistoryService;

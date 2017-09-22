@@ -51,11 +51,11 @@ public class ArticleService {
     CreateArticleResponse createArticleResponse = new CreateArticleResponse();
     if (StringUtils.isBlank(article.getBoardId())) {
       try {
-        Optional<BoardBox> boardContainerOptional = boardRemoteService.createBoard(boardRequest);
-        if (boardContainerOptional.isPresent()) {
-          article.setBoardId(boardContainerOptional.get().getId());
+        Optional<BoardBox> boardBoxOptional = boardRemoteService.createBoard(boardRequest);
+        if (boardBoxOptional.isPresent()) {
+          article.setBoardId(boardBoxOptional.get().getId());
           createArticleResponse.setArticle(article);
-          createArticleResponse.setBoard(boardContainerOptional.get());
+          createArticleResponse.setBoard(boardBoxOptional.get());
         } else {
           throw new ArticleServiceException("Unable to create board");
         }
@@ -110,8 +110,8 @@ public class ArticleService {
   public Optional<BoardBox> findBoardByArticleId(String articleId) {
     Optional<Article> articleOptional = findById(articleId);
     return articleOptional.map(article -> {
-      Optional<BoardBox> boardContainer = boardRemoteService.findBoardById(article.getBoardId());
-      return boardContainer.orElse(null);
+      Optional<BoardBox> boardBox = boardRemoteService.findBoardById(article.getBoardId());
+      return boardBox.orElse(null);
     });
   }
 }

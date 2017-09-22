@@ -73,25 +73,25 @@ public class BoardUtilsTest {
 
   @Test
   public void test_init_board() {
-    Board boardContainer = getBoardFilled();
-    boardContainer.getAssignedSquares().forEach(square -> {
+    Board boardBox = getBoardFilled();
+    boardBox.getAssignedSquares().forEach(square -> {
       if (square.getNotation().equals("a1") || square.getNotation().equals("h8")) {
         assertEquals(1, square.getDiagonals().size());
       } else {
         assertEquals(2, square.getDiagonals().size());
       }
     });
-//    Map<Integer, List<List<List<String>>>> collect = boardContainer.getWhiteDraughts().stream().map(draught -> draught.getDiagonals()).map(lists -> lists.stream().map(squares -> squares.stream().map(square -> square.getNotation()).collect(Collectors.toList())).collect(Collectors.toList())).collect(Collectors.groupingBy(o -> o.size()));
+//    Map<Integer, List<List<List<String>>>> collect = boardBox.getWhiteDraughts().stream().map(draught -> draught.getDiagonals()).map(lists -> lists.stream().map(squares -> squares.stream().map(square -> square.getNotation()).collect(Collectors.toList())).collect(Collectors.toList())).collect(Collectors.groupingBy(o -> o.size()));
 //    assertEquals("{1=[[[h8, g7, f6, e5, d4, c3, b2, a1]]], 2=[[[a3, b2, c1], [f8, e7, d6, c5, b4, a3]], [[a3, b2, c1], [h8, g7, f6, e5, d4, c3, b2, a1]], [[a3, b2, c1], [h6, g5, f4, e3, d2, c1]], [[a5, b4, c3, d2, e1], [h8, g7, f6, e5, d4, c3, b2, a1]], [[a5, b4, c3, d2, e1], [h6, g5, f4, e3, d2, c1]], [[a5, b4, c3, d2, e1], [h4, g3, f2, e1]], [[a7, b6, c5, d4, e3, f2, g1], [h6, g5, f4, e3, d2, c1]], [[a7, b6, c5, d4, e3, f2, g1], [h4, g3, f2, e1]], [[a7, b6, c5, d4, e3, f2, g1], [h2, g1]], [[b8, c7, d6, e5, f4, g3, h2], [h4, g3, f2, e1]], [[b8, c7, d6, e5, f4, g3, h2], [h2, g1]]]}", collect.toString());
-//    collect = boardContainer.getBlackDraughts().stream().map(draught -> draught.getDiagonals()).map(lists -> lists.stream().map(squares -> squares.stream().map(square -> square.getNotation()).collect(Collectors.toList())).collect(Collectors.toList())).collect(Collectors.groupingBy(o -> o.size()));
+//    collect = boardBox.getBlackDraughts().stream().map(draught -> draught.getDiagonals()).map(lists -> lists.stream().map(squares -> squares.stream().map(square -> square.getNotation()).collect(Collectors.toList())).collect(Collectors.toList())).collect(Collectors.groupingBy(o -> o.size()));
 //    assertEquals("{1=[[[h8, g7, f6, e5, d4, c3, b2, a1]]], 2=[[[a7, b6, c5, d4, e3, f2, g1], [b8, a7]], [[a7, b6, c5, d4, e3, f2, g1], [d8, c7, b6, a5]], [[b8, c7, d6, e5, f4, g3, h2], [b8, a7]], [[b8, c7, d6, e5, f4, g3, h2], [d8, c7, b6, a5]], [[b8, c7, d6, e5, f4, g3, h2], [f8, e7, d6, c5, b4, a3]], [[d8, e7, f6, g5, h4], [d8, c7, b6, a5]], [[d8, e7, f6, g5, h4], [f8, e7, d6, c5, b4, a3]], [[d8, e7, f6, g5, h4], [h8, g7, f6, e5, d4, c3, b2, a1]], [[f8, g7, h6], [f8, e7, d6, c5, b4, a3]], [[f8, g7, h6], [h8, g7, f6, e5, d4, c3, b2, a1]], [[f8, g7, h6], [h6, g5, f4, e3, d2, c1]]]}", collect.toString());
   }
 
   @Test
   public void add_draught_to_board() throws BoardServiceException {
-    Board boardContainer = getBoardFilled();
-    BoardUtils.addDraught(boardContainer, "c3", true);
-    Optional<Square> c3 = BoardUtils.findSquareByNotation(boardContainer, "c3");
+    Board boardBox = getBoardFilled();
+    BoardUtils.addDraught(boardBox, "c3", true);
+    Optional<Square> c3 = BoardUtils.findSquareByNotation(boardBox, "c3");
     assertTrue(c3.isPresent());
     c3.get().getDiagonals().forEach(squares -> {
       int index = squares.indexOf(c3.get());
@@ -102,8 +102,8 @@ public class BoardUtilsTest {
 
   @Test
   public void test_main_diagonal() {
-    Board boardContainer = getBoardFilled();
-    Square square = boardContainer.getAssignedSquares().get(4);
+    Board boardBox = getBoardFilled();
+    Square square = boardBox.getAssignedSquares().get(4);
     List<Square> diagonal0 = square.getDiagonals().get(0);
     System.out.println(diagonal0);
     List<Square> diagonal1 = square.getDiagonals().get(1);
@@ -119,12 +119,12 @@ public class BoardUtilsTest {
 
   @Test
   public void test_highlight() throws BoardServiceException, ExecutionException, InterruptedException {
-    Board boardContainer = getBoard();
-    BoardUtils.addDraught(boardContainer, "d4", false);
-    Optional<Square> d4 = BoardUtils.findSquareByNotation(boardContainer, "d4");
+    Board boardBox = getBoard();
+    BoardUtils.addDraught(boardBox, "d4", false);
+    Optional<Square> d4 = BoardUtils.findSquareByNotation(boardBox, "d4");
     assertTrue(d4.isPresent());
     MovesList highlightedMoves = HighlightMoveService.getHighlightedMoves(d4.get());
-    Board boardHighlighted = BoardUtils.highlightBoard(boardContainer, highlightedMoves);
+    Board boardHighlighted = BoardUtils.highlightBoard(boardBox, highlightedMoves);
     Optional<Square> e5 = BoardUtils.findSquareByNotation(boardHighlighted, "e5");
     assertTrue(e5.isPresent());
     assertTrue(e5.get().isHighlighted());
@@ -132,18 +132,18 @@ public class BoardUtilsTest {
 
   @Test
   public void move_draught() throws BoardServiceException {
-    Board boardContainer = getBoard();
-    Square d4 = BoardUtils.findSquareByNotation(boardContainer, "d4").get();
-    boardContainer.setSelectedSquare(d4);
-    BoardUtils.addDraught(boardContainer, d4.getNotation(), false);
-    d4 = BoardUtils.findSquareByNotation(boardContainer, d4.getNotation()).get();
+    Board boardBox = getBoard();
+    Square d4 = BoardUtils.findSquareByNotation(boardBox, "d4").get();
+    boardBox.setSelectedSquare(d4);
+    BoardUtils.addDraught(boardBox, d4.getNotation(), false);
+    d4 = BoardUtils.findSquareByNotation(boardBox, d4.getNotation()).get();
     assertTrue(d4.isOccupied());
-    Square e5 = BoardUtils.findSquareByNotation(boardContainer, "e5").get();
-    boardContainer.setNextSquare(e5);
-    boardContainer = BoardUtils.moveDraught(d4, e5, boardContainer);
-    d4 = BoardUtils.findSquareByNotation(boardContainer, d4.getNotation()).get();
+    Square e5 = BoardUtils.findSquareByNotation(boardBox, "e5").get();
+    boardBox.setNextSquare(e5);
+    boardBox = BoardUtils.moveDraught(d4, e5, boardBox);
+    d4 = BoardUtils.findSquareByNotation(boardBox, d4.getNotation()).get();
     assertFalse(d4.isOccupied());
-    e5 = BoardUtils.findSquareByNotation(boardContainer, e5.getNotation()).get();
+    e5 = BoardUtils.findSquareByNotation(boardBox, e5.getNotation()).get();
     assertTrue(e5.isOccupied());
   }
 

@@ -1,8 +1,8 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.dao.BoardContainerDao;
+import com.workingbit.board.dao.BoardBoxDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.model.BoardContainers;
+import com.workingbit.board.model.BoardBoxes;
 import com.workingbit.board.model.Strings;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
  * Created by Aleksey Popryaduhin on 07:00 22/09/2017.
  */
 @Service
-public class BoardContainerService {
+public class BoardBoxService {
 
-  private final BoardContainerDao boardContainerDao;
+  private final BoardBoxDao boardBoxDao;
   private final BoardService boardService;
 
   @Autowired
-  public BoardContainerService(BoardContainerDao boardContainerDao, BoardService boardService) {
-    this.boardContainerDao = boardContainerDao;
+  public BoardBoxService(BoardBoxDao boardBoxDao, BoardService boardService) {
+    this.boardBoxDao = boardBoxDao;
     this.boardService = boardService;
   }
 
@@ -43,11 +43,11 @@ public class BoardContainerService {
     return boardBox;
   }
 
-  public Optional<BoardBox> findById(String boardContainerId) {
-    return boardContainerDao.findById(boardContainerId).map(this::updateBoardContainer);
+  public Optional<BoardBox> findById(String boardBoxId) {
+    return boardBoxDao.findById(boardBoxId).map(this::updateBoardBox);
   }
 
-  private BoardBox updateBoardContainer(BoardBox boardBox) {
+  private BoardBox updateBoardBox(BoardBox boardBox) {
     Optional<Board> boardOptional = boardService.findById(boardBox.getCurrentBoardId());
     return boardOptional.map(board -> {
       Board updateBoard = BoardUtils.updateBoard(board);
@@ -56,11 +56,11 @@ public class BoardContainerService {
     }).orElseGet(null);
   }
 
-  public void delete(String boardContainerId) {
-    boardContainerDao.findById(boardContainerId)
-        .map(boardContainer -> {
-          boardService.delete(boardContainer.getCurrentBoardId());
-          boardContainerDao.delete(boardContainer.getId());
+  public void delete(String boardBoxId) {
+    boardBoxDao.findById(boardBoxId)
+        .map(boardBox -> {
+          boardService.delete(boardBox.getCurrentBoardId());
+          boardBoxDao.delete(boardBox.getId());
           return null;
         });
   }
@@ -102,18 +102,18 @@ public class BoardContainerService {
   }
 
   private void save(BoardBox boardBox) {
-    boardContainerDao.save(boardBox);
+    boardBoxDao.save(boardBox);
   }
 
-  public BoardContainers findByIds(Strings boardIds) {
+  public BoardBoxes findByIds(Strings boardIds) {
     List<String> ids = new ArrayList<>(boardIds.size());
     ids.addAll(boardIds);
-    List<BoardBox> boardBoxList = boardContainerDao.findByIds(ids)
+    List<BoardBox> boardBoxList = boardBoxDao.findByIds(ids)
         .stream()
-        .map(this::updateBoardContainer)
+        .map(this::updateBoardBox)
         .collect(Collectors.toList());
-    BoardContainers boardContainers = new BoardContainers();
-    boardContainers.addAll(boardBoxList);
-    return boardContainers;
+    BoardBoxes boardBoxs = new BoardBoxes();
+    boardBoxs.addAll(boardBoxList);
+    return boardBoxs;
   }
 }

@@ -21,17 +21,17 @@
     /boards:
       post:
         summary: Get boards by ids
-        operationId: listBoardContainersByIds
+        operationId: listBoardBoxsByIds
         tags:
           - boards
         parameters:
-          - name: boardContainerIds
+          - name: boardBoxIds
             in: body
             schema:
               $ref: '#/definitions/Strings'
         responses:
           "201":
-            description: BoardContainers loaded
+            description: BoardBoxs loaded
             schema:
               $ref: '#/definitions/BoardBoxes'
           default:

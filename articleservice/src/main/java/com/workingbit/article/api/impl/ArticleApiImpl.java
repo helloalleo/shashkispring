@@ -51,9 +51,9 @@ public class ArticleApiImpl implements ArticleApi {
 
   @Override
   public ResponseEntity<BoardBox> findBoardByArticleId(@PathVariable String articleId) {
-    Optional<BoardBox> boardContainerOptional = articleService.findBoardByArticleId(articleId);
-    return boardContainerOptional
-        .map(boardContainer -> new ResponseEntity<>(boardContainer, HttpStatus.OK))
+    Optional<BoardBox> boardBoxOptional = articleService.findBoardByArticleId(articleId);
+    return boardBoxOptional
+        .map(boardBox -> new ResponseEntity<>(boardBox, HttpStatus.OK))
         .orElseThrow(() -> new ArticleServiceException("Board not found"));
   }
 

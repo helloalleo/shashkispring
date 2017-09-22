@@ -1,7 +1,7 @@
 package com.workingbit.board.api.impl;
 
 import com.workingbit.board.api.BoardApi;
-import com.workingbit.board.service.BoardContainerService;
+import com.workingbit.board.service.BoardBoxService;
 import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,42 +19,42 @@ import java.util.Optional;
 @RestController
 public class BoardApiImpl implements BoardApi {
 
-  private final BoardContainerService boardContainerService;
+  private final BoardBoxService boardBoxService;
 
   @Autowired
-  public BoardApiImpl(BoardContainerService boardContainerService) {
-    this.boardContainerService = boardContainerService;
+  public BoardApiImpl(BoardBoxService boardBoxService) {
+    this.boardBoxService = boardBoxService;
   }
 
   @Override
   public ResponseEntity<BoardBox> createBoard(@RequestBody CreateBoardRequest createBoardRequest) {
-    BoardBox board = boardContainerService.createBoard(createBoardRequest);
+    BoardBox board = boardBoxService.createBoard(createBoardRequest);
     return new ResponseEntity<>(board, HttpStatus.CREATED);
   }
 
   @Override
   public ResponseEntity<BoardBox> findBoardById(@PathVariable String boardId) {
-    Optional<BoardBox> boardContainerOptional = boardContainerService.findById(boardId);
-    return boardContainerOptional.map(boardContainer -> new ResponseEntity<>(boardContainer, HttpStatus.OK))
+    Optional<BoardBox> boardBoxOptional = boardBoxService.findById(boardId);
+    return boardBoxOptional.map(boardBox -> new ResponseEntity<>(boardBox, HttpStatus.OK))
         .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
   @Override
   public ResponseEntity<Void> deleteBoardById(@PathVariable String boardId) {
-    boardContainerService.delete(boardId);
+    boardBoxService.delete(boardId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @Override
   public ResponseEntity<BoardBox> highlightBoard(@RequestBody BoardBox boardBox) {
-    return boardContainerService.highlight(boardBox)
+    return boardBoxService.highlight(boardBox)
         .map(highlighted -> new ResponseEntity<>(highlighted, HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
   @Override
   public ResponseEntity<BoardBox> move(@RequestBody BoardBox board) {
-    return boardContainerService.move(board)
+    return boardBoxService.move(board)
         .map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }

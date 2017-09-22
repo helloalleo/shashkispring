@@ -131,7 +131,7 @@
       type: object
     Article:
       type: object
-    BoardContainer:
+    BoardBox:
       type: object
     ResponseError:
       type: object
