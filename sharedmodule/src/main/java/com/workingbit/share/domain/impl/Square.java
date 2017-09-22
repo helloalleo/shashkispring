@@ -92,6 +92,11 @@ public class Square implements ICoordinates, BaseDomain {
     this.dim = dim;
   }
 
+  public Square dim(int dim) {
+    this.dim = dim;
+    return this;
+  }
+
   public boolean isMain() {
     return main;
   }

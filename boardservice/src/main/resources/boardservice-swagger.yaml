@@ -166,6 +166,52 @@
             description: unexpected ResponseError
             schema:
               $ref: '#/definitions/ResponseError'
+    /board/undo:
+      post:
+        summary: Info for a specific board
+        operationId: undo
+        tags:
+          - board
+        parameters:
+          - name: boardBox
+            in: body
+            required: true
+            description: A board for adding draught
+            schema:
+              $ref: '#/definitions/BoardBox'
+        responses:
+          "200":
+            description: Expected response to a valid request
+            schema:
+              type: object
+              $ref: '#/definitions/BoardBox'
+          default:
+            description: unexpected ResponseError
+            schema:
+              $ref: '#/definitions/ResponseError'
+    /board/redo:
+      post:
+        summary: Info for a specific board
+        operationId: redo
+        tags:
+          - board
+        parameters:
+          - name: boardBox
+            in: body
+            required: true
+            description: A board for adding draught
+            schema:
+              $ref: '#/definitions/BoardBox'
+        responses:
+          "200":
+            description: Expected response to a valid request
+            schema:
+              type: object
+              $ref: '#/definitions/BoardBox'
+          default:
+            description: unexpected ResponseError
+            schema:
+              $ref: '#/definitions/ResponseError'
 
   definitions:
     # Mapped

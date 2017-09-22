@@ -60,14 +60,11 @@ public class BoardService {
    * @throws BoardServiceException
    */
   public Board highlight(Board boardHighlight) throws BoardServiceException {
-    String boardId = boardHighlight.getId();
     Square selectedSquare = boardHighlight.getSelectedSquare();
     if (isValidHighlight(boardHighlight, selectedSquare)) {
-      return null;
+      throw new BoardServiceException("Invalid highlight square");
     }
-    return boardDao.findById(boardId)
-        .map((board) -> getHighlightedBoard(board, selectedSquare))
-        .orElseThrow(getBoardServiceExceptionSupplier("Unable to highlight the board"));
+    return getHighlightedBoard(boardHighlight, selectedSquare);
   }
 
   private boolean isValidHighlight(Board boardHighlight, Square selectedSquare) {
@@ -77,7 +74,7 @@ public class BoardService {
   }
 
   /**
-   * @param board map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
+   * @param previous map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
    * @param selectedSquare
    * @param nextSquare
    * @return Move info:
@@ -86,20 +83,17 @@ public class BoardService {
    * moved draught, queen is a draught has become the queen
    * @throws BoardServiceException
    */
-  public Board move(Board board, Square selectedSquare, Square nextSquare) throws BoardServiceException {
-    return boardDao.findById(board.getId()).map(boardBox ->
-        BoardUtils.moveDraught(selectedSquare, nextSquare, boardBox))
-        .map(moved-> {
-          boardDao.save(moved);
-          return moved;
-        })
-        .orElseGet(null);
+  public Board move(Board previous, Square selectedSquare, Square nextSquare) throws BoardServiceException {
+      Board moved = BoardUtils.moveDraught(selectedSquare, nextSquare, previous);
+      if (moved == null) {
+        throw new BoardServiceException("Unable to move draught");
+      }
+      moved.getPrevious().put(selectedSquare.getNotation(), previous.getId());
+      previous.getNext().put(nextSquare.getNotation(), moved.getId());
+      boardDao.save(previous);
+      boardDao.save(moved);
+      return moved;
   }
-
-//  public Map<String, Object> undo(String boardId) throws BoardServiceException {
-//    Map<String, Object> undoMove = boardHistoryService.undo(boardId);
-//    return move(undoMove);
-//  }
 
   public void save(Board board) {
     boardDao.save(board);
@@ -114,5 +108,24 @@ public class BoardService {
       Log.error("Unable to add draught", e);
     }
     return null;
+  }
+
+  public Optional<Board> undo(Board board) {
+    return boardDao.findById(board.getId())
+        .map(currentBoard -> {
+          Square previousSquare = currentBoard.getPreviousSquare();
+          if (previousSquare != null) {
+            String previousId = currentBoard.getPreviousBoard(previousSquare.getNotation());
+            return boardDao.findById(previousId)
+                .map(undoBoard -> {
+                  undoBoard.setCursor(true);
+                  currentBoard.setCursor(false);
+                  undoBoard.setPreviousBoard(currentBoard.getSelectedSquare().getNotation(), currentBoard.getId());
+                  return undoBoard;
+                })
+                .orElseGet(null);
+          }
+          return currentBoard;
+        });
   }
 }

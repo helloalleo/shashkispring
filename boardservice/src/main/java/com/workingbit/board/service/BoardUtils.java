@@ -2,6 +2,7 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -309,12 +310,9 @@ public class BoardUtils {
   }
 
   public static Board moveDraught(Square selectedSquare, Square nextSquare, Board board) {
-    Board highlighted = getHighlightedBoard(board, selectedSquare);
-    try {
-      nextSquare = BoardUtils.findSquareLink(highlighted, nextSquare)
-          .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
-    } catch (BoardServiceException e) {
-      e.printStackTrace();
+    Board boardClone = (Board) board.deepClone();
+    Board highlighted = getHighlightedBoard(boardClone, selectedSquare);
+    if (highlighted == null) {
       return null;
     }
     highlighted.setNextSquare(nextSquare);
@@ -328,20 +326,13 @@ public class BoardUtils {
   }
 
   public static Board getHighlightedBoard(Board board, Square selectedSquare) {
-    Board boardUpdated = BoardUtils.updateBoard(board);
-    Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardUpdated, selectedSquare);
-    return squareHighlight.map(square -> {
-      try {
-        selectedSquare.getDraught().setDim(square.getDim());
-        square.setDraught(selectedSquare.getDraught());
-        boardUpdated.setSelectedSquare(square);
-        MovesList highlighted = getHighlightedMoves(square);
-        return highlightBoard(boardUpdated, highlighted);
-      } catch (BoardServiceException | ExecutionException | InterruptedException e) {
-        e.printStackTrace();
-      }
-      return null;
-    }).orElse(null);
+    try {
+      MovesList highlighted = getHighlightedMoves(selectedSquare);
+      return highlightBoard(board, highlighted);
+    } catch (BoardServiceException | ExecutionException | InterruptedException e) {
+      Log.error("Unable to highlight board", e);
+    }
+    return null;
   }
 
   private static Board moveDraught(Board board) throws BoardServiceException {
@@ -358,8 +349,34 @@ public class BoardUtils {
     BoardUtils.removeDraught(board, sourceSquare.getNotation(), draught.isBlack());
     targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation()).orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
     board.setNextSquare(targetSquare);
+    board.setPreviousSquare(board.getSelectedSquare());
     board.setSelectedSquare(targetSquare);
     targetSquare.setHighlighted(true);
     return board;
+  }
+
+  public static void updateMoveSquaresNotation(Board board) {
+    int dimension = board.getRules().getDimension();
+    Square selectedSquare = findSquareLink(board, board.getSelectedSquare()).orElseGet(null);
+    if (selectedSquare != null) {
+      board.setSelectedSquare(selectedSquare.dim(dimension));
+    }
+    Square nextSquare = findSquareLink(board, board.getNextSquare()).orElseGet(null);
+    if (nextSquare != null) {
+      board.setNextSquare(nextSquare.dim(dimension));
+    }
+    Square previousSquare = findSquareLink(board, board.getPreviousSquare()).orElseGet(null);
+    if (previousSquare != null) {
+      board.setPreviousSquare(previousSquare.dim(dimension));
+    }
+    updateMoveDraughtsNotation(selectedSquare);
+    updateMoveDraughtsNotation(nextSquare);
+    updateMoveDraughtsNotation(previousSquare);
+  }
+
+  private static void updateMoveDraughtsNotation(Square square) {
+    if (square != null && square.isOccupied()) {
+      square.getDraught().setDim(square.getDim());
+    }
   }
 }

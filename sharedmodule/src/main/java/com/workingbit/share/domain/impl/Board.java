@@ -31,7 +31,7 @@ public class Board implements BaseDomain {
   @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = HashMap.class)
   @DynamoDBAttribute(attributeName = "next")
-  private Map<String, String> next = new HashMap<>(2);
+  private Map<String, String> next = new HashMap<>();
 
   /**
    * Next boards map. Key next square notation, value board id
@@ -39,7 +39,7 @@ public class Board implements BaseDomain {
   @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = HashMap.class)
   @DynamoDBAttribute(attributeName = "previous")
-  private Map<String, String> previous = new HashMap<>(2);
+  private Map<String, String> previous = new HashMap<>();
 
   /**
    * Black draughts associated with owner square
@@ -61,12 +61,17 @@ public class Board implements BaseDomain {
   @DynamoDBAttribute(attributeName = "selectedSquare")
   private Square selectedSquare;
 
+
   /**
    * Next move for draught
    */
   @DynamoDBTypeConvertedJson(targetType = Square.class)
   @DynamoDBAttribute(attributeName = "nextSquare")
   private Square nextSquare;
+
+  @DynamoDBTypeConvertedJson(targetType = Square.class)
+  @DynamoDBAttribute(attributeName = "previousSquare")
+  private Square previousSquare;
 
   /**
    * Squares for API
@@ -216,5 +221,21 @@ public class Board implements BaseDomain {
 
   public void addWhiteDraughts(String notation, Draught draught) {
     whiteDraughts.put(notation, draught);
+  }
+
+  public void setPreviousSquare(Square previousSquare) {
+    this.previousSquare = previousSquare;
+  }
+
+  public Square getPreviousSquare() {
+    return previousSquare;
+  }
+
+  public String getPreviousBoard(String notation) {
+    return previous.get(notation);
+  }
+
+  public void setPreviousBoard(String notation, String boardId) {
+    previous.put(notation, boardId);
   }
 }

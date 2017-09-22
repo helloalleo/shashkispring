@@ -74,17 +74,16 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          currentBoard.setSelectedSquare(boardBox.getSelectedSquare());
+          Board updatedBoard = BoardUtils.updateBoard(currentBoard);
+          updatedBoard.setSelectedSquare(boardBox.getSelectedSquare());
+          BoardUtils.updateMoveSquaresNotation(updatedBoard);
           try {
-            currentBoard = boardService.highlight(currentBoard);
-            if (currentBoard == null) {
-              return null;
-            }
+            updatedBoard = boardService.highlight(updatedBoard);
           } catch (BoardServiceException e) {
             Log.error(e.getMessage(), e);
             return null;
           }
-          updated.setBoard(currentBoard);
+          updated.setBoard(updatedBoard);
           return updated;
         });
   }
@@ -92,28 +91,30 @@ public class BoardBoxService {
   public Optional<BoardBox> move(BoardBox boardBox) {
     return findById(boardBox.getId())
         .map(updated -> {
-          Board currentBoard = updated.getBoard();
-          Square nextSquare = boardBox.getBoard().getNextSquare();
-          Square selectedSquare = boardBox.getBoard().getSelectedSquare();
+          Board boardUpdated = updated.getBoard();
+          BoardUtils.updateMoveSquaresNotation(boardUpdated);
+          Square nextSquare =boardUpdated.getNextSquare();
+          Square selectedSquare = boardUpdated.getSelectedSquare();
           if (isValidMove(nextSquare, selectedSquare)) {
+            Log.error(String.format("Invalid move Next: %s, Selected: %s", nextSquare, selectedSquare));
             return null;
           }
           try {
-            currentBoard = boardService.move(currentBoard, selectedSquare, nextSquare);
-            if (currentBoard == null) {
-              return null;
-            }
+            boardUpdated = boardService.move(boardUpdated, selectedSquare, nextSquare);
           } catch (BoardServiceException e) {
             Log.error(e.getMessage(), e);
             return null;
           }
-          updated.setBoard(currentBoard);
+          updated.setBoard(boardUpdated);
           return updated;
         });
   }
 
   private boolean isValidMove(Square nextSquare, Square selectedSquare) {
-    return nextSquare == null || selectedSquare == null || !selectedSquare.isOccupied() || !nextSquare.isHighlighted();
+    return nextSquare == null
+        || selectedSquare == null
+        || !selectedSquare.isOccupied()
+        || !nextSquare.isHighlighted();
   }
 
   private void save(BoardBox boardBox) {
@@ -154,6 +155,21 @@ public class BoardBoxService {
             return null;
           }
           updated.setBoard(currentBoard);
+          return updated;
+        });
+  }
+
+  public Optional<BoardBox> undo(BoardBox boardBox) {
+    return findById(boardBox.getId())
+        .map(updated->{
+          Board currentBoard = updated.getBoard();
+          Optional<Board> undone = boardService.undo(currentBoard);
+          if (undone.isPresent()) {
+            updated.setBoard(undone.get());
+            updated.setBoardId(undone.get().getId());
+//            boardBoxDao.save(updated);
+            return updated;
+          }
           return updated;
         });
   }
