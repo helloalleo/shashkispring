@@ -74,6 +74,7 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
+          currentBoard.setSelectedSquare(boardBox.getSelectedSquare());
           try {
             currentBoard = boardService.highlight(currentBoard);
             if (currentBoard == null) {
@@ -92,8 +93,13 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
+          Square nextSquare = boardBox.getBoard().getNextSquare();
+          Square selectedSquare = boardBox.getBoard().getSelectedSquare();
+          if (isValidMove(nextSquare, selectedSquare)) {
+            return null;
+          }
           try {
-            currentBoard = boardService.move(currentBoard);
+            currentBoard = boardService.move(currentBoard, selectedSquare, nextSquare);
             if (currentBoard == null) {
               return null;
             }
@@ -104,6 +110,10 @@ public class BoardBoxService {
           updated.setBoard(currentBoard);
           return updated;
         });
+  }
+
+  private boolean isValidMove(Square nextSquare, Square selectedSquare) {
+    return nextSquare == null || selectedSquare == null || !selectedSquare.isOccupied() || !nextSquare.isHighlighted();
   }
 
   private void save(BoardBox boardBox) {

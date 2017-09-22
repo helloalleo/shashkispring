@@ -78,25 +78,22 @@ public class BoardService {
 
   /**
    * @param board map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
+   * @param selectedSquare
+   * @param nextSquare
    * @return Move info:
    * {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
    * h - distance for move horizontal (minus left), targetSquare is a new square with
    * moved draught, queen is a draught has become the queen
    * @throws BoardServiceException
    */
-  public Board move(Board board) throws BoardServiceException {
-    Square nextSquare = board.getNextSquare();
-    Square selectedSquare = board.getSelectedSquare();
-    if (isValidMove(nextSquare, selectedSquare)) {
-      return null;
-    }
+  public Board move(Board board, Square selectedSquare, Square nextSquare) throws BoardServiceException {
     return boardDao.findById(board.getId()).map(boardBox ->
         BoardUtils.moveDraught(selectedSquare, nextSquare, boardBox))
+        .map(moved-> {
+          boardDao.save(moved);
+          return moved;
+        })
         .orElseGet(null);
-  }
-
-  private boolean isValidMove(Square nextSquare, Square selectedSquare) {
-    return nextSquare == null || selectedSquare == null || !selectedSquare.isOccupied() || !nextSquare.isHighlighted();
   }
 
 //  public Map<String, Object> undo(String boardId) throws BoardServiceException {
@@ -118,13 +115,4 @@ public class BoardService {
     }
     return null;
   }
-
-//  public List<Board> findByIds(Strings boardIds) {
-//    List<String> ids = new ArrayList<>(boardIds.size());
-//    ids.addAll(boardIds);
-//    return boardDao.findByIds(ids)
-//        .stream()
-//        .map(BoardUtils::updateBoard)
-//        .collect(Collectors.toList());
-//  }
 }
