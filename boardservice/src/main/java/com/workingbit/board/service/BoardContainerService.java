@@ -6,7 +6,7 @@ import com.workingbit.board.model.BoardContainers;
 import com.workingbit.board.model.Strings;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,28 +31,28 @@ public class BoardContainerService {
     this.boardService = boardService;
   }
 
-  public BoardContainer createBoard(CreateBoardRequest createBoardRequest) {
+  public BoardBox createBoard(CreateBoardRequest createBoardRequest) {
     Board board = boardService.createBoard(createBoardRequest);
 
-    BoardContainer boardContainer = new BoardContainer(board);
-    boardContainer.setArticleId(createBoardRequest.getArticleId());
-    save(boardContainer);
+    BoardBox boardBox = new BoardBox(board);
+    boardBox.setArticleId(createBoardRequest.getArticleId());
+    save(boardBox);
 
-    board.setBoardContainerId(boardContainer.getId());
+    board.setBoardBoxId(boardBox.getId());
     boardService.save(board);
-    return boardContainer;
+    return boardBox;
   }
 
-  public Optional<BoardContainer> findById(String boardContainerId) {
+  public Optional<BoardBox> findById(String boardContainerId) {
     return boardContainerDao.findById(boardContainerId).map(this::updateBoardContainer);
   }
 
-  private BoardContainer updateBoardContainer(BoardContainer boardContainer) {
-    Optional<Board> boardOptional = boardService.findById(boardContainer.getCurrentBoardId());
+  private BoardBox updateBoardContainer(BoardBox boardBox) {
+    Optional<Board> boardOptional = boardService.findById(boardBox.getCurrentBoardId());
     return boardOptional.map(board -> {
       Board updateBoard = BoardUtils.updateBoard(board);
-      boardContainer.setCurrentBoard(updateBoard);
-      return boardContainer;
+      boardBox.setCurrentBoard(updateBoard);
+      return boardBox;
     }).orElseGet(null);
   }
 
@@ -65,8 +65,8 @@ public class BoardContainerService {
         });
   }
 
-  public Optional<BoardContainer> highlight(BoardContainer boardContainer) {
-    return findById(boardContainer.getId())
+  public Optional<BoardBox> highlight(BoardBox boardBox) {
+    return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getCurrentBoard();
           try {
@@ -83,8 +83,8 @@ public class BoardContainerService {
         });
   }
 
-  public Optional<BoardContainer> move(BoardContainer boardContainer) {
-    return findById(boardContainer.getId())
+  public Optional<BoardBox> move(BoardBox boardBox) {
+    return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getCurrentBoard();
           try {
@@ -101,19 +101,19 @@ public class BoardContainerService {
         });
   }
 
-  private void save(BoardContainer boardContainer) {
-    boardContainerDao.save(boardContainer);
+  private void save(BoardBox boardBox) {
+    boardContainerDao.save(boardBox);
   }
 
   public BoardContainers findByIds(Strings boardIds) {
     List<String> ids = new ArrayList<>(boardIds.size());
     ids.addAll(boardIds);
-    List<BoardContainer> boardContainerList = boardContainerDao.findByIds(ids)
+    List<BoardBox> boardBoxList = boardContainerDao.findByIds(ids)
         .stream()
         .map(this::updateBoardContainer)
         .collect(Collectors.toList());
     BoardContainers boardContainers = new BoardContainers();
-    boardContainers.addAll(boardContainerList);
+    boardContainers.addAll(boardBoxList);
     return boardContainers;
   }
 }

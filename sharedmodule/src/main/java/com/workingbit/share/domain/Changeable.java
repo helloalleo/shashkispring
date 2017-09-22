@@ -1,16 +1,16 @@
 package com.workingbit.share.domain;
 
 
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 
 public interface Changeable {
 	/**
 	 * Undoes an action
 	 */
-	BoardContainer undo();
+	BoardBox undo();
 
 	/**
 	 * Redoes an action
 	 */
-	BoardContainer redo();
+	BoardBox redo();
 }

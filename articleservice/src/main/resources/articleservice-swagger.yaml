@@ -117,7 +117,7 @@
           "200":
             description: Expected response to a valid request
             schema:
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
           default:
             description: unexpected ResponseError
             schema:

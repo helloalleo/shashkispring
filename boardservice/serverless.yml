@@ -99,10 +99,10 @@ functions:
 # you can add CloudFormation api templates here
 resources:
   Resources:
-    DynamoDbTableBoardContainer:
+    DynamoDbTableBoardBox:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: BoardContainer
+        TableName: BoardBox
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -112,10 +112,10 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-    DynamoDbTableBoardHistory:
+    DynamoDbTableBoard:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: BoardHistory
+        TableName: Board
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -125,9 +125,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
-    DynamoDBIamPolicyBoardContainer:
+    DynamoDBIamPolicyBoardBox:
       Type: AWS::IAM::Policy
-      DependsOn: DynamoDbTableBoardContainer
+      DependsOn: DynamoDbTableBoardBox
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -140,12 +140,12 @@ resources:
                 - dynamodb:PutItem
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
-              Resource: arn:aws:dynamodb:*:*:table/BoardContainer
+              Resource: arn:aws:dynamodb:*:*:table/BoardBox
         Roles:
           - Ref: IamRoleLambdaExecution
-    DynamoDBIamPolicyBoardHistory:
+    DynamoDBIamPolicyBoard:
       Type: AWS::IAM::Policy
-      DependsOn: DynamoDbTableBoardHistory
+      DependsOn: DynamoDbTableBoard
       Properties:
         PolicyName: lambda-dynamodb
         PolicyDocument:
@@ -158,7 +158,7 @@ resources:
                 - dynamodb:PutItem
                 - dynamodb:UpdateItem
                 - dynamodb:Scan
-              Resource: arn:aws:dynamodb:*:*:table/BoardHistory
+              Resource: arn:aws:dynamodb:*:*:table/Board
         Roles:
           - Ref: IamRoleLambdaExecution
 
@@ -171,6 +171,7 @@ custom:
       port: 8083
       inMemory: true
       migrate: true
-      seed: true
+#      seed: true
+#      migrate: true
     # Uncomment only if you already have a DynamoDB running locally
     # noStart: true

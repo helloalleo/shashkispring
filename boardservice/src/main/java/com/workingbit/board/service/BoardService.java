@@ -4,7 +4,7 @@ import com.workingbit.board.dao.BoardContainerDao;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.domain.impl.Board;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
@@ -39,7 +39,7 @@ public class BoardService {
     return board;
   }
 
-  public List<BoardContainer> findAll(Integer limit) {
+  public List<BoardBox> findAll(Integer limit) {
     return boardContainerDao.findAll(limit);
   }
 
@@ -51,7 +51,7 @@ public class BoardService {
     boardDao.delete(boardId);
   }
 
-  public void addDraught(BoardContainer board, Draught draught) {
+  public void addDraught(BoardBox board, Draught draught) {
 //    Optional<Square> draughtOnBoard = board.getSquares()
 //        .stream()
 //        // find square by coords of draught

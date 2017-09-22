@@ -2,7 +2,7 @@ package com.workingbit.share.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
@@ -18,7 +18,7 @@ public class CreateArticleResponse {
   private Article article = null;
 
   @JsonProperty("board")
-  private BoardContainer board = null;
+  private BoardBox board = null;
 
   public CreateArticleResponse fillBoard(Article fillBoard) {
     this.article = fillBoard;
@@ -41,7 +41,7 @@ public class CreateArticleResponse {
     this.article = article;
   }
 
-  public CreateArticleResponse black(BoardContainer black) {
+  public CreateArticleResponse black(BoardBox black) {
     this.board = black;
     return this;
   }
@@ -54,11 +54,11 @@ public class CreateArticleResponse {
   @NotNull
 
 
-  public BoardContainer getBoard() {
+  public BoardBox getBoard() {
     return board;
   }
 
-  public void setBoard(BoardContainer board) {
+  public void setBoard(BoardBox board) {
     this.board = board;
   }
 

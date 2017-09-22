@@ -1,7 +1,7 @@
 package com.workingbit.article.service;
 
 import com.workingbit.article.config.RestProperties;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,17 +29,17 @@ public class BoardRemoteService {
     this.restProperties = restProperties;
   }
 
-  public Optional<BoardContainer> createBoard(CreateBoardRequest createBoardRequest) throws URISyntaxException {
-    ResponseEntity<BoardContainer> responseEntity = restTemplate.postForEntity(new URI(restProperties.getBoardResource()), createBoardRequest, BoardContainer.class);
+  public Optional<BoardBox> createBoard(CreateBoardRequest createBoardRequest) throws URISyntaxException {
+    ResponseEntity<BoardBox> responseEntity = restTemplate.postForEntity(new URI(restProperties.getBoardResource()), createBoardRequest, BoardBox.class);
     if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
       return Optional.of(responseEntity.getBody());
     }
     return Optional.empty();
   }
 
-  public Optional<BoardContainer> findBoardById(String boardId) {
-    BoardContainer boardContainer = restTemplate.getForObject(restProperties.getBoardResource() + "/" + boardId,
-        BoardContainer.class);
-    return Optional.ofNullable(boardContainer);
+  public Optional<BoardBox> findBoardById(String boardId) {
+    BoardBox boardBox = restTemplate.getForObject(restProperties.getBoardResource() + "/" + boardId,
+        BoardBox.class);
+    return Optional.ofNullable(boardBox);
   }
 }

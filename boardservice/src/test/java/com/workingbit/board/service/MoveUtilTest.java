@@ -1,7 +1,7 @@
 package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +17,7 @@ public class MoveUtilTest extends BaseServiceTest {
 
   @Test
   public void doMove() throws Exception, BoardServiceException {
-    BoardContainer board = getBoard();
+    BoardBox board = getBoard();
     Draught draught = getDraught(5, 2);
 //    ISquare square = getSquareByVH(board, 5, 2);
 //    square.setDraught(draught);

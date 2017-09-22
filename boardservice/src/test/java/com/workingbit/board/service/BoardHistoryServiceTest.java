@@ -17,7 +17,7 @@
 //
 ////  @Test
 ////  public void should_save_history() throws Exception, BoardServiceException {
-////    BoardContainer board = getBoard();
+////    BoardBox board = getBoard();
 //////    boardHistoryService.addBoardAndSave(board);
 ////    Optional<BoardHistory> boardHistory = boardHistoryService.getHistory(board.getId());
 ////    assertTrue(boardHistory.isPresent());
@@ -26,7 +26,7 @@
 ////
 ////  @Test
 ////  public void should_save_two_history() throws Exception, BoardServiceException {
-////    BoardContainer board = getBoard();
+////    BoardBox board = getBoard();
 //////    boardHistoryService.addBoardAndSave(board);
 ////    Optional<BoardHistory> boardHistory = boardHistoryService.getHistory(board.getId());
 ////    assertTrue(boardHistory.isPresent());

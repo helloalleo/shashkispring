@@ -2,7 +2,7 @@ package com.workingbit.board.api.impl;
 
 import com.workingbit.board.service.BaseServiceTest;
 import com.workingbit.board.service.BoardContainerService;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class BoardApiImplTest extends BaseServiceTest {
   @Autowired
   private BoardContainerService boardContainerService;
 
-  private BoardContainer board;
+  private BoardBox board;
 
   @Before
   public void setUp() {

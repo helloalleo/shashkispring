@@ -4,7 +4,7 @@ import com.workingbit.article.api.ArticleApi;
 import com.workingbit.article.exception.ArticleServiceException;
 import com.workingbit.article.service.ArticleService;
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.model.CreateArticleRequest;
 import com.workingbit.share.model.CreateArticleResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +50,8 @@ public class ArticleApiImpl implements ArticleApi {
   }
 
   @Override
-  public ResponseEntity<BoardContainer> findBoardByArticleId(@PathVariable String articleId) {
-    Optional<BoardContainer> boardContainerOptional = articleService.findBoardByArticleId(articleId);
+  public ResponseEntity<BoardBox> findBoardByArticleId(@PathVariable String articleId) {
+    Optional<BoardBox> boardContainerOptional = articleService.findBoardByArticleId(articleId);
     return boardContainerOptional
         .map(boardContainer -> new ResponseEntity<>(boardContainer, HttpStatus.OK))
         .orElseThrow(() -> new ArticleServiceException("Board not found"));

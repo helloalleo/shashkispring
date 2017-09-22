@@ -3,7 +3,7 @@ package com.workingbit.board.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.share.domain.impl.Board;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
@@ -30,17 +30,17 @@ public class BaseServiceTest {
   @Autowired
   BoardDao boardDao;
 
-  BoardContainer getBoard() {
+  BoardBox getBoard() {
     Board board = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
-    BoardContainer boardContainer = new BoardContainer(board);
-//    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
-//    BoardContainer currentBoard = board.getCurrentBoard();
+    BoardBox boardBox = new BoardBox(board);
+//    Board board = new Board(boardBox, false, EnumRules.RUSSIAN, 60);
+//    BoardBox currentBoard = board.getCurrentBoard();
 //    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
 //    Square selectedSquare = squareByVH.get();
 //    Draught draught = new Draught(5, 2, getRules().getDimension());
 //    selectedSquare.setDraught(draught);
 //    currentBoard.setSelectedSquare(selectedSquare);
-    return boardContainer;
+    return boardBox;
   }
 
   Draught getDraught(int v, int h) {
@@ -55,7 +55,7 @@ public class BaseServiceTest {
     return new Draught(v, h, getRules().getDimension(), true);
   }
 
-  Square getSquareByVH(BoardContainer board, int v, int h) {
+  Square getSquareByVH(BoardBox board, int v, int h) {
     return findSquareByVH(board.getCurrentBoard(), v, h).get();
   }
 

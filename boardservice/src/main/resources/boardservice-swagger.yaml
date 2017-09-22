@@ -33,7 +33,7 @@
           "201":
             description: BoardContainers loaded
             schema:
-              $ref: '#/definitions/BoardContainers'
+              $ref: '#/definitions/BoardBoxes'
           default:
             description: unexpected ResponseError
             schema:
@@ -53,7 +53,7 @@
           "201":
             description: Board response
             schema:
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
           default:
             description: unexpected ResponseError
             schema:
@@ -74,7 +74,7 @@
           "200":
             description: Expected response to a valid request
             schema:
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
           default:
             description: unexpected ResponseError
             schema:
@@ -109,13 +109,13 @@
             required: true
             description: A board to be highlighted
             schema:
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
         responses:
           "200":
             description: Expected response to a valid request
             schema:
               type: object
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
           default:
             description: unexpected ResponseError
             schema:
@@ -132,13 +132,13 @@
             required: true
             description: A board to be highlighted
             schema:
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
         responses:
           "200":
             description: Expected response to a valid request
             schema:
               type: object
-              $ref: '#/definitions/BoardContainer'
+              $ref: '#/definitions/BoardBox'
           default:
             description: unexpected ResponseError
             schema:
@@ -148,17 +148,17 @@
     # Mapped
     Board:
       type: object
-    BoardContainer:
+    BoardBox:
       type: object
     Square:
       type: object
     CreateBoardRequest:
       type: object
     # Defined here
-    BoardContainers:
+    BoardBoxes:
       type: array
       items:
-        $ref: '#/definitions/BoardContainer'
+        $ref: '#/definitions/BoardBox'
     Strings:
       type: array
       items:

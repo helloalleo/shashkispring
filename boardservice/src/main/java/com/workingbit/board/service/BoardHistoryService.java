@@ -18,7 +18,7 @@
 //  }
 //
 ////  public void addBoardAndSave(Board newBoard) {
-////    BoardContainer currentBoard = newBoard.getCurrentBoard();
+////    BoardBox currentBoard = newBoard.getCurrentBoard();
 ////
 ////    System.out.println(boardHistoryDao.findAll());
 ////    // find board history
@@ -38,11 +38,11 @@
 //      // initialize history manager with found history
 //      BoardHistoryManager boardHistoryManager = new BoardHistoryManager(boardHistoryOptional.get());
 //      // undo history
-//      Optional<BoardContainer> undo = boardHistoryManager.undo();
+//      Optional<BoardBox> undo = boardHistoryManager.undo();
 //      if (undo.isPresent()) {
 //        // do move
-//        BoardContainer oldBoardContainer = boardHistoryOptional.get().getCurrent().getData();
-//        BoardContainer newBoardContainer = undo.get();
+//        BoardBox oldBoardContainer = boardHistoryOptional.get().getCurrent().getData();
+//        BoardBox newBoardContainer = undo.get();
 //
 //        Map<String, Object> moveTo = new HashMap<String, Object>() {{
 //          put(EnumBaseKeys.boardId.name(), boardId);

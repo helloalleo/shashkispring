@@ -5,7 +5,7 @@ import com.workingbit.article.dao.ArticleDao;
 import com.workingbit.article.exception.ArticleServiceException;
 import com.workingbit.article.model.Articles;
 import com.workingbit.share.domain.impl.Article;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.model.CreateArticleRequest;
 import com.workingbit.share.model.CreateArticleResponse;
 import com.workingbit.share.model.CreateBoardRequest;
@@ -51,7 +51,7 @@ public class ArticleService {
     CreateArticleResponse createArticleResponse = new CreateArticleResponse();
     if (StringUtils.isBlank(article.getBoardId())) {
       try {
-        Optional<BoardContainer> boardContainerOptional = boardRemoteService.createBoard(boardRequest);
+        Optional<BoardBox> boardContainerOptional = boardRemoteService.createBoard(boardRequest);
         if (boardContainerOptional.isPresent()) {
           article.setBoardId(boardContainerOptional.get().getId());
           createArticleResponse.setArticle(article);
@@ -107,10 +107,10 @@ public class ArticleService {
     return articleDao.findPublished();
   }
 
-  public Optional<BoardContainer> findBoardByArticleId(String articleId) {
+  public Optional<BoardBox> findBoardByArticleId(String articleId) {
     Optional<Article> articleOptional = findById(articleId);
     return articleOptional.map(article -> {
-      Optional<BoardContainer> boardContainer = boardRemoteService.findBoardById(article.getBoardId());
+      Optional<BoardBox> boardContainer = boardRemoteService.findBoardById(article.getBoardId());
       return boardContainer.orElse(null);
     });
   }

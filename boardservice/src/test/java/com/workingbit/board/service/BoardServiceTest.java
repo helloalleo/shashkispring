@@ -1,6 +1,6 @@
 package com.workingbit.board.service;
 
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
@@ -30,43 +30,43 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void createBoard() throws Exception {
-    BoardContainer boardContainer = boardContainerService.createBoard(getCreateBoardRequest());
-    toDelete(boardContainer);
-    assertNotNull(boardContainer.getId());
+    BoardBox boardBox = boardContainerService.createBoard(getCreateBoardRequest());
+    toDelete(boardBox);
+    assertNotNull(boardBox.getId());
   }
 
 //  @Test
 //  public void findAll() throws Exception {
-//    BoardContainer board = getNewBoard();
+//    BoardBox board = getNewBoard();
 //    toDelete(board);
 //    assertNotNull(board.getId());
-//    List<BoardContainer> all = boardContainerService.findAll(null);
+//    List<BoardBox> all = boardContainerService.findAll(null);
 //    assertTrue(all.contains(board));
 //  }
 
   @Test
   public void findById() throws Exception {
-    BoardContainer board = getNewBoard();
+    BoardBox board = getNewBoard();
     toDelete(board);
     assertNotNull(board.getId());
-    Optional<BoardContainer> byId = boardContainerService.findById(board.getId());
+    Optional<BoardBox> byId = boardContainerService.findById(board.getId());
     assertNotNull(byId.get());
   }
 
   @Test
   public void delete() throws Exception {
-    BoardContainer board = getNewBoard();
+    BoardBox board = getNewBoard();
     String boardId = board.getId();
     assertNotNull(boardId);
     boardContainerService.delete(boardId);
-    Optional<BoardContainer> byId = boardContainerService.findById(boardId);
+    Optional<BoardBox> byId = boardContainerService.findById(boardId);
     assertTrue(!byId.isPresent());
   }
 
   /*
   @Test
   public void should_save_move_history() throws BoardServiceException, ExecutionException, InterruptedException {
-    BoardContainer board = getNewBoard();
+    BoardBox board = getNewBoard();
     Draught draught = getDraught(5, 2);
     Square square = getSquareByVH(board, 5, 2);
     square.setDraught(draught);
@@ -79,7 +79,7 @@ public class BoardServiceTest extends BaseServiceTest {
 //    List<Draught> beatenMoves = (List<Draught>) allowedMovesMap.get(beaten.name());
 
     // create moveTo action
-    BoardContainer finalBoard = board;
+    BoardBox finalBoard = board;
     Map<String, Object> moveTo = new HashMap<String, Object>() {{
       put(boardId.name(), finalBoard.getId());
       put(selectedSquare.name(), square);
@@ -108,7 +108,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   @Test
   public void should_undo_move() throws BoardServiceException {
-    BoardContainer board = getNewBoard();
+    BoardBox board = getNewBoard();
     Square square = getSquareByVH(board, 5, 2);
     Square target = getSquareByVH(board, 4, 3);
 
@@ -145,7 +145,7 @@ public class BoardServiceTest extends BaseServiceTest {
     MapUtils.debugPrint(System.out, "UNDO", undo);
   }
 */
-  private HashMap<String, Object> getMoveTo(BoardContainer board, Square square, Square target, List<Square> allowedMoves, List<Draught> beatenMoves) {
+  private HashMap<String, Object> getMoveTo(BoardBox board, Square square, Square target, List<Square> allowedMoves, List<Draught> beatenMoves) {
     return new HashMap<String, Object>() {{
       put(boardId.name(), board.getId());
       put(selectedSquare.name(), square);
@@ -160,15 +160,15 @@ public class BoardServiceTest extends BaseServiceTest {
     boards.forEach(board -> boardContainerService.delete(board.getId()));
   }
 
-  private List<BoardContainer> boards = new ArrayList<>();
+  private List<BoardBox> boards = new ArrayList<>();
 
-  private void toDelete(BoardContainer board) {
+  private void toDelete(BoardBox board) {
     boards.add(board);
   }
 
-  private BoardContainer getNewBoard() {
+  private BoardBox getNewBoard() {
     CreateBoardRequest createBoardRequest = getCreateBoardRequest();
-    BoardContainer board = boardContainerService.createBoard(createBoardRequest);
+    BoardBox board = boardContainerService.createBoard(createBoardRequest);
 
     // place initial draught on the desk
 //    Draught draught = getDraught(5, 2);

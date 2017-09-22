@@ -2,7 +2,7 @@ package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.workingbit.board.common.DBConstants;
+import com.workingbit.share.common.DBConstants;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 
@@ -14,9 +14,6 @@ import java.util.Map;
 /**
  * Created by Aleksey Popryaduhin on 23:21 21/09/2017.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 @DynamoDBTable(tableName = DBConstants.BOARD_TABLE)
 public class Board implements BaseDomain {
 
@@ -24,8 +21,8 @@ public class Board implements BaseDomain {
   @DynamoDBHashKey(attributeName = "id")
   private String id;
 
-  @DynamoDBAttribute(attributeName = "boardContainerId")
-  private String boardContainerId;
+  @DynamoDBAttribute(attributeName = "boardBoxId")
+  private String boardBoxId;
 
   /**
    * Next boards map. Key next square notation, value board id
@@ -95,7 +92,7 @@ public class Board implements BaseDomain {
    * Current move cursor
    */
   @DynamoDBAttribute(attributeName = "cursor")
-  private Boolean cursor = false;
+  private boolean cursor;
 
   public Board(boolean black, EnumRules rules) {
     this.black = black;
@@ -110,12 +107,12 @@ public class Board implements BaseDomain {
     this.id = id;
   }
 
-  public String getBoardContainerId() {
-    return boardContainerId;
+  public String getBoardBoxId() {
+    return boardBoxId;
   }
 
-  public void setBoardContainerId(String boardContainerId) {
-    this.boardContainerId = boardContainerId;
+  public void setBoardBoxId(String boardBoxId) {
+    this.boardBoxId = boardBoxId;
   }
 
   public Map<String, String> getNext() {

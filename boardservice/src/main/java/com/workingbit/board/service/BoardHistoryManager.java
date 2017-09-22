@@ -3,7 +3,7 @@
 //import com.fasterxml.jackson.core.JsonProcessingException;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.workingbit.share.common.Log;
-//import com.workingbit.share.domain.impl.BoardContainer;
+//import com.workingbit.share.domain.impl.BoardBox;
 //import com.workingbit.share.domain.impl.BoardHistory;
 //import com.workingbit.share.domain.impl.BoardTreeNode;
 //
@@ -48,7 +48,7 @@
 //   *
 //   * @param boardContainer
 //   */
-//  public BoardTreeNode addBoard(@NotNull BoardContainer boardContainer) {
+//  public BoardTreeNode addBoard(@NotNull BoardBox boardContainer) {
 //    BoardTreeNode child = new BoardTreeNode(boardContainer);
 //    current.addChild(child);
 //    current = child;
@@ -97,7 +97,7 @@
 ////    return current.getRootOfTree();
 ////  }
 //
-////  private Tree<Tree.Node<BoardContainer>> getTree(Tree.Node<Optional<BoardContainer>> node) {
+////  private Tree<Tree.Node<BoardBox>> getTree(Tree.Node<Optional<BoardBox>> node) {
 ////    return node.asTree()
 ////        .mapAsNodes(optionalNode -> Tree.node(optionalNode.getData().orElse(null)))
 ////        .deepClone(boardContainerNode -> boardContainerNode);
@@ -117,7 +117,7 @@
 //   *
 //   * @throws IllegalStateException if canUndo returns false.
 //   */
-//  public Optional<BoardContainer> undo() {
+//  public Optional<BoardBox> undo() {
 //    //validate
 //    if (!canUndo()) {
 //      return Optional.empty();
@@ -125,7 +125,7 @@
 //    //set index
 //    moveUp();
 //    //undo
-//    BoardContainer boardContainerOptional = getCurrent().getData();
+//    BoardBox boardContainerOptional = getCurrent().getData();
 //    boardContainerOptional.undo();
 //    return Optional.of(boardContainerOptional);
 //  }
@@ -135,7 +135,7 @@
 //   *
 //   * @throws IllegalStateException if canRedo returns false.
 //   */
-//  public Optional<BoardContainer> redo(BoardTreeNode branch) {
+//  public Optional<BoardBox> redo(BoardTreeNode branch) {
 //    //validate
 //    if (!canRedo(branch)) {
 //      return Optional.empty();
@@ -143,17 +143,17 @@
 //    //reset index
 //    moveDown(branch);
 //    //redo
-//    BoardContainer boardContainer = getCurrent().getData();
+//    BoardBox boardContainer = getCurrent().getData();
 //    boardContainer.redo();
 //    return Optional.of(boardContainer);
 //  }
 //
-//  public Optional<BoardContainer> redo() {
+//  public Optional<BoardBox> redo() {
 //    if (!canRedo()) {
 //      return Optional.empty();
 //    }
 //    moveDown();
-//    BoardContainer boardContainer = getCurrent().getData();
+//    BoardBox boardContainer = getCurrent().getData();
 //    boardContainer.redo();
 //    return Optional.of(boardContainer);
 //  }

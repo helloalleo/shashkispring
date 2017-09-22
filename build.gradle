@@ -160,7 +160,7 @@ project(':boardservice') {
             ])
             config.setImportMappings([
                     'Board'             : 'com.workingbit.share.domain.impl.Board',
-                    'BoardContainer'    : 'com.workingbit.share.domain.impl.BoardContainer',
+                    'BoardBox'    : 'com.workingbit.share.domain.impl.BoardBox',
                     'Square'            : 'com.workingbit.share.domain.impl.Square',
                     'CreateBoardRequest': 'com.workingbit.share.model.CreateBoardRequest'
             ])
@@ -265,7 +265,7 @@ project(':articleservice') {
             ])
             config.setImportMappings([
                     'Article'              : 'com.workingbit.share.domain.impl.Article',
-                    'BoardContainer'       : 'com.workingbit.share.domain.impl.BoardContainer',
+                    'BoardBox'       : 'com.workingbit.share.domain.impl.BoardBox',
                     'CreateArticleRequest' : 'com.workingbit.share.model.CreateArticleRequest',
                     'CreateArticleResponse': 'com.workingbit.share.model.CreateArticleResponse'
             ])
