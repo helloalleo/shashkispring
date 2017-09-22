@@ -7,4 +7,5 @@ public class DBConstants {
   public static final String BOARD_CONTAINER_TABLE = "BoardContainer";
   public static final String BOARD_HISTORY_TABLE = "BoardHistory";
   public static final String ARTICLE_TABLE = "Article";
+  public static final String BOARD_TABLE = "Board";
 }

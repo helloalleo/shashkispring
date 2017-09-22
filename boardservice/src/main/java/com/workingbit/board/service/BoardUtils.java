@@ -2,7 +2,7 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.EnumRules;
@@ -31,17 +31,17 @@ public class BoardUtils {
    * @param rules
    * @return
    */
-  static BoardContainer initBoard(boolean fillBoard, boolean black, EnumRules rules) {
-    BoardContainer boardContainer = new BoardContainer(black, rules);
+  static Board initBoard(boolean fillBoard, boolean black, EnumRules rules) {
+    Board boardContainer = new Board(black, rules);
     return updateBoard(fillBoard, false, boardContainer);
   }
 
-  static BoardContainer updateBoard(BoardContainer boardContainer) {
-    return updateBoard(false, true, boardContainer);
+  static Board updateBoard(Board board) {
+    return updateBoard(false, true, board);
   }
 
-  private static BoardContainer updateBoard(boolean fillBoard, boolean update, BoardContainer boardContainer) {
-    BoardContainer boardClone = (BoardContainer) boardContainer.deepClone();
+  private static Board updateBoard(boolean fillBoard, boolean update, Board board) {
+    Board boardClone = (Board) board.deepClone();
     EnumRules rules = boardClone.getRules();
     boolean black = boardClone.isBlack();
 
@@ -71,17 +71,17 @@ public class BoardUtils {
 //    boardContainer.setBlackDraughts(blackDraughts);
 //    boardContainer.setWhiteDraughts(whiteDraughts);
     boardClone.setAssignedSquares(boardSquares);
-    List<Square> board = getSquares(boardSquares, rules.getDimension());
-    boardClone.setSquares(board);
+    List<Square> squares = getSquares(boardSquares, rules.getDimension());
+    boardClone.setSquares(squares);
     return boardClone;
   }
 
-  static BoardContainer highlightBoard(BoardContainer boardContainer, MovesList highlight) {
+  static Board highlightBoard(Board board, MovesList highlight) {
     List<Square> allowedSquares = highlight.getAllowed();
     List<Square> beatenSquares = highlight.getBeaten();
-    List<Square> assignedSquares = boardContainer.getAssignedSquares().isEmpty()
-        ? getAssignedSquares(boardContainer.getRules().getDimension())
-        : boardContainer.getAssignedSquares();
+    List<Square> assignedSquares = board.getAssignedSquares().isEmpty()
+        ? getAssignedSquares(board.getRules().getDimension())
+        : board.getAssignedSquares();
     List<Square> squareList = assignedSquares
         .stream()
         .map(square -> {
@@ -92,12 +92,12 @@ public class BoardUtils {
         })
         .collect(Collectors.toList());
 
-    if (allowedSquares.contains(boardContainer.getNextSquare())) {
-      boardContainer.getNextSquare().setHighlighted(true);
+    if (allowedSquares.contains(board.getNextSquare())) {
+      board.getNextSquare().setHighlighted(true);
     }
-    boardContainer.setAssignedSquares(squareList);
-    boardContainer.setSquares(getSquares(squareList, boardContainer.getRules().getDimension()));
-    return boardContainer;
+    board.setAssignedSquares(squareList);
+    board.setSquares(getSquares(squareList, board.getRules().getDimension()));
+    return board;
   }
 
   private static void placeDraught(boolean black, EnumRules rules, List<Draught> draughts, Square square, int v, int h) {
@@ -204,14 +204,14 @@ public class BoardUtils {
    * @param square
    * @return
    */
-  static Optional<Square> findSquareLink(BoardContainer board, Square square) {
+  static Optional<Square> findSquareLink(Board board, Square square) {
     if (square == null) {
       return Optional.empty();
     }
     return findSquareByVH(board, square.getV(), square.getH());
   }
 
-  static Optional<Square> findSquareByVH(BoardContainer board, int v, int h) {
+  static Optional<Square> findSquareByVH(Board board, int v, int h) {
     for (Square square : board.getAssignedSquares()) {
       if (square.getH() == h && square.getV() == v) {
         return Optional.of(square);
@@ -220,7 +220,7 @@ public class BoardUtils {
     return Optional.empty();
   }
 
-  static Optional<Square> findSquareByNotation(BoardContainer board, String notation) {
+  static Optional<Square> findSquareByNotation(Board board, String notation) {
     if (StringUtils.isBlank(notation)) {
       return Optional.empty();
     }
@@ -262,23 +262,23 @@ public class BoardUtils {
     return newSquares;
   }
 
-  public static void addDraught(BoardContainer boardContainer, String notation, Draught draught) throws BoardServiceException {
+  public static void addDraught(Board board, String notation, Draught draught) throws BoardServiceException {
     if (draught == null) {
       return;
     }
-    addDraught(boardContainer, notation, draught.isBlack(), draught.isQueen(), false);
+    addDraught(board, notation, draught.isBlack(), draught.isQueen(), false);
   }
 
-  public static void addDraught(BoardContainer boardContainer, String notation, boolean black) throws BoardServiceException {
-    addDraught(boardContainer, notation, black, false, false);
+  public static void addDraught(Board board, String notation, boolean black) throws BoardServiceException {
+    addDraught(board, notation, black, false, false);
   }
 
-  public static void addDraught(BoardContainer boardContainer, String notation, boolean black, boolean queen) throws BoardServiceException {
-    addDraught(boardContainer, notation, black, queen, false);
+  public static void addDraught(Board board, String notation, boolean black, boolean queen) throws BoardServiceException {
+    addDraught(board, notation, black, queen, false);
   }
 
-  public static void addDraught(BoardContainer boardContainer, String notation, boolean black, boolean queen, boolean remove) throws BoardServiceException {
-    Optional<Square> squareOptional = findSquareByNotation(boardContainer, notation);
+  public static void addDraught(Board board, String notation, boolean black, boolean queen, boolean remove) throws BoardServiceException {
+    Optional<Square> squareOptional = findSquareByNotation(board, notation);
     squareOptional.ifPresent(square -> {
       Draught draught = null;
       if (!remove) {
@@ -288,12 +288,12 @@ public class BoardUtils {
     });
   }
 
-  public static void removeDraught(BoardContainer board, String notation) throws BoardServiceException {
+  public static void removeDraught(Board board, String notation) throws BoardServiceException {
     addDraught(board, notation, false, false, true);
   }
 
-  public static BoardContainer moveDraught(Square selectedSquare, Square nextSquare, BoardContainer boardContainer) {
-    BoardContainer highlighted = getHighlightedBoard(boardContainer, selectedSquare);
+  public static Board moveDraught(Square selectedSquare, Square nextSquare, Board board) {
+    Board highlighted = getHighlightedBoard(board, selectedSquare);
     try {
       nextSquare = BoardUtils.findSquareLink(highlighted, nextSquare)
           .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
@@ -303,7 +303,7 @@ public class BoardUtils {
     }
     highlighted.setNextSquare(nextSquare);
     try {
-      BoardContainer movedBoard = moveDraught(highlighted);
+      Board movedBoard = moveDraught(highlighted);
       return getHighlightedBoard(movedBoard, nextSquare);
     } catch (BoardServiceException e) {
       e.printStackTrace();
@@ -311,16 +311,16 @@ public class BoardUtils {
     return null;
   }
 
-  public static BoardContainer getHighlightedBoard(BoardContainer board, Square selectedSquare) {
-    BoardContainer boardContainer = BoardUtils.updateBoard(board);
-    Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardContainer, selectedSquare);
+  public static Board getHighlightedBoard(Board board, Square selectedSquare) {
+    Board boardUpdated = BoardUtils.updateBoard(board);
+    Optional<Square> squareHighlight = BoardUtils.findSquareLink(boardUpdated, selectedSquare);
     return squareHighlight.map(square -> {
       try {
         selectedSquare.getDraught().setDim(square.getDim());
         square.setDraught(selectedSquare.getDraught());
-        boardContainer.setSelectedSquare(square);
+        boardUpdated.setSelectedSquare(square);
         MovesList highlighted = getHighlightedMoves(square);
-        return highlightBoard(boardContainer, highlighted);
+        return highlightBoard(boardUpdated, highlighted);
       } catch (BoardServiceException | ExecutionException | InterruptedException e) {
         e.printStackTrace();
       }
@@ -328,7 +328,7 @@ public class BoardUtils {
     }).orElse(null);
   }
 
-  private static BoardContainer moveDraught(BoardContainer board) throws BoardServiceException {
+  private static Board moveDraught(Board board) throws BoardServiceException {
     Square sourceSquare = board.getSelectedSquare();
     Square targetSquare = board.getNextSquare();
     if (!targetSquare.isHighlighted()

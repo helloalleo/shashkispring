@@ -21,7 +21,7 @@
     /boards:
       post:
         summary: Get boards by ids
-        operationId: listBoardsByIds
+        operationId: listBoardContainersByIds
         tags:
           - boards
         parameters:
@@ -31,9 +31,9 @@
               $ref: '#/definitions/Strings'
         responses:
           "201":
-            description: Boards loaded
+            description: BoardContainers loaded
             schema:
-              $ref: '#/definitions/Boards'
+              $ref: '#/definitions/BoardContainers'
           default:
             description: unexpected ResponseError
             schema:
@@ -146,6 +146,8 @@
 
   definitions:
     # Mapped
+    Board:
+      type: object
     BoardContainer:
       type: object
     Square:
@@ -153,7 +155,7 @@
     CreateBoardRequest:
       type: object
     # Defined here
-    Boards:
+    BoardContainers:
       type: array
       items:
         $ref: '#/definitions/BoardContainer'

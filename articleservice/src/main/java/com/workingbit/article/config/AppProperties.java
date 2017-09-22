@@ -1,6 +1,5 @@
 package com.workingbit.article.config;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -16,14 +15,30 @@ public class AppProperties {
   private Environment env;
 
   @Value("${TEST}")
-  private @Getter
+  private
   boolean test;
 
   @Value("${AWS_ENDPOINT}")
-  private @Getter
+  private
   String endpoint;
 
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
+  }
+
+  public boolean isTest() {
+    return test;
+  }
+
+  public void setTest(boolean test) {
+    this.test = test;
+  }
+
+  public String getEndpoint() {
+    return endpoint;
+  }
+
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
   }
 }

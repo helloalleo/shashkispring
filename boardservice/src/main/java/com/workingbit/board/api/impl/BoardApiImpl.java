@@ -1,8 +1,8 @@
 package com.workingbit.board.api.impl;
 
-import com.workingbit.board.api.BoardApi;
 import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.service.BoardContainerService;
 import com.workingbit.board.service.BoardService;
 import com.workingbit.board.service.BoardUtils;
 import com.workingbit.share.domain.impl.BoardContainer;
@@ -20,45 +20,38 @@ import java.util.Optional;
  * Created by Aleksey Popryaduhin on 13:22 09/08/2017.
  */
 @RestController
-public class BoardApiImpl implements BoardApi {
+public class BoardApiImpl {
 
-  private final BoardService boardService;
+  private final BoardContainerService boardContainerService;
 
   @Autowired
-  public BoardApiImpl(BoardService boardService) {
-    this.boardService = boardService;
+  public BoardApiImpl(BoardContainerService boardContainerService) {
+    this.boardContainerService = boardContainerService;
   }
 
   @Override
   public ResponseEntity<BoardContainer> createBoard(@RequestBody CreateBoardRequest createBoardRequest) {
-    BoardContainer board = boardService.createBoard(createBoardRequest);
+    BoardContainer board = boardContainerService.createBoard(createBoardRequest);
     return new ResponseEntity<>(board, HttpStatus.CREATED);
   }
 
   @Override
   public ResponseEntity<BoardContainer> findBoardById(@PathVariable String boardId) {
-    Optional<BoardContainer> boardContainerOptional = boardService.findById(boardId);
-    if (boardContainerOptional.isPresent()) {
-      try {
-        BoardContainer boardContainer = boardContainerOptional.get();
-        BoardUtils.addDraught(boardContainer, "d4", false, true);
-        return new ResponseEntity<>(boardContainer, HttpStatus.OK);
-      } catch (BoardServiceException ignore) {
-      }
-    }
-    throw new BoardServiceError("Board not found");
+    Optional<BoardContainer> boardContainerOptional = boardContainerService.findById(boardId);
+    return boardContainerOptional.map(boardContainer -> new ResponseEntity<>(boardContainer, HttpStatus.OK))
+        .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
   @Override
   public ResponseEntity<Void> deleteBoardById(@PathVariable String boardId) {
-    boardService.delete(boardId);
+    boardContainerService.delete(boardId);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   @Override
   public ResponseEntity<BoardContainer> highlightBoard(@RequestBody BoardContainer boardContainer) {
     try {
-      BoardContainer highlighted = boardService.highlight(boardContainer);
+      BoardContainer highlighted = boardContainerService.highlight(boardContainer);
       return new ResponseEntity<>(highlighted, HttpStatus.OK);
     } catch (BoardServiceException e) {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -68,7 +61,7 @@ public class BoardApiImpl implements BoardApi {
   @Override
   public ResponseEntity<BoardContainer> move(@RequestBody BoardContainer board) {
     try {
-      Optional<BoardContainer> move = boardService.move(board);
+      Optional<BoardContainer> move = boardContainerService.move(board);
       return move.map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
           .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
     } catch (BoardServiceException e) {
@@ -79,7 +72,7 @@ public class BoardApiImpl implements BoardApi {
   //  @PostMapping(ResourceConstants.MOVE)
 //  public Map<String, Object> move(@RequestBody Map<String, Object> moveTo) {
 //    try {
-//      Map<String, Object> move = boardService.move(moveTo);
+//      Map<String, Object> move = boardContainerService.move(moveTo);
 //      return new HashMap<String, Object>() {{
 //        put(ok.name(), true);
 //        put(data.name(), move);
@@ -93,7 +86,7 @@ public class BoardApiImpl implements BoardApi {
 //  public Map<String, Object> undo(@RequestBody Map<String, Object> undoInfo) {
 //    try {
 //      String boardIdStr = (String) undoInfo.get(boardId.name());
-//      Map<String, Object> undo = boardService.undo(boardIdStr);
+//      Map<String, Object> undo = boardContainerService.undo(boardIdStr);
 //      return new HashMap<String, Object>() {{
 //        put(ok.name(), true);
 //        put(data.name(), undo);

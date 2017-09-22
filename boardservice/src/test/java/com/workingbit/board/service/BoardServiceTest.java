@@ -88,7 +88,7 @@ public class BoardServiceTest extends BaseServiceTest {
 //      put(beaten.name(), beatenMoves);
     }};
 
-    // move draught and save
+    // move draught and saveBoard
     Map<String, Object> newMoveCoords = boardService.move(moveTo);
 
     // find saved and check if it's selected square is equals to target
@@ -121,7 +121,7 @@ public class BoardServiceTest extends BaseServiceTest {
     Map<String, Object> moveTo = getMoveTo(board, square, target, null, null);
     MapUtils.debugPrint(System.out, "PREP MOVE", moveTo);
 
-    // move draught and save
+    // move draught and saveBoard
     Map<String, Object> newMoveCoords = boardService.move(moveTo);
     MapUtils.debugPrint(System.out, "MOVE", newMoveCoords);
 
@@ -137,7 +137,7 @@ public class BoardServiceTest extends BaseServiceTest {
     moveTo = getMoveTo(board, target, nextTarget, null, null);
     MapUtils.debugPrint(System.out, "PREP MOVE", moveTo);
 
-    // move draught and save
+    // move draught and saveBoard
     newMoveCoords = boardService.move(moveTo);
     MapUtils.debugPrint(System.out, "MOVE", newMoveCoords);
 
@@ -176,7 +176,7 @@ public class BoardServiceTest extends BaseServiceTest {
 //    Square square = sel.get();
 //    square.setDraught(draught);
 //    board.getCurrentBoard().setSelectedSquare(square);
-//    boardDao.save(board);
+//    boardDao.saveBoard(board);
     return board;
   }
 }

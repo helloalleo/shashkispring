@@ -1,10 +1,10 @@
 package com.workingbit.board.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.workingbit.board.dao.BoardContainerDao;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.model.Boards;
 import com.workingbit.board.model.Strings;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -26,33 +26,28 @@ import static com.workingbit.board.service.BoardUtils.*;
 public class BoardService {
 
   private final BoardDao boardDao;
-  private final ObjectMapper mapper;
-  private final BoardHistoryService boardHistoryService;
+  private final BoardContainerDao boardContainerDao;
 
   @Autowired
   public BoardService(BoardDao boardDao,
-                      ObjectMapper mapper,
-                      BoardHistoryService boardHistoryService) {
+                      BoardContainerDao boardContainerDao) {
     this.boardDao = boardDao;
-    this.mapper = mapper;
-    this.boardHistoryService = boardHistoryService;
+    this.boardContainerDao = boardContainerDao;
   }
 
-  public BoardContainer createBoard(CreateBoardRequest newBoardRequest) {
-    BoardContainer boardContainer = initBoard(newBoardRequest.getFillBoard(), newBoardRequest.getBlack(),
+  public Board createBoard(CreateBoardRequest newBoardRequest) {
+    Board board = initBoard(newBoardRequest.getFillBoard(), newBoardRequest.getBlack(),
         newBoardRequest.getRules());
-    save(boardContainer);
-//    boardHistoryService.addBoardAndSave(board);
-    return boardContainer;
+    saveBoard(board);
+    return board;
   }
 
   public List<BoardContainer> findAll(Integer limit) {
-    return boardDao.findAll(limit);
+    return boardContainerDao.findAll(limit);
   }
 
-  public Optional<BoardContainer> findById(String boardId) {
-    return boardDao.findById(boardId)
-        .map(BoardUtils::updateBoard);
+  public Optional<Board> findById(String boardId) {
+    return boardDao.findById(boardId);
   }
 
   public void delete(String boardId) {
@@ -74,7 +69,7 @@ public class BoardService {
    * @return map of {allowed, beaten}
    * @throws BoardServiceException
    */
-  public BoardContainer highlight(BoardContainer boardHighlight) throws BoardServiceException {
+  public Board highlight(Board boardHighlight) throws BoardServiceException {
     String boardId = boardHighlight.getId();
     Square selectedSquare = boardHighlight.getSelectedSquare();
     if (isValidHighlight(boardHighlight, selectedSquare)) {
@@ -85,7 +80,7 @@ public class BoardService {
         .orElseThrow(getBoardServiceExceptionSupplier("Unable to highlight the board"));
   }
 
-  private boolean isValidHighlight(BoardContainer boardHighlight, Square selectedSquare) {
+  private boolean isValidHighlight(Board boardHighlight, Square selectedSquare) {
     return selectedSquare == null
         || !selectedSquare.isOccupied()
         || selectedSquare.getDraught().isBlack() != boardHighlight.isBlack();
@@ -99,7 +94,7 @@ public class BoardService {
    * moved draught, queen is a draught has become the queen
    * @throws BoardServiceException
    */
-  public Optional<BoardContainer> move(BoardContainer board) throws BoardServiceException {
+  public Optional<Board> move(Board board) throws BoardServiceException {
     Square nextSquare = board.getNextSquare();
     Square selectedSquare = board.getSelectedSquare();
     if (isValidMove(nextSquare, selectedSquare)) {
@@ -118,19 +113,16 @@ public class BoardService {
 //    return move(undoMove);
 //  }
 
-  public void save(BoardContainer board) {
+  public void saveBoard(Board board) {
     boardDao.save(board);
   }
 
-  public Boards findByIds(Strings boardIds) {
+  public List<Board> findByIds(Strings boardIds) {
     List<String> ids = new ArrayList<>(boardIds.size());
     ids.addAll(boardIds);
-    List<BoardContainer> boardList = boardDao.findByIds(ids)
+    return boardDao.findByIds(ids)
         .stream()
         .map(BoardUtils::updateBoard)
         .collect(Collectors.toList());
-    Boards boards = new Boards();
-    boards.addAll(boardList);
-    return boards;
   }
 }

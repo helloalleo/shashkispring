@@ -1,6 +1,5 @@
 package com.workingbit.article.config;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +10,26 @@ import org.springframework.stereotype.Component;
 public class RestProperties {
 
   @Value("${BOARD_API_URL}")
-  private @Getter
+  private
   String boardApiUrl;
 
   @Value("${BOARD_RESOURCE}")
-  private @Getter
+  private
   String boardResource;
+
+  public String getBoardApiUrl() {
+    return boardApiUrl;
+  }
+
+  public void setBoardApiUrl(String boardApiUrl) {
+    this.boardApiUrl = boardApiUrl;
+  }
+
+  public String getBoardResource() {
+    return boardResource;
+  }
+
+  public void setBoardResource(String boardResource) {
+    this.boardResource = boardResource;
+  }
 }

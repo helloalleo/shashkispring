@@ -31,7 +31,7 @@ public class BoardHistoryService {
 //      boardHistoryManager = new BoardHistoryManager(boardHistoryOptional.get());
 //    }
 //    boardHistoryManager.addBoard(currentBoard);
-//    boardHistoryDao.save(boardHistoryManager.getBoardHistory());
+//    boardHistoryDao.saveBoard(boardHistoryManager.getBoardHistory());
 //  }
 /*
   public Map<String, Object> undo(String boardId) throws BoardServiceException {
