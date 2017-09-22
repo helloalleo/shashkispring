@@ -1,13 +1,16 @@
 package com.workingbit.share.domain.impl;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.DBConstants;
+import com.workingbit.share.model.DraughtMap;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -75,21 +78,21 @@ public class BoardBox implements BaseDomain {
 
   @JsonIgnore
   @DynamoDBIgnore
-  public Map<String, Draught> getBlackDraughts() {
+  public DraughtMap getBlackDraughts() {
     return board.getBlackDraughts();
   }
 
-  public void setBlackDraughts(Map<String, Draught> blackDraughts) {
+  public void setBlackDraughts(DraughtMap blackDraughts) {
     board.setBlackDraughts(blackDraughts);
   }
 
   @JsonIgnore
   @DynamoDBIgnore
-  public Map<String, Draught> getWhiteDraughts() {
+  public DraughtMap getWhiteDraughts() {
     return board.getWhiteDraughts();
   }
 
-  public void setWhiteDraughts(Map<String, Draught> whiteDraughts) {
+  public void setWhiteDraughts(DraughtMap whiteDraughts) {
     board.setWhiteDraughts(whiteDraughts);
   }
 

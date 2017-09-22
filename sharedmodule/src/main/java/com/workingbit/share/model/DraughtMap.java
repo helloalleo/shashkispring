@@ -1,4 +1,4 @@
-package com.workingbit.share.common;
+package com.workingbit.share.model;
 
 import com.workingbit.share.domain.impl.Draught;
 import org.apache.commons.collections4.map.AbstractHashedMap;
