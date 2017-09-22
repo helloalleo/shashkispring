@@ -2,7 +2,6 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.share.model.DraughtMap;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -48,8 +47,8 @@ public class BoardUtils {
 
     List<Draught> blackDraughts = new ArrayList<>();
     List<Draught> whiteDraughts = new ArrayList<>();
-    DraughtMap blackDraughtsExisted = boardClone.getBlackDraughts();
-    DraughtMap whiteDraughtsExisted = boardClone.getWhiteDraughts();
+    Map<String, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
+    Map<String, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
     List<Square> boardSquares = getAssignedSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();

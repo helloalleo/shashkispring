@@ -32,6 +32,9 @@ public interface ICoordinates {
     return Utils.alph.get(getH()) + (getDim() - getV());
   }
 
+  default void setNotation(String notation) {
+  }
+
   default void fromNotation(String pos) {
     setH(Utils.alph.indexOf(String.valueOf(pos.charAt(0))));
     setV(getDim() - Integer.valueOf(String.valueOf(pos.charAt(1))));

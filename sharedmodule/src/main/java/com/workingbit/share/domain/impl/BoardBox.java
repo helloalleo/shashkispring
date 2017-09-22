@@ -6,11 +6,12 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.DBConstants;
-import com.workingbit.share.model.DraughtMap;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -78,21 +79,21 @@ public class BoardBox implements BaseDomain {
 
   @JsonIgnore
   @DynamoDBIgnore
-  public DraughtMap getBlackDraughts() {
+  public Map<String, Draught> getBlackDraughts() {
     return board.getBlackDraughts();
   }
 
-  public void setBlackDraughts(DraughtMap blackDraughts) {
+  public void setBlackDraughts(HashMap<String, Draught> blackDraughts) {
     board.setBlackDraughts(blackDraughts);
   }
 
   @JsonIgnore
   @DynamoDBIgnore
-  public DraughtMap getWhiteDraughts() {
+  public Map<String, Draught> getWhiteDraughts() {
     return board.getWhiteDraughts();
   }
 
-  public void setWhiteDraughts(DraughtMap whiteDraughts) {
+  public void setWhiteDraughts(Map<String, Draught> whiteDraughts) {
     board.setWhiteDraughts(whiteDraughts);
   }
 
