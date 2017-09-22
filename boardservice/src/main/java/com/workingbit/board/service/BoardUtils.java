@@ -2,6 +2,7 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.share.common.DraughtMap;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -47,14 +48,14 @@ public class BoardUtils {
 
     List<Draught> blackDraughts = new ArrayList<>();
     List<Draught> whiteDraughts = new ArrayList<>();
-    Map<String, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
-    Map<String, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
+    DraughtMap blackDraughtsExisted = boardClone.getBlackDraughts();
+    DraughtMap whiteDraughtsExisted = boardClone.getWhiteDraughts();
     List<Square> boardSquares = getAssignedSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
       if (update) {
-        Draught blackDraught = blackDraughtsExisted.get(square.getNotation());
-        Draught whiteDraught = whiteDraughtsExisted.get(square.getNotation());
+        Draught blackDraught = blackDraughtsExisted.getOrDefault(square.getNotation(), null);
+        Draught whiteDraught = whiteDraughtsExisted.getOrDefault(square.getNotation(), null);
         if (blackDraught != null) {
           square.setDraught(blackDraught);
         } else if (whiteDraught != null) {
@@ -283,13 +284,29 @@ public class BoardUtils {
       Draught draught = null;
       if (!remove) {
         draught = new Draught(square.getV(), square.getH(), square.getDim(), black, queen);
+        if (black && !isOverloadDraughts(board, true)) {
+          board.addBlackDraughts(notation, draught);
+        } else if (!isOverloadDraughts(board, black)) {
+          board.addWhiteDraughts(notation, draught);
+        }
+      } else {
+        if (black) {
+          board.getBlackDraughts().remove(notation);
+        } else {
+          board.getWhiteDraughts().remove(notation);
+        }
       }
       square.setDraught(draught);
     });
   }
 
-  public static void removeDraught(Board board, String notation) throws BoardServiceException {
-    addDraught(board, notation, false, false, true);
+  private static boolean isOverloadDraughts(Board board, boolean black) {
+    return black ? board.getBlackDraughts().size() >= board.getRules().getDraughtsCount()
+        : board.getWhiteDraughts().size() >= board.getRules().getDraughtsCount();
+  }
+
+  public static void removeDraught(Board board, String notation, boolean black) throws BoardServiceException {
+    addDraught(board, notation, black, false, true);
   }
 
   public static Board moveDraught(Square selectedSquare, Square nextSquare, Board board) {
@@ -339,7 +356,7 @@ public class BoardUtils {
     }
     Draught draught = sourceSquare.getDraught();
     BoardUtils.addDraught(board, targetSquare.getNotation(), draught);
-    BoardUtils.removeDraught(board, sourceSquare.getNotation());
+    BoardUtils.removeDraught(board, sourceSquare.getNotation(), draught.isBlack());
     targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation()).orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
     board.setNextSquare(targetSquare);
     board.setSelectedSquare(targetSquare);

@@ -24,4 +24,8 @@ public enum EnumRules {
   public int getRowsForDraughts() {
     return rowsForDraughts;
   }
+
+  public int getDraughtsCount() {
+    return dimension / 2 * rowsForDraughts;
+  }
 }

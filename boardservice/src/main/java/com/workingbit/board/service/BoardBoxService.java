@@ -7,6 +7,8 @@ import com.workingbit.board.model.Strings;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardBox;
+import com.workingbit.share.domain.impl.Draught;
+import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.workingbit.board.common.AppConstants.INTERNAL_SERVER_ERROR;
+import static com.workingbit.board.service.BoardUtils.getBoardServiceExceptionSupplier;
 
 /**
  * Created by Aleksey Popryaduhin on 07:00 22/09/2017.
@@ -115,5 +120,31 @@ public class BoardBoxService {
     BoardBoxes boardBoxs = new BoardBoxes();
     boardBoxs.addAll(boardBoxList);
     return boardBoxs;
+  }
+
+  public Optional<BoardBox> addDraught(BoardBox boardBox) {
+    Square selectedSquare = boardBox.getSelectedSquare();
+    if (selectedSquare == null
+        || !selectedSquare.isOccupied()) {
+      return Optional.empty();
+    }
+    Draught draught = selectedSquare.getDraught();
+    return findById(boardBox.getId())
+        .map(updated -> {
+          Board currentBoard = updated.getBoard();
+          try {
+            Square squareLink = BoardUtils.findSquareLink(currentBoard, selectedSquare)
+                .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
+            currentBoard = boardService.addDraught(currentBoard, squareLink.getNotation(), draught);
+            if (currentBoard == null) {
+              return null;
+            }
+          } catch (BoardServiceException e) {
+            Log.error(e.getMessage(), e);
+            return null;
+          }
+          updated.setBoard(currentBoard);
+          return updated;
+        });
   }
 }

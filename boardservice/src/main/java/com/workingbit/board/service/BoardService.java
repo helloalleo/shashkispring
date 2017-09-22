@@ -3,6 +3,7 @@ package com.workingbit.board.service;
 import com.workingbit.board.dao.BoardBoxDao;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
@@ -52,17 +53,6 @@ public class BoardService {
 
   public void delete(String boardId) {
     boardDao.delete(boardId);
-  }
-
-  public void addDraught(BoardBox board, Draught draught) {
-//    Optional<Square> draughtOnBoard = board.getSquares()
-//        .stream()
-//        // find square by coords of draught
-//        .filter(square -> square.getV() == draught.getV() && square.getH() == draught.getH())
-//        .findFirst();
-//    draughtOnBoard.ifPresent(square -> {
-//      square.setDraught((Draught) draught);
-//    });
   }
 
   /**
@@ -116,6 +106,17 @@ public class BoardService {
 
   public void save(Board board) {
     boardDao.save(board);
+  }
+
+  public Board addDraught(Board currentBoard, String notation, Draught draught) throws BoardServiceException {
+    try {
+      BoardUtils.addDraught(currentBoard, notation, draught);
+      boardDao.save(currentBoard);
+      return currentBoard;
+    } catch (BoardServiceException e) {
+      Log.error("Unable to add draught", e);
+    }
+    return null;
   }
 
 //  public List<Board> findByIds(Strings boardIds) {

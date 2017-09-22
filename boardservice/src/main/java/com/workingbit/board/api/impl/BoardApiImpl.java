@@ -58,4 +58,11 @@ public class BoardApiImpl implements BoardApi {
         .map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
         .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
+
+  @Override
+  public ResponseEntity<BoardBox> addDraught(@RequestBody BoardBox board) {
+    return boardBoxService.addDraught(board)
+        .map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+  }
 }

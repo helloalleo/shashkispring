@@ -104,7 +104,7 @@
         tags:
           - board
         parameters:
-          - name: board
+          - name: boardBox
             in: body
             required: true
             description: A board to be highlighted
@@ -127,10 +127,33 @@
         tags:
           - board
         parameters:
-          - name: board
+          - name: boardBox
             in: body
             required: true
             description: A board to be highlighted
+            schema:
+              $ref: '#/definitions/BoardBox'
+        responses:
+          "200":
+            description: Expected response to a valid request
+            schema:
+              type: object
+              $ref: '#/definitions/BoardBox'
+          default:
+            description: unexpected ResponseError
+            schema:
+              $ref: '#/definitions/ResponseError'
+    /board/add-draught:
+      post:
+        summary: Info for a specific board
+        operationId: addDraught
+        tags:
+          - board
+        parameters:
+          - name: boardBox
+            in: body
+            required: true
+            description: A board for adding draught
             schema:
               $ref: '#/definitions/BoardBox'
         responses:

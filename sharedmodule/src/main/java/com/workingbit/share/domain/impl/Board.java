@@ -3,6 +3,7 @@ package com.workingbit.share.domain.impl;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.DBConstants;
+import com.workingbit.share.common.DraughtMap;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 
@@ -20,6 +21,7 @@ public class Board implements BaseDomain {
   @DynamoDBHashKey(attributeName = "id")
   private String id;
 
+  @JsonIgnore
   @DynamoDBAttribute(attributeName = "boardBoxId")
   private String boardBoxId;
 
@@ -43,14 +45,14 @@ public class Board implements BaseDomain {
    * Black draughts associated with owner square
    */
   @JsonIgnore
-  @DynamoDBTypeConvertedJson(targetType = Map.class)
+  @DynamoDBTypeConvertedJson(targetType = DraughtMap.class)
   @DynamoDBAttribute(attributeName = "blackDraughts")
   private Map<String, Draught> blackDraughts = new HashMap<>();
 
   @JsonIgnore
-  @DynamoDBTypeConvertedJson(targetType = Map.class)
+  @DynamoDBTypeConvertedJson(targetType = DraughtMap.class)
   @DynamoDBAttribute(attributeName = "whiteDraughts")
-  private Map<String, Draught> whiteDraughts = new HashMap<>();
+  private DraughtMap whiteDraughts = new HashMap<>();
 
   /**
    * Currently selected square
@@ -144,7 +146,7 @@ public class Board implements BaseDomain {
     this.blackDraughts = blackDraughts;
   }
 
-  public Map<String, Draught> getWhiteDraughts() {
+  public DraughtMap getWhiteDraughts() {
     return whiteDraughts;
   }
 
@@ -206,5 +208,13 @@ public class Board implements BaseDomain {
 
   public void setCursor(Boolean cursor) {
     this.cursor = cursor;
+  }
+
+  public void addBlackDraughts(String notation, Draught draught) {
+    blackDraughts.put(notation, draught);
+  }
+
+  public void addWhiteDraughts(String notation, Draught draught) {
+    whiteDraughts.put(notation, draught);
   }
 }
