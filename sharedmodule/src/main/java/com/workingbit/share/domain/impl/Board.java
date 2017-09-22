@@ -27,6 +27,7 @@ public class Board implements BaseDomain {
   /**
    * Next boards map. Key next square notation, value board id
    */
+  @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = HashMap.class)
   @DynamoDBAttribute(attributeName = "next")
   private Map<String, String> next = new HashMap<>(2);
@@ -34,6 +35,7 @@ public class Board implements BaseDomain {
   /**
    * Next boards map. Key next square notation, value board id
    */
+  @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = HashMap.class)
   @DynamoDBAttribute(attributeName = "previous")
   private Map<String, String> previous = new HashMap<>(2);
@@ -44,12 +46,12 @@ public class Board implements BaseDomain {
   @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = Map.class)
   @DynamoDBAttribute(attributeName = "blackDraughts")
-  private Map<Square, Draught> blackDraughts = new HashMap<>();
+  private Map<String, Draught> blackDraughts = new HashMap<>();
 
   @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = Map.class)
   @DynamoDBAttribute(attributeName = "whiteDraughts")
-  private Map<Square, Draught> whiteDraughts = new HashMap<>();
+  private Map<String, Draught> whiteDraughts = new HashMap<>();
 
   /**
    * Currently selected square
@@ -91,8 +93,12 @@ public class Board implements BaseDomain {
   /**
    * Current move cursor
    */
+  @JsonIgnore
   @DynamoDBAttribute(attributeName = "cursor")
   private boolean cursor;
+
+  public Board() {
+  }
 
   public Board(boolean black, EnumRules rules) {
     this.black = black;
@@ -131,19 +137,19 @@ public class Board implements BaseDomain {
     this.previous = previous;
   }
 
-  public Map<Square, Draught> getBlackDraughts() {
+  public Map<String, Draught> getBlackDraughts() {
     return blackDraughts;
   }
 
-  public void setBlackDraughts(Map<Square, Draught> blackDraughts) {
+  public void setBlackDraughts(Map<String, Draught> blackDraughts) {
     this.blackDraughts = blackDraughts;
   }
 
-  public Map<Square, Draught> getWhiteDraughts() {
+  public Map<String, Draught> getWhiteDraughts() {
     return whiteDraughts;
   }
 
-  public void setWhiteDraughts(Map<Square, Draught> whiteDraughts) {
+  public void setWhiteDraughts(Map<String, Draught> whiteDraughts) {
     this.whiteDraughts = whiteDraughts;
   }
 

@@ -9,10 +9,6 @@ import java.util.Objects;
 /**
  * Created by Aleksey Popryaduhin on 09:28 10/08/2017.
  */
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@EqualsAndHashCode(of = {"v", "h"})
 public class Draught implements ICoordinates, BaseDomain {
   /**
    * row

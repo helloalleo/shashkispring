@@ -48,10 +48,9 @@ public class BoardBoxService {
   }
 
   private BoardBox updateBoardBox(BoardBox boardBox) {
-    Optional<Board> boardOptional = boardService.findById(boardBox.getCurrentBoardId());
+    Optional<Board> boardOptional = boardService.findById(boardBox.getBoardId());
     return boardOptional.map(board -> {
-      Board updateBoard = BoardUtils.updateBoard(board);
-      boardBox.setCurrentBoard(updateBoard);
+      boardBox.setBoard(board);
       return boardBox;
     }).orElseGet(null);
   }
@@ -59,7 +58,7 @@ public class BoardBoxService {
   public void delete(String boardBoxId) {
     boardBoxDao.findById(boardBoxId)
         .map(boardBox -> {
-          boardService.delete(boardBox.getCurrentBoardId());
+          boardService.delete(boardBox.getBoardId());
           boardBoxDao.delete(boardBox.getId());
           return null;
         });
@@ -68,7 +67,7 @@ public class BoardBoxService {
   public Optional<BoardBox> highlight(BoardBox boardBox) {
     return findById(boardBox.getId())
         .map(updated -> {
-          Board currentBoard = updated.getCurrentBoard();
+          Board currentBoard = updated.getBoard();
           try {
             currentBoard = boardService.highlight(currentBoard);
             if (currentBoard == null) {
@@ -78,7 +77,7 @@ public class BoardBoxService {
             Log.error(e.getMessage(), e);
             return null;
           }
-          updated.setCurrentBoard(currentBoard);
+          updated.setBoard(currentBoard);
           return updated;
         });
   }
@@ -86,7 +85,7 @@ public class BoardBoxService {
   public Optional<BoardBox> move(BoardBox boardBox) {
     return findById(boardBox.getId())
         .map(updated -> {
-          Board currentBoard = updated.getCurrentBoard();
+          Board currentBoard = updated.getBoard();
           try {
             currentBoard = boardService.move(currentBoard);
             if (currentBoard == null) {
@@ -96,7 +95,7 @@ public class BoardBoxService {
             Log.error(e.getMessage(), e);
             return null;
           }
-          updated.setCurrentBoard(currentBoard);
+          updated.setBoard(currentBoard);
           return updated;
         });
   }

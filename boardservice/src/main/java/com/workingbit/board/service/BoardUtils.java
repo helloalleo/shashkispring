@@ -47,14 +47,14 @@ public class BoardUtils {
 
     List<Draught> blackDraughts = new ArrayList<>();
     List<Draught> whiteDraughts = new ArrayList<>();
-    Map<Square, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
-    Map<Square, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
+    Map<String, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
+    Map<String, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
     List<Square> boardSquares = getAssignedSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
       if (update) {
-        Draught blackDraught = blackDraughtsExisted.get(square);
-        Draught whiteDraught = whiteDraughtsExisted.get(square);
+        Draught blackDraught = blackDraughtsExisted.get(square.getNotation());
+        Draught whiteDraught = whiteDraughtsExisted.get(square.getNotation());
         if (blackDraught != null) {
           square.setDraught(blackDraught);
         } else if (whiteDraught != null) {

@@ -44,7 +44,8 @@ public class BoardService {
   }
 
   public Optional<Board> findById(String boardId) {
-    return boardDao.findById(boardId);
+    Optional<Board> boardOptional = boardDao.findById(boardId);
+    return boardOptional.map(BoardUtils::updateBoard);
   }
 
   public void delete(String boardId) {

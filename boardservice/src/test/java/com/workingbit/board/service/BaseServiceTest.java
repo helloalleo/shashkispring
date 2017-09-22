@@ -34,7 +34,7 @@ public class BaseServiceTest {
     Board board = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
     BoardBox boardBox = new BoardBox(board);
 //    Board board = new Board(boardBox, false, EnumRules.RUSSIAN, 60);
-//    BoardBox currentBoard = board.getCurrentBoard();
+//    BoardBox currentBoard = board.getBoard();
 //    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
 //    Square selectedSquare = squareByVH.get();
 //    Draught draught = new Draught(5, 2, getRules().getDimension());
@@ -56,7 +56,7 @@ public class BaseServiceTest {
   }
 
   Square getSquareByVH(BoardBox board, int v, int h) {
-    return findSquareByVH(board.getCurrentBoard(), v, h).get();
+    return findSquareByVH(board.getBoard(), v, h).get();
   }
 
   protected EnumRules getRules() {

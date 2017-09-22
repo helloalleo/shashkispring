@@ -20,23 +20,21 @@ public class BoardBox implements BaseDomain {
   @DynamoDBHashKey(attributeName = "id")
   private String id;
 
-  @JsonIgnore
   @DynamoDBAttribute(attributeName = "articleId")
   private String articleId;
 
-  @DynamoDBAttribute(attributeName = "currentBoardId")
-  private String currentBoardId;
+  @DynamoDBAttribute(attributeName = "boardId")
+  private String boardId;
 
-  @JsonIgnore
   @DynamoDBIgnore
-  private Board currentBoard;
+  private Board board;
 
   public BoardBox() {
   }
 
   public BoardBox(Board board) {
-    this.currentBoard = board;
-    this.currentBoardId = board.getId();
+    this.board = board;
+    this.boardId = board.getId();
   }
 
   public String getId() {
@@ -55,85 +53,109 @@ public class BoardBox implements BaseDomain {
     this.articleId = articleId;
   }
 
-  public String getCurrentBoardId() {
-    return currentBoardId;
+  public String getBoardId() {
+    return boardId;
   }
 
-  public void setCurrentBoardId(String currentBoardId) {
-    this.currentBoardId = currentBoardId;
+  public void setBoardId(String boardId) {
+    this.boardId = boardId;
   }
 
-  public Board getCurrentBoard() {
-    return currentBoard;
+  /**
+   * For backward compatibility
+   */
+  @DynamoDBIgnore
+  public Board getBoard() {
+    return board;
   }
 
-  public void setCurrentBoard(Board currentBoard) {
-    this.currentBoard = currentBoard;
+  public void setBoard(Board board) {
+    this.board = board;
   }
 
-  public Map<Square, Draught> getBlackDraughts() {
-    return currentBoard.getBlackDraughts();
+  @JsonIgnore
+  @DynamoDBIgnore
+  public Map<String, Draught> getBlackDraughts() {
+    return board.getBlackDraughts();
   }
 
-  public void setBlackDraughts(Map<Square, Draught> blackDraughts) {
-    currentBoard.setBlackDraughts(blackDraughts);
+  public void setBlackDraughts(Map<String, Draught> blackDraughts) {
+    board.setBlackDraughts(blackDraughts);
   }
 
-  public Map<Square, Draught> getWhiteDraughts() {
-    return currentBoard.getWhiteDraughts();
+  @JsonIgnore
+  @DynamoDBIgnore
+  public Map<String, Draught> getWhiteDraughts() {
+    return board.getWhiteDraughts();
   }
 
-  public void setWhiteDraughts(Map<Square, Draught> whiteDraughts) {
-    currentBoard.setWhiteDraughts(whiteDraughts);
+  public void setWhiteDraughts(Map<String, Draught> whiteDraughts) {
+    board.setWhiteDraughts(whiteDraughts);
   }
 
+  @JsonIgnore
+  @DynamoDBIgnore
   public Square getSelectedSquare() {
-    return currentBoard.getSelectedSquare();
+    return board.getSelectedSquare();
   }
 
   public void setSelectedSquare(Square selectedSquare) {
-    currentBoard.setSelectedSquare(selectedSquare);
+    board.setSelectedSquare(selectedSquare);
   }
 
+  @JsonIgnore
+  @DynamoDBIgnore
   public Square getNextSquare() {
-    return currentBoard.getNextSquare();
+    return board.getNextSquare();
   }
 
   public void setNextSquare(Square nextSquare) {
-    currentBoard.setNextSquare(nextSquare);
+    board.setNextSquare(nextSquare);
   }
 
+  @JsonIgnore
+  @DynamoDBIgnore
   public List<Square> getSquares() {
-    return currentBoard.getSquares();
+    return board.getSquares();
   }
 
   public void setSquares(List<Square> squares) {
-    currentBoard.setSquares(squares);
+    board.setSquares(squares);
   }
 
+  @JsonIgnore
+  @DynamoDBIgnore
   public List<Square> getAssignedSquares() {
-    return currentBoard.getAssignedSquares();
+    return board.getAssignedSquares();
   }
 
   public void setAssignedSquares(List<Square> assignedSquares) {
-    currentBoard.setAssignedSquares(assignedSquares);
+    board.setAssignedSquares(assignedSquares);
   }
 
+  @JsonIgnore
+  @DynamoDBIgnore
   public boolean isBlack() {
-    return currentBoard.isBlack();
+    return board.isBlack();
   }
 
   public void setBlack(boolean black) {
-    currentBoard.setBlack(black);
+    board.setBlack(black);
   }
 
+  @JsonIgnore
+  @DynamoDBIgnore
   public EnumRules getRules() {
-    return currentBoard.getRules();
+    return board.getRules();
   }
 
   public void setRules(EnumRules rules) {
-    currentBoard.setRules(rules);
+    board.setRules(rules);
   }
+
+  /**
+   * END For backward compatibility
+   */
 
   @Override
   public boolean equals(Object o) {
@@ -142,11 +164,11 @@ public class BoardBox implements BaseDomain {
     BoardBox that = (BoardBox) o;
     return Objects.equals(id, that.id) &&
         Objects.equals(articleId, that.articleId) &&
-        Objects.equals(currentBoardId, that.currentBoardId);
+        Objects.equals(boardId, that.boardId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, articleId, currentBoardId);
+    return Objects.hash(id, articleId, boardId);
   }
 }
