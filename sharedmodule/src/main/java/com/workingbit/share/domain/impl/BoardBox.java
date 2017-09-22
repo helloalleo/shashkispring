@@ -119,6 +119,16 @@ public class BoardBox implements BaseDomain {
 
   @JsonIgnore
   @DynamoDBIgnore
+  public Square getPreviousSquare() {
+    return board.getPreviousSquare();
+  }
+
+  public void setPreviousSquare(Square previousSquare) {
+    board.setPreviousSquare(previousSquare);
+  }
+
+  @JsonIgnore
+  @DynamoDBIgnore
   public List<Square> getSquares() {
     return board.getSquares();
   }

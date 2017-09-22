@@ -75,8 +75,7 @@ public class BoardBoxService {
         .map(updated -> {
           Board currentBoard = updated.getBoard();
           Board updatedBoard = BoardUtils.updateBoard(currentBoard);
-          updatedBoard.setSelectedSquare(boardBox.getSelectedSquare());
-          BoardUtils.updateMoveSquaresNotation(updatedBoard);
+          BoardUtils.updateMoveSquaresNotation(updatedBoard, boardBox.getBoard());
           try {
             updatedBoard = boardService.highlight(updatedBoard);
           } catch (BoardServiceException e) {
@@ -90,10 +89,10 @@ public class BoardBoxService {
 
   public Optional<BoardBox> move(BoardBox boardBox) {
     return findById(boardBox.getId())
-        .map(updated -> {
-          Board boardUpdated = updated.getBoard();
-          BoardUtils.updateMoveSquaresNotation(boardUpdated);
-          Square nextSquare =boardUpdated.getNextSquare();
+        .map(updatedBox -> {
+          Board boardUpdated = updatedBox.getBoard();
+          BoardUtils.updateMoveSquaresNotation(boardUpdated, boardBox.getBoard());
+          Square nextSquare = boardUpdated.getNextSquare();
           Square selectedSquare = boardUpdated.getSelectedSquare();
           if (isValidMove(nextSquare, selectedSquare)) {
             Log.error(String.format("Invalid move Next: %s, Selected: %s", nextSquare, selectedSquare));
@@ -105,8 +104,8 @@ public class BoardBoxService {
             Log.error(e.getMessage(), e);
             return null;
           }
-          updated.setBoard(boardUpdated);
-          return updated;
+          updatedBox.setBoard(boardUpdated);
+          return updatedBox;
         });
   }
 
@@ -161,7 +160,7 @@ public class BoardBoxService {
 
   public Optional<BoardBox> undo(BoardBox boardBox) {
     return findById(boardBox.getId())
-        .map(updated->{
+        .map(updated -> {
           Board currentBoard = updated.getBoard();
           Optional<Board> undone = boardService.undo(currentBoard);
           if (undone.isPresent()) {

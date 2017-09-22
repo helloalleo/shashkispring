@@ -78,26 +78,27 @@ public class BoardUtils {
   }
 
   static Board highlightBoard(Board board, MovesList highlight) {
-    List<Square> allowedSquares = highlight.getAllowed();
-    List<Square> beatenSquares = highlight.getBeaten();
-    List<Square> assignedSquares = board.getAssignedSquares().isEmpty()
-        ? getAssignedSquares(board.getRules().getDimension())
-        : board.getAssignedSquares();
-    List<Square> squareList = assignedSquares
-        .stream()
-        .map(square -> {
-          int allowedIndex = allowedSquares.indexOf(square);
-          int beatenIndex = beatenSquares.indexOf(square);
-          return allowedIndex != -1 ? square.highlight(true)
-              : (beatenIndex != -1 ? square.highlight(true) : square);
-        })
-        .collect(Collectors.toList());
-
-    if (allowedSquares.contains(board.getNextSquare())) {
-      board.getNextSquare().setHighlighted(true);
+//    List<Square> allowedSquares = highlight.getAllowed();
+//    List<Square> beatenSquares = highlight.getBeaten();
+    boolean assignedSquaresEmpty = board.getAssignedSquares().isEmpty();
+    if (assignedSquaresEmpty) {
+      board.setAssignedSquares(getAssignedSquares(board.getRules().getDimension()));
     }
-    board.setAssignedSquares(squareList);
-    board.setSquares(getSquares(squareList, board.getRules().getDimension()));
+//    List<Square> squareList = assignedSquares
+//        .stream()
+//        .map(square -> {
+//          int allowedIndex = allowedSquares.indexOf(square);
+//          int beatenIndex = beatenSquares.indexOf(square);
+//          return allowedIndex != -1 ? square.highlight(true)
+//              : (beatenIndex != -1 ? square.highlight(true) : square);
+//        })
+//        .collect(Collectors.toList());
+
+//    if (allowedSquares.contains(board.getNextSquare())) {
+//      board.getNextSquare().setHighlighted(true);
+//    }
+    List<Square> squares = getSquares(board.getAssignedSquares(), board.getRules().getDimension());
+    board.setSquares(squares);
     return board;
   }
 
@@ -355,23 +356,26 @@ public class BoardUtils {
     return board;
   }
 
-  public static void updateMoveSquaresNotation(Board board) {
-    int dimension = board.getRules().getDimension();
-    Square selectedSquare = findSquareLink(board, board.getSelectedSquare()).orElseGet(null);
+  public static void updateMoveSquaresNotation(Board currentBoard, Board origBoard) {
+    Square selectedSquare = findSquareLink(currentBoard, origBoard.getSelectedSquare()).orElse(null);
     if (selectedSquare != null) {
-      board.setSelectedSquare(selectedSquare.dim(dimension));
+      currentBoard.setSelectedSquare(updateSquare(selectedSquare, origBoard.getSelectedSquare()));
     }
-    Square nextSquare = findSquareLink(board, board.getNextSquare()).orElseGet(null);
+    Square nextSquare = findSquareLink(currentBoard, currentBoard.getNextSquare()).orElse(null);
     if (nextSquare != null) {
-      board.setNextSquare(nextSquare.dim(dimension));
+      currentBoard.setNextSquare(updateSquare(nextSquare, origBoard.getNextSquare()));
     }
-    Square previousSquare = findSquareLink(board, board.getPreviousSquare()).orElseGet(null);
+    Square previousSquare = findSquareLink(currentBoard, currentBoard.getPreviousSquare()).orElse(null);
     if (previousSquare != null) {
-      board.setPreviousSquare(previousSquare.dim(dimension));
+      currentBoard.setPreviousSquare(updateSquare(previousSquare, origBoard.getPreviousSquare()));
     }
     updateMoveDraughtsNotation(selectedSquare);
     updateMoveDraughtsNotation(nextSquare);
     updateMoveDraughtsNotation(previousSquare);
+  }
+
+  private static Square updateSquare(Square selectedSquare, Square origSquare) {
+    return selectedSquare.highlight(origSquare.isHighlighted());
   }
 
   private static void updateMoveDraughtsNotation(Square square) {
