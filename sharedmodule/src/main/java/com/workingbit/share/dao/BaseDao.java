@@ -47,6 +47,10 @@ public class BaseDao<T> {
     return dynamoDBMapper;
   }
 
+  public void save(final T entity, DynamoDBSaveExpression saveExpression) {
+    dynamoDBMapper.save(entity, saveExpression);
+  }
+
   public void save(final T entity) {
     dynamoDBMapper.save(entity);
   }

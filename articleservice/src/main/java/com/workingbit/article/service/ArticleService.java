@@ -10,7 +10,6 @@ import com.workingbit.share.model.CreateArticleRequest;
 import com.workingbit.share.model.CreateArticleResponse;
 import com.workingbit.share.model.CreateBoardRequest;
 import com.workingbit.share.model.EnumArticleState;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,8 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.workingbit.share.common.Utils.getRandomUUID;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.
@@ -46,27 +47,26 @@ public class ArticleService {
    */
   public CreateArticleResponse createArticleAndBoard(CreateArticleRequest articleAndBoard) {
     Article article = articleAndBoard.getArticle();
-    article.setId(null);
-    CreateBoardRequest boardRequest = articleAndBoard.getBoardRequest();
-    CreateArticleResponse createArticleResponse = new CreateArticleResponse();
-    if (StringUtils.isBlank(article.getBoardId())) {
-      try {
-        Optional<BoardBox> boardBoxOptional = boardRemoteService.createBoard(boardRequest);
-        if (boardBoxOptional.isPresent()) {
-          article.setBoardId(boardBoxOptional.get().getId());
-          createArticleResponse.setArticle(article);
-          createArticleResponse.setBoard(boardBoxOptional.get());
-        } else {
-          throw new ArticleServiceException("Unable to create board");
-        }
-      } catch (URISyntaxException e) {
-        throw new ArticleServiceException("Invalid URI");
-      }
-    } else {
-      throw new ArticleServiceException("boardId must not be specified");
-    }
-    article.setState(EnumArticleState.newcoming);
+    article.setId(getRandomUUID());
     article.setCreatedAt(new Date());
+    article.setState(EnumArticleState.newadded);
+    article.setBoardBoxId(getRandomUUID());
+    CreateBoardRequest boardRequest = articleAndBoard.getBoardRequest();
+    boardRequest.setBoardBoxId(article.getBoardBoxId());
+    CreateArticleResponse createArticleResponse = new CreateArticleResponse();
+    try {
+      boardRequest.setArticleId(article.getId());
+      Optional<BoardBox> boardBoxOptional = boardRemoteService.createBoard(boardRequest);
+      if (boardBoxOptional.isPresent()) {
+        article.setBoardBoxId(boardBoxOptional.get().getId());
+        createArticleResponse.setArticle(article);
+        createArticleResponse.setBoard(boardBoxOptional.get());
+      } else {
+        throw new ArticleServiceException("Unable to create board");
+      }
+    } catch (URISyntaxException e) {
+      throw new ArticleServiceException("Invalid URI");
+    }
     articleDao.save(article);
     return createArticleResponse;
   }
@@ -110,7 +110,7 @@ public class ArticleService {
   public Optional<BoardBox> findBoardByArticleId(String articleId) {
     Optional<Article> articleOptional = findById(articleId);
     return articleOptional.map(article -> {
-      Optional<BoardBox> boardBox = boardRemoteService.findBoardById(article.getBoardId());
+      Optional<BoardBox> boardBox = boardRemoteService.findBoardById(article.getBoardBoxId());
       return boardBox.orElse(null);
     });
   }

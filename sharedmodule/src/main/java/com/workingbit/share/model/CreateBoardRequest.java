@@ -22,6 +22,7 @@ public class CreateBoardRequest   {
 
   @JsonProperty("rules")
   private EnumRules rules = null;
+  private String boardBoxId;
 
   public String getArticleId() {
     return articleId;
@@ -136,6 +137,14 @@ public class CreateBoardRequest   {
       return "null";
     }
     return o.toString().replace("\n", "\n    ");
+  }
+
+  public void setBoardBoxId(String boardBoxId) {
+    this.boardBoxId = boardBoxId;
+  }
+
+  public String getBoardBoxId() {
+    return boardBoxId;
   }
 }
 

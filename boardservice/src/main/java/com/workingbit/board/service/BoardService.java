@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.workingbit.board.service.BoardUtils.*;
+import static com.workingbit.share.common.Utils.getRandomUUID;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.
@@ -35,6 +36,7 @@ public class BoardService {
   public Board createBoard(CreateBoardRequest newBoardRequest) {
     Board board = initBoard(newBoardRequest.getFillBoard(), newBoardRequest.getBlack(),
         newBoardRequest.getRules());
+    board.setId(getRandomUUID());
     save(board);
     return board;
   }

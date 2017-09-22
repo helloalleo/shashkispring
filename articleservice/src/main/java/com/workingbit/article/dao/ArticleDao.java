@@ -3,10 +3,10 @@ package com.workingbit.article.dao;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.workingbit.article.config.AppProperties;
 import com.workingbit.share.dao.BaseDao;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.share.model.EnumArticleState;
-import com.workingbit.article.config.AppProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

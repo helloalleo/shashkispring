@@ -8,7 +8,7 @@ public enum EnumArticleState {
   /**
    * New article not viewed by moderator
    */
-  newcoming,
+  newadded,
 
   /**
    * Article was removed

@@ -36,6 +36,7 @@ public class BoardBoxService {
 
     BoardBox boardBox = new BoardBox(board);
     boardBox.setArticleId(createBoardRequest.getArticleId());
+    boardBox.setId(createBoardRequest.getBoardBoxId());
     save(boardBox);
 
     board.setBoardBoxId(boardBox.getId());
