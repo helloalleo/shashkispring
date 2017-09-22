@@ -1,10 +1,7 @@
 package com.workingbit.board.api.impl;
 
-import com.workingbit.board.exception.BoardServiceError;
-import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.api.BoardApi;
 import com.workingbit.board.service.BoardContainerService;
-import com.workingbit.board.service.BoardService;
-import com.workingbit.board.service.BoardUtils;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +17,7 @@ import java.util.Optional;
  * Created by Aleksey Popryaduhin on 13:22 09/08/2017.
  */
 @RestController
-public class BoardApiImpl {
+public class BoardApiImpl implements BoardApi {
 
   private final BoardContainerService boardContainerService;
 
@@ -50,49 +47,15 @@ public class BoardApiImpl {
 
   @Override
   public ResponseEntity<BoardContainer> highlightBoard(@RequestBody BoardContainer boardContainer) {
-    try {
-      BoardContainer highlighted = boardContainerService.highlight(boardContainer);
-      return new ResponseEntity<>(highlighted, HttpStatus.OK);
-    } catch (BoardServiceException e) {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return boardContainerService.highlight(boardContainer)
+        .map(highlighted -> new ResponseEntity<>(highlighted, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
   @Override
   public ResponseEntity<BoardContainer> move(@RequestBody BoardContainer board) {
-    try {
-      Optional<BoardContainer> move = boardContainerService.move(board);
-      return move.map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
-          .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
-    } catch (BoardServiceException e) {
-      return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return boardContainerService.move(board)
+        .map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
-
-  //  @PostMapping(ResourceConstants.MOVE)
-//  public Map<String, Object> move(@RequestBody Map<String, Object> moveTo) {
-//    try {
-//      Map<String, Object> move = boardContainerService.move(moveTo);
-//      return new HashMap<String, Object>() {{
-//        put(ok.name(), true);
-//        put(data.name(), move);
-//      }};
-//    } catch (BoardServiceException e) {
-//      return getErrorResponse(e);
-//    }
-//  }
-//
-//  @PostMapping(ResourceConstants.UNDO)
-//  public Map<String, Object> undo(@RequestBody Map<String, Object> undoInfo) {
-//    try {
-//      String boardIdStr = (String) undoInfo.get(boardId.name());
-//      Map<String, Object> undo = boardContainerService.undo(boardIdStr);
-//      return new HashMap<String, Object>() {{
-//        put(ok.name(), true);
-//        put(data.name(), undo);
-//      }};
-//    } catch (BoardServiceException e) {
-//      return getErrorResponse(e);
-//    }
-//  }
 }

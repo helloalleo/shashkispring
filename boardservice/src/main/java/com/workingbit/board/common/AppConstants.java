@@ -1,6 +1,5 @@
 package com.workingbit.board.common;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -13,8 +12,16 @@ import org.springframework.stereotype.Component;
 public class AppConstants {
 
   @Value("${CLIENT_URL}")
-  private @Getter
-  String clientUrl;
+  private String clientUrl;
 
   public static final String INTERNAL_SERVER_ERROR = "500";
+
+  public String getClientUrl() {
+    return clientUrl;
+  }
+
+  public AppConstants setClientUrl(String clientUrl) {
+    this.clientUrl = clientUrl;
+    return this;
+  }
 }

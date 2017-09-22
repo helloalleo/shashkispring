@@ -12,6 +12,8 @@ import java.util.Objects;
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-14T22:16:30.741+03:00")
 
 public class CreateBoardRequest   {
+  private String articleId = null;
+
   @JsonProperty("fillBoard")
   private Boolean fillBoard = null;
 
@@ -20,6 +22,14 @@ public class CreateBoardRequest   {
 
   @JsonProperty("rules")
   private EnumRules rules = null;
+
+  public String getArticleId() {
+    return articleId;
+  }
+
+  public void setArticleId(String articleId) {
+    this.articleId = articleId;
+  }
 
   public CreateBoardRequest fillBoard(Boolean fillBoard) {
     this.fillBoard = fillBoard;

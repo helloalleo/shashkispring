@@ -22,6 +22,7 @@ public class BoardContainer implements BaseDomain {
   @DynamoDBHashKey(attributeName = "id")
   private String id;
 
+  @JsonIgnore
   @DynamoDBAttribute(attributeName = "articleId")
   private String articleId;
 
@@ -37,6 +38,7 @@ public class BoardContainer implements BaseDomain {
 
   public BoardContainer(Board board) {
     this.currentBoard = board;
+    this.currentBoardId = board.getId();
   }
 
   public String getId() {

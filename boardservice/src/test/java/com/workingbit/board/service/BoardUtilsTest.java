@@ -2,7 +2,7 @@ package com.workingbit.board.service;
 
 import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.share.domain.ICoordinates;
-import com.workingbit.share.domain.impl.BoardContainer;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.EnumRules;
 import com.workingbit.share.model.MovesList;
@@ -73,7 +73,7 @@ public class BoardUtilsTest {
 
   @Test
   public void test_init_board() {
-    BoardContainer boardContainer = getBoardContainerFilled();
+    Board boardContainer = getBoardFilled();
     boardContainer.getAssignedSquares().forEach(square -> {
       if (square.getNotation().equals("a1") || square.getNotation().equals("h8")) {
         assertEquals(1, square.getDiagonals().size());
@@ -89,7 +89,7 @@ public class BoardUtilsTest {
 
   @Test
   public void add_draught_to_board() throws BoardServiceException {
-    BoardContainer boardContainer = getBoardContainerFilled();
+    Board boardContainer = getBoardFilled();
     BoardUtils.addDraught(boardContainer, "c3", true);
     Optional<Square> c3 = BoardUtils.findSquareByNotation(boardContainer, "c3");
     assertTrue(c3.isPresent());
@@ -102,7 +102,7 @@ public class BoardUtilsTest {
 
   @Test
   public void test_main_diagonal() {
-    BoardContainer boardContainer = getBoardContainerFilled();
+    Board boardContainer = getBoardFilled();
     Square square = boardContainer.getAssignedSquares().get(4);
     List<Square> diagonal0 = square.getDiagonals().get(0);
     System.out.println(diagonal0);
@@ -113,18 +113,18 @@ public class BoardUtilsTest {
 //    assertTrue(isSubDiagonal(diagonal0, Collections.singletonList(diagonal0.get(2))));
   }
 
-  private BoardContainer getBoardContainerFilled() {
+  private Board getBoardFilled() {
     return BoardUtils.initBoard(true, false, EnumRules.RUSSIAN);
   }
 
   @Test
   public void test_highlight() throws BoardServiceException, ExecutionException, InterruptedException {
-    BoardContainer boardContainer = getBoardContainer();
+    Board boardContainer = getBoard();
     BoardUtils.addDraught(boardContainer, "d4", false);
     Optional<Square> d4 = BoardUtils.findSquareByNotation(boardContainer, "d4");
     assertTrue(d4.isPresent());
     MovesList highlightedMoves = HighlightMoveService.getHighlightedMoves(d4.get());
-    BoardContainer boardHighlighted = BoardUtils.highlightBoard(boardContainer, highlightedMoves);
+    Board boardHighlighted = BoardUtils.highlightBoard(boardContainer, highlightedMoves);
     Optional<Square> e5 = BoardUtils.findSquareByNotation(boardHighlighted, "e5");
     assertTrue(e5.isPresent());
     assertTrue(e5.get().isHighlighted());
@@ -132,7 +132,7 @@ public class BoardUtilsTest {
 
   @Test
   public void move_draught() throws BoardServiceException {
-    BoardContainer boardContainer = getBoardContainer();
+    Board boardContainer = getBoard();
     Square d4 = BoardUtils.findSquareByNotation(boardContainer, "d4").get();
     boardContainer.setSelectedSquare(d4);
     BoardUtils.addDraught(boardContainer, d4.getNotation(), false);
@@ -147,7 +147,7 @@ public class BoardUtilsTest {
     assertTrue(e5.isOccupied());
   }
 
-  private BoardContainer getBoardContainer() {
+  private Board getBoard() {
     return BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
   }
 

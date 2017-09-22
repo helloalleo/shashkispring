@@ -1,19 +1,17 @@
 package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.board.config.AppProperties;
 import com.workingbit.board.dao.BoardDao;
-import com.workingbit.share.model.CreateBoardRequest;
-import com.workingbit.share.model.EnumRules;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
+import com.workingbit.share.model.CreateBoardRequest;
+import com.workingbit.share.model.EnumRules;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.workingbit.board.service.BoardUtils.findSquareByVH;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by Aleksey Popryaduhin on 21:15 11/08/2017.
@@ -24,16 +22,17 @@ public class BaseServiceTest {
   private ObjectMapper objectMapper = new ObjectMapper();
 
   @Autowired
-  BoardService boardService;
+  BoardContainerService boardContainerService;
 
-  @Autowired
-  BoardHistoryService boardHistoryService;
+//  @Autowired
+//  BoardHistoryService boardHistoryService;
 
   @Autowired
   BoardDao boardDao;
 
   BoardContainer getBoard() {
-    BoardContainer boardContainer = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
+    Board board = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
+    BoardContainer boardContainer = new BoardContainer(board);
 //    Board board = new Board(boardContainer, false, EnumRules.RUSSIAN, 60);
 //    BoardContainer currentBoard = board.getCurrentBoard();
 //    Optional<Square> squareByVH = BoardUtils.findSquareByVH(currentBoard, 5, 2);
@@ -57,19 +56,19 @@ public class BaseServiceTest {
   }
 
   Square getSquareByVH(BoardContainer board, int v, int h) {
-    return findSquareByVH(board, v, h).get();
+    return findSquareByVH(board.getCurrentBoard(), v, h).get();
   }
 
   protected EnumRules getRules() {
     return EnumRules.RUSSIAN;
   }
 
-  BoardService getBoardServiceMock() {
-    AppProperties appProperties = mock(AppProperties.class);
-    when(appProperties.getRegion()).thenReturn("eu-central-1");
-    BoardDao boardDao = new BoardDao(appProperties);
-    return new BoardService(boardDao, objectMapper, boardHistoryService);
-  }
+//  BoardService getBoardServiceMock() {
+//    AppProperties appProperties = mock(AppProperties.class);
+//    when(appProperties.getRegion()).thenReturn("eu-central-1");
+//    BoardDao boardDao = new BoardDao(appProperties);
+//    return new BoardService(boardDao, objectMapper, boardHistoryService);
+//  }
 
   protected CreateBoardRequest getCreateBoardRequest() {
     CreateBoardRequest createBoardRequest = new CreateBoardRequest();

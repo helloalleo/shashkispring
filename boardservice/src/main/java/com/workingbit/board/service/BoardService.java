@@ -3,7 +3,6 @@ package com.workingbit.board.service;
 import com.workingbit.board.dao.BoardContainerDao;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceException;
-import com.workingbit.board.model.Strings;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardContainer;
 import com.workingbit.share.domain.impl.Draught;
@@ -12,10 +11,8 @@ import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.workingbit.board.service.BoardUtils.*;
 
@@ -38,7 +35,7 @@ public class BoardService {
   public Board createBoard(CreateBoardRequest newBoardRequest) {
     Board board = initBoard(newBoardRequest.getFillBoard(), newBoardRequest.getBlack(),
         newBoardRequest.getRules());
-    saveBoard(board);
+    save(board);
     return board;
   }
 
@@ -94,14 +91,15 @@ public class BoardService {
    * moved draught, queen is a draught has become the queen
    * @throws BoardServiceException
    */
-  public Optional<Board> move(Board board) throws BoardServiceException {
+  public Board move(Board board) throws BoardServiceException {
     Square nextSquare = board.getNextSquare();
     Square selectedSquare = board.getSelectedSquare();
     if (isValidMove(nextSquare, selectedSquare)) {
-      return Optional.empty();
+      return null;
     }
     return boardDao.findById(board.getId()).map(boardContainer ->
-        BoardUtils.moveDraught(selectedSquare, nextSquare, boardContainer));
+        BoardUtils.moveDraught(selectedSquare, nextSquare, boardContainer))
+        .orElseGet(null);
   }
 
   private boolean isValidMove(Square nextSquare, Square selectedSquare) {
@@ -113,16 +111,16 @@ public class BoardService {
 //    return move(undoMove);
 //  }
 
-  public void saveBoard(Board board) {
+  public void save(Board board) {
     boardDao.save(board);
   }
 
-  public List<Board> findByIds(Strings boardIds) {
-    List<String> ids = new ArrayList<>(boardIds.size());
-    ids.addAll(boardIds);
-    return boardDao.findByIds(ids)
-        .stream()
-        .map(BoardUtils::updateBoard)
-        .collect(Collectors.toList());
-  }
+//  public List<Board> findByIds(Strings boardIds) {
+//    List<String> ids = new ArrayList<>(boardIds.size());
+//    ids.addAll(boardIds);
+//    return boardDao.findByIds(ids)
+//        .stream()
+//        .map(BoardUtils::updateBoard)
+//        .collect(Collectors.toList());
+//  }
 }
