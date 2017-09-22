@@ -37,12 +37,12 @@ class HighlightMoveService {
    * @throws ExecutionException
    * @throws InterruptedException
    */
-  static MovesList getHighlightedMoves(Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
+  static void getHighlightedMoves(Square selectedSquare) throws BoardServiceException, ExecutionException, InterruptedException {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
-      return new MovesList();
+      throw new BoardServiceException("Invalid selected square");
     }
     HighlightMoveService highlightMoveService = new HighlightMoveService(selectedSquare);
-    return highlightMoveService.findAllMoves();
+    highlightMoveService.findAllMoves();
   }
 
   /**

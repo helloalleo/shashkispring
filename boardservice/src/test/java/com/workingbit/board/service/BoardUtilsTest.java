@@ -124,7 +124,7 @@ public class BoardUtilsTest {
     Optional<Square> d4 = BoardUtils.findSquareByNotation(boardBox, "d4");
     assertTrue(d4.isPresent());
     MovesList highlightedMoves = HighlightMoveService.getHighlightedMoves(d4.get());
-    Board boardHighlighted = BoardUtils.highlightBoard(boardBox, highlightedMoves);
+    Board boardHighlighted = BoardUtils.highlightBoard(boardBox);
     Optional<Square> e5 = BoardUtils.findSquareByNotation(boardHighlighted, "e5");
     assertTrue(e5.isPresent());
     assertTrue(e5.get().isHighlighted());

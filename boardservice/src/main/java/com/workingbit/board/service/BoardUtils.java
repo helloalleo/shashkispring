@@ -7,7 +7,6 @@ import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.EnumRules;
-import com.workingbit.share.model.MovesList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -77,7 +76,7 @@ public class BoardUtils {
     return boardClone;
   }
 
-  static Board highlightBoard(Board board, MovesList highlight) {
+  static Board highlightBoard(Board board) {
 //    List<Square> allowedSquares = highlight.getAllowed();
 //    List<Square> beatenSquares = highlight.getBeaten();
     boolean assignedSquaresEmpty = board.getAssignedSquares().isEmpty();
@@ -310,33 +309,27 @@ public class BoardUtils {
     addDraught(board, notation, black, false, true);
   }
 
-  public static Board moveDraught(Square selectedSquare, Square nextSquare, Board board) {
-    Board boardClone = (Board) board.deepClone();
-    Board highlighted = getHighlightedBoard(boardClone, selectedSquare);
-    if (highlighted == null) {
-      return null;
-    }
-    highlighted.setNextSquare(nextSquare);
+  public static void moveDraught(Square selectedSquare, Square nextSquare, Board board) {
+    getHighlightedBoard(board, selectedSquare);
+    board.setNextSquare(nextSquare);
     try {
-      Board movedBoard = moveDraught(highlighted);
-      return getHighlightedBoard(movedBoard, nextSquare);
+      moveDraught(board);
+      getHighlightedBoard(board, nextSquare);
     } catch (BoardServiceException e) {
-      e.printStackTrace();
+      Log.error("Unable to highlight", e);
     }
-    return null;
   }
 
-  public static Board getHighlightedBoard(Board board, Square selectedSquare) {
+  public static void getHighlightedBoard(Board board, Square selectedSquare) {
     try {
-      MovesList highlighted = getHighlightedMoves(selectedSquare);
-      return highlightBoard(board, highlighted);
+      getHighlightedMoves(selectedSquare);
+      highlightBoard(board);
     } catch (BoardServiceException | ExecutionException | InterruptedException e) {
       Log.error("Unable to highlight board", e);
     }
-    return null;
   }
 
-  private static Board moveDraught(Board board) throws BoardServiceException {
+  private static void moveDraught(Board board) throws BoardServiceException {
     Square sourceSquare = board.getSelectedSquare();
     Square targetSquare = board.getNextSquare();
     if (!targetSquare.isHighlighted()
@@ -353,7 +346,6 @@ public class BoardUtils {
     board.setPreviousSquare(board.getSelectedSquare());
     board.setSelectedSquare(targetSquare);
     targetSquare.setHighlighted(true);
-    return board;
   }
 
   public static void updateMoveSquaresNotation(Board currentBoard, Board origBoard) {
@@ -361,11 +353,11 @@ public class BoardUtils {
     if (selectedSquare != null) {
       currentBoard.setSelectedSquare(updateSquare(selectedSquare, origBoard.getSelectedSquare()));
     }
-    Square nextSquare = findSquareLink(currentBoard, currentBoard.getNextSquare()).orElse(null);
+    Square nextSquare = findSquareLink(currentBoard, origBoard.getNextSquare()).orElse(null);
     if (nextSquare != null) {
       currentBoard.setNextSquare(updateSquare(nextSquare, origBoard.getNextSquare()));
     }
-    Square previousSquare = findSquareLink(currentBoard, currentBoard.getPreviousSquare()).orElse(null);
+    Square previousSquare = findSquareLink(currentBoard, origBoard.getPreviousSquare()).orElse(null);
     if (previousSquare != null) {
       currentBoard.setPreviousSquare(updateSquare(previousSquare, origBoard.getPreviousSquare()));
     }
