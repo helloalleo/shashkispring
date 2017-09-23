@@ -16,7 +16,7 @@
 //  private BoardHistoryService boardHistoryService;
 //
 ////  @Test
-////  public void should_save_history() throws Exception, BoardServiceException {
+////  public void should_save_history() throws Exception, BoardServiceError {
 ////    BoardBox board = getBoard();
 //////    boardHistoryService.addBoardAndSave(board);
 ////    Optional<BoardHistory> boardHistory = boardHistoryService.getHistory(board.getId());
@@ -25,7 +25,7 @@
 ////  }
 ////
 ////  @Test
-////  public void should_save_two_history() throws Exception, BoardServiceException {
+////  public void should_save_two_history() throws Exception, BoardServiceError {
 ////    BoardBox board = getBoard();
 //////    boardHistoryService.addBoardAndSave(board);
 ////    Optional<BoardHistory> boardHistory = boardHistoryService.getHistory(board.getId());

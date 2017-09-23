@@ -31,7 +31,7 @@
 ////    boardHistoryDao.save(boardHistoryManager.getBoardHistory());
 ////  }
 ///*
-//  public Map<String, Object> undo(String boardId) throws BoardServiceException {
+//  public Map<String, Object> undo(String boardId) throws BoardServiceError {
 //    // find history for given board
 //    Optional<BoardHistory> boardHistoryOptional = boardHistoryDao.findByBoardId(boardId);
 //    if (boardHistoryOptional.isPresent()) {

@@ -1,6 +1,6 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Square;
@@ -27,7 +27,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void draught_simple_moves() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void draught_simple_moves() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     System.out.println(board);
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
@@ -38,7 +38,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void draught_one_beat() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void draught_one_beat() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
@@ -48,7 +48,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void draught_beat_sequence() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void draught_beat_sequence() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
@@ -60,7 +60,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void queen_turk_stroke() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void queen_turk_stroke() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraughtQueen(board, "e1", false); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "c3"); // c3
@@ -73,7 +73,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void draught_turk_stroke() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void draught_turk_stroke() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraught(board, "c1"); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "b2"); // c3
@@ -88,7 +88,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void queen_beats_sequence() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void queen_beats_sequence() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraughtQueen(board, "e1", false); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "c3"); // c3
@@ -102,7 +102,7 @@ public class HighlightMoveServiceTest {
 
 
   @Test
-  public void queen_beats_sequence2() throws BoardServiceException, ExecutionException, InterruptedException, TimeoutException {
+  public void queen_beats_sequence2() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraughtQueen(board, "e1", false); // c3
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d2"); // c3
@@ -114,7 +114,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void draught_two_beaten() throws BoardServiceException, ExecutionException, InterruptedException {
+  public void draught_two_beaten() throws BoardServiceError, ExecutionException, InterruptedException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
     System.out.println(updatedBoard);
@@ -128,7 +128,7 @@ public class HighlightMoveServiceTest {
 
 
   @Test
-  public void queen_moves_on_empty_desk() throws BoardServiceException, ExecutionException, InterruptedException {
+  public void queen_moves_on_empty_desk() throws BoardServiceError, ExecutionException, InterruptedException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraughtQueen(board, "c3", false);
     MovesList highlight = HighlightMoveService.getHighlightedMoves(getSquare(updatedBoard, "c3"));
@@ -136,7 +136,7 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
-  public void queen_moves_with_beat() throws BoardServiceException, ExecutionException, InterruptedException {
+  public void queen_moves_with_beat() throws BoardServiceError, ExecutionException, InterruptedException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraughtQueen(board, "c3", false);
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "e5");
@@ -145,17 +145,17 @@ public class HighlightMoveServiceTest {
     testCollection("f6,g7,h8", highlight.getAllowed());
   }
 
-  private Board getSquareByVHWithDraught(Board currentBoard, String notation) throws BoardServiceException {
+  private Board getSquareByVHWithDraught(Board currentBoard, String notation) throws BoardServiceError {
     BoardUtils.addDraught(currentBoard, notation, false);
     return currentBoard;
   }
 
-  private Board getSquareByVHWithBlackDraught(Board currentBoard, String notation) throws BoardServiceException {
+  private Board getSquareByVHWithBlackDraught(Board currentBoard, String notation) throws BoardServiceError {
     BoardUtils.addDraught(currentBoard, notation, true);
     return currentBoard;
   }
 
-  private Board getSquareByVHWithDraughtQueen(Board board, String notation, boolean black) throws BoardServiceException {
+  private Board getSquareByVHWithDraughtQueen(Board board, String notation, boolean black) throws BoardServiceError {
     BoardUtils.addDraught(board, notation, black, true);
     return board;
   }

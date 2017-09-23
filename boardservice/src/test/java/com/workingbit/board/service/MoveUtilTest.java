@@ -1,6 +1,6 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class MoveUtilTest extends BaseServiceTest {
 
   @Test
-  public void doMove() throws Exception, BoardServiceException {
+  public void doMove() throws Exception, BoardServiceError {
     BoardBox board = getBoard();
     Draught draught = getDraught(5, 2);
 //    ISquare square = getSquareByVH(board, 5, 2);

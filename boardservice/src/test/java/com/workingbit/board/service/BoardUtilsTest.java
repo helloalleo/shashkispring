@@ -1,6 +1,6 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Square;
@@ -88,7 +88,7 @@ public class BoardUtilsTest {
   }
 
   @Test
-  public void add_draught_to_board() throws BoardServiceException {
+  public void add_draught_to_board() throws BoardServiceError {
     Board boardBox = getBoardFilled();
     BoardUtils.addDraught(boardBox, "c3", true);
     Optional<Square> c3 = BoardUtils.findSquareByNotation(boardBox, "c3");
@@ -118,7 +118,7 @@ public class BoardUtilsTest {
   }
 
   @Test
-  public void test_highlight() throws BoardServiceException, ExecutionException, InterruptedException {
+  public void test_highlight() throws BoardServiceError, ExecutionException, InterruptedException {
     Board boardBox = getBoard();
     BoardUtils.addDraught(boardBox, "d4", false);
     Optional<Square> d4 = BoardUtils.findSquareByNotation(boardBox, "d4");
@@ -131,7 +131,7 @@ public class BoardUtilsTest {
   }
 
   @Test
-  public void move_draught() throws BoardServiceException {
+  public void move_draught() throws BoardServiceError {
     Board boardBox = getBoard();
     Square d4 = BoardUtils.findSquareByNotation(boardBox, "d4").get();
     boardBox.setSelectedSquare(d4);

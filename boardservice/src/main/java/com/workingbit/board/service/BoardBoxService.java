@@ -1,7 +1,6 @@
 package com.workingbit.board.service;
 
 import com.workingbit.board.dao.BoardBoxDao;
-import com.workingbit.board.exception.BoardServiceException;
 import com.workingbit.board.model.BoardBoxes;
 import com.workingbit.board.model.Strings;
 import com.workingbit.share.common.Log;
@@ -153,13 +152,29 @@ public class BoardBoxService {
           Board currentBoard = updated.getBoard();
           BoardUtils.updateMoveSquaresHighlightAndNotation(currentBoard, boardBox.getBoard());
           Optional<Board> undone = boardService.undo(currentBoard);
-          if (undone.isPresent()) {
-            updated.setBoard(undone.get());
-            updated.setBoardId(undone.get().getId());
-            boardBoxDao.save(updated);
-            return updated;
-          }
+          if (undoRedoBoardAction(updated, undone)) return updated;
           return updated;
         });
+  }
+
+  public Optional<BoardBox> redo(BoardBox boardBox) {
+    return findById(boardBox.getId())
+        .map(updated -> {
+          Board currentBoard = updated.getBoard();
+          BoardUtils.updateMoveSquaresHighlightAndNotation(currentBoard, boardBox.getBoard());
+          Optional<Board> redone = boardService.redo(currentBoard);
+          if (undoRedoBoardAction(updated, redone)) return updated;
+          return updated;
+        });
+  }
+
+  private boolean undoRedoBoardAction(BoardBox updated, Optional<Board> redone) {
+    if (redone.isPresent()) {
+      updated.setBoard(redone.get());
+      updated.setBoardId(redone.get().getId());
+      boardBoxDao.save(updated);
+      return true;
+    }
+    return false;
   }
 }

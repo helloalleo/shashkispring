@@ -246,4 +246,12 @@ public class Board implements BaseDomain {
   public void setPreviousBoard(String notation, String boardId) {
     previous.put(notation, boardId);
   }
+
+  public String getNextBoard(String notation) {
+    return next.get(notation);
+  }
+
+  public void setNextBoard(String notation, String boardId) {
+    next.put(notation, boardId);
+  }
 }

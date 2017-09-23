@@ -75,6 +75,8 @@ public class BoardApiImpl implements BoardApi {
 
   @Override
   public ResponseEntity<BoardBox> redo(@RequestBody BoardBox boardBox) {
-    return null;
+    return boardBoxService.redo(boardBox)
+        .map(redone -> new ResponseEntity<>(redone, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 }

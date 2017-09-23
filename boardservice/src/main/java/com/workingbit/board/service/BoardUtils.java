@@ -1,7 +1,7 @@
 package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.workingbit.board.exception.BoardServiceException;
+import com.workingbit.board.exception.BoardServiceError;
 import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
@@ -44,7 +44,6 @@ public class BoardUtils {
     Board boardClone = (Board) board.deepClone();
     EnumRules rules = boardClone.getRules();
     boolean black = boardClone.isBlack();
-    updateMoveSquaresDimension(boardClone);
 
     List<Draught> blackDraughts = new ArrayList<>();
     List<Draught> whiteDraughts = new ArrayList<>();
@@ -69,9 +68,9 @@ public class BoardUtils {
         }
       }
     }
-//    boardBox.setBlackDraughts(blackDraughts);
-//    boardBox.setWhiteDraughts(whiteDraughts);
     boardClone.setAssignedSquares(boardSquares);
+    updateMoveSquaresDimensionAndDiagonals(boardClone);
+
     List<Square> squares = getSquares(boardSquares, rules.getDimension());
     boardClone.setSquares(squares);
     return boardClone;
@@ -222,8 +221,8 @@ public class BoardUtils {
     return Pair.of(vDist, hDist);
   }
 
-  static Supplier<BoardServiceException> getBoardServiceExceptionSupplier(String message) {
-    return () -> new BoardServiceException(message);
+  static Supplier<BoardServiceError> getBoardServiceExceptionSupplier(String message) {
+    return () -> new BoardServiceError(message);
   }
 
   static <T, I> List<I> mapList(List<I> squares, ObjectMapper objectMapper, Class<T> clazz, Class<I> iclazz) {
@@ -239,7 +238,7 @@ public class BoardUtils {
     return newSquares;
   }
 
-  public static void addDraught(Board board, String notation, Draught draught) throws BoardServiceException {
+  public static void addDraught(Board board, String notation, Draught draught) throws BoardServiceError {
     if (draught == null) {
       return;
     }
@@ -310,7 +309,7 @@ public class BoardUtils {
         || sourceSquare == null
         || !sourceSquare.isOccupied()
         || sourceSquare.getDraught().isBlack() != board.isBlack()) {
-      throw new BoardServiceException("Unable to move the draught");
+      throw new BoardServiceError("Unable to move the draught");
     }
     Draught draught = sourceSquare.getDraught();
     BoardUtils.addDraught(board, targetSquare.getNotation(), draught);
@@ -350,7 +349,7 @@ public class BoardUtils {
     }
   }
 
-  public static void updateMoveSquaresDimension(Board currentBoard) {
+  public static void updateMoveSquaresDimensionAndDiagonals(Board currentBoard) {
     currentBoard.setSelectedSquare(updateSquareDimension(currentBoard.getSelectedSquare(), currentBoard));
     currentBoard.setNextSquare(updateSquareDimension(currentBoard.getNextSquare(), currentBoard));
     currentBoard.setPreviousSquare(updateSquareDimension(currentBoard.getPreviousSquare(), currentBoard));

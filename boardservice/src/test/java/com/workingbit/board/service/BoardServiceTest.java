@@ -65,7 +65,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
   /*
   @Test
-  public void should_save_move_history() throws BoardServiceException, ExecutionException, InterruptedException {
+  public void should_save_move_history() throws BoardServiceError, ExecutionException, InterruptedException {
     BoardBox board = getNewBoard();
     Draught draught = getDraught(5, 2);
     Square square = getSquareByVH(board, 5, 2);
@@ -107,7 +107,7 @@ public class BoardServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void should_undo_move() throws BoardServiceException {
+  public void should_undo_move() throws BoardServiceError {
     BoardBox board = getNewBoard();
     Square square = getSquareByVH(board, 5, 2);
     Square target = getSquareByVH(board, 4, 3);
