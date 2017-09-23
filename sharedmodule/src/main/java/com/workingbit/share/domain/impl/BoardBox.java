@@ -1,18 +1,12 @@
 package com.workingbit.share.domain.impl;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.DBConstants;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -22,6 +16,9 @@ public class BoardBox implements BaseDomain {
 
   @DynamoDBHashKey(attributeName = "id")
   private String id;
+
+  @DynamoDBRangeKey(attributeName = "createdAt")
+  private Date createdAt;
 
   @DynamoDBAttribute(attributeName = "articleId")
   private String articleId;
@@ -47,6 +44,14 @@ public class BoardBox implements BaseDomain {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
   }
 
   public String getArticleId() {

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ public class BoardBoxService {
     BoardBox boardBox = new BoardBox(board);
     boardBox.setArticleId(createBoardRequest.getArticleId());
     boardBox.setId(createBoardRequest.getBoardBoxId());
+    boardBox.setCreatedAt(new Date());
     save(boardBox);
 
     board.setBoardBoxId(boardBox.getId());
@@ -50,7 +52,7 @@ public class BoardBoxService {
   }
 
   public Optional<BoardBox> findById(String boardBoxId) {
-    return boardBoxDao.findById(boardBoxId).map(this::updateBoardBox);
+    return boardBoxDao.findByKey(boardBoxId).map(this::updateBoardBox);
   }
 
   private BoardBox updateBoardBox(BoardBox boardBox) {
@@ -58,7 +60,7 @@ public class BoardBoxService {
     return boardOptional.map(board -> {
       boardBox.setBoard(board);
       return boardBox;
-    }).orElseGet(null);
+    }).orElse(null);
   }
 
   public void delete(String boardBoxId) {
@@ -75,13 +77,8 @@ public class BoardBoxService {
         .map(updated -> {
           Board currentBoard = updated.getBoard();
           Board updatedBoard = BoardUtils.updateBoard(currentBoard);
-          BoardUtils.updateMoveSquaresNotation(updatedBoard, boardBox.getBoard());
-          try {
+          BoardUtils.updateMoveSquaresHighlightAndNotation(updatedBoard, boardBox.getBoard());
             updatedBoard = boardService.highlight(updatedBoard);
-          } catch (BoardServiceException e) {
-            Log.error(e.getMessage(), e);
-            return null;
-          }
           updated.setBoard(updatedBoard);
           return updated;
         });
@@ -91,20 +88,17 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updatedBox -> {
           Board boardUpdated = updatedBox.getBoard();
-          BoardUtils.updateMoveSquaresNotation(boardUpdated, boardBox.getBoard());
+          BoardUtils.updateMoveSquaresHighlightAndNotation(boardUpdated, boardBox.getBoard());
           Square nextSquare = boardUpdated.getNextSquare();
           Square selectedSquare = boardUpdated.getSelectedSquare();
           if (isValidMove(nextSquare, selectedSquare)) {
             Log.error(String.format("Invalid move Next: %s, Selected: %s", nextSquare, selectedSquare));
             return null;
           }
-          try {
             boardUpdated = boardService.move(boardUpdated, selectedSquare, nextSquare);
-          } catch (BoardServiceException e) {
-            Log.error(e.getMessage(), e);
-            return null;
-          }
           updatedBox.setBoard(boardUpdated);
+          updatedBox.setBoardId(boardUpdated.getId());
+          boardBoxDao.save(updatedBox);
           return updatedBox;
         });
   }
@@ -142,15 +136,10 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          try {
-            Square squareLink = BoardUtils.findSquareLink(currentBoard, selectedSquare)
-                .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
-            currentBoard = boardService.addDraught(currentBoard, squareLink.getNotation(), draught);
-            if (currentBoard == null) {
-              return null;
-            }
-          } catch (BoardServiceException e) {
-            Log.error(e.getMessage(), e);
+          Square squareLink = BoardUtils.findSquareLink(currentBoard, selectedSquare)
+              .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
+          currentBoard = boardService.addDraught(currentBoard, squareLink.getNotation(), draught);
+          if (currentBoard == null) {
             return null;
           }
           updated.setBoard(currentBoard);
@@ -162,11 +151,12 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
+          BoardUtils.updateMoveSquaresHighlightAndNotation(currentBoard, boardBox.getBoard());
           Optional<Board> undone = boardService.undo(currentBoard);
           if (undone.isPresent()) {
             updated.setBoard(undone.get());
             updated.setBoardId(undone.get().getId());
-//            boardBoxDao.save(updated);
+            boardBoxDao.save(updated);
             return updated;
           }
           return updated;

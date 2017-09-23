@@ -48,7 +48,7 @@ class HighlightMoveService {
   /**
    * Entry point for initially selected square
    */
-  private MovesList findAllMoves() throws BoardServiceException {
+  private MovesList findAllMoves() {
     List<Square> allowedMoves = new ArrayList<>();
     List<Square> beatenMoves = new ArrayList<>();
     Draught draught = selectedSquare.getDraught();
@@ -65,7 +65,7 @@ class HighlightMoveService {
     return movesList;
   }
 
-  private void findBeatenMovesOnDiagonalsOfSelectedSquare(Square selectedSquare, boolean black, boolean queen, List<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+  private void findBeatenMovesOnDiagonalsOfSelectedSquare(Square selectedSquare, boolean black, boolean queen, List<Square> beatenMoves, List<Square> allowedMoves) {
     List<List<Square>> diagonals = selectedSquare.getDiagonals();
     int indexOfSelected;
     for (List<Square> diagonal : diagonals) {
@@ -76,7 +76,7 @@ class HighlightMoveService {
     }
   }
 
-  private void walkOnDiagonal(Square selectedSquare, boolean down, boolean queen, List<Square> diagonal, List<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+  private void walkOnDiagonal(Square selectedSquare, boolean down, boolean queen, List<Square> diagonal, List<Square> beatenMoves, List<Square> allowedMoves) {
     Tree<Square> treeBeaten = Tree.empty();
     findBeatenMovesOnHalfDiagonal(diagonal, selectedSquare, down, queen, 0, true, treeBeaten.asNode(), allowedMoves);
     beatenMoves.addAll(flatTree(treeBeaten));
@@ -85,7 +85,7 @@ class HighlightMoveService {
     beatenMoves.addAll(flatTree(treeBeaten));
   }
 
-  private void findBeatenMovesOnHalfDiagonal(List<Square> diagonal, Square selectedSquare, boolean down, boolean queen, int deep, boolean cross, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+  private void findBeatenMovesOnHalfDiagonal(List<Square> diagonal, Square selectedSquare, boolean down, boolean queen, int deep, boolean cross, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
     if (queen) {
       findBeatenMovesForQueen(diagonal, selectedSquare, down, deep, cross, beatenMoves, allowedMoves);
     } else {
@@ -93,7 +93,7 @@ class HighlightMoveService {
     }
   }
 
-  private void findBeatenMovesForQueen(List<Square> diagonal, Square selectedSquare, boolean down, int deep, boolean cross, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+  private void findBeatenMovesForQueen(List<Square> diagonal, Square selectedSquare, boolean down, int deep, boolean cross, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
     int indexOfSelected = diagonal.indexOf(selectedSquare);
     ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
     List<Square> walkAllowedMoves = new ArrayList<>();
@@ -129,7 +129,7 @@ class HighlightMoveService {
     }
   }
 
-  private void walkCross(boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves, List<Square> walkAllowedMoves, Square next, Square previous) throws BoardServiceException {
+  private void walkCross(boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves, List<Square> walkAllowedMoves, Square next, Square previous) {
     List<Tree.Node<Square>> children = beatenMoves.getChildren();
     Tree.Node<Square> newBeatenMoves = children.get(children.size() - 1);
     walkCrossDiagonalForBeaten(next, previous, down, deep, true, newBeatenMoves, allowedMoves);
@@ -141,7 +141,7 @@ class HighlightMoveService {
     }
   }
 
-  private void findBeatenMovesForDraught(List<Square> diagonal, Square selectedSquare, boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+  private void findBeatenMovesForDraught(List<Square> diagonal, Square selectedSquare, boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
     int indexOfSelected = diagonal.indexOf(selectedSquare);
     ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
     Square next, previous = selectedSquare;
@@ -175,7 +175,7 @@ class HighlightMoveService {
     while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
   }
 
-  private void walkCrossDiagonalForBeaten(Square next, Square previous, boolean down, int deep, boolean queen, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) throws BoardServiceException {
+  private void walkCrossDiagonalForBeaten(Square next, Square previous, boolean down, int deep, boolean queen, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
     for (List<Square> diagonal : next.getDiagonals()) {
       if (!isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
         findBeatenMovesOnHalfDiagonal(diagonal, next, down, queen, deep, false, beatenMoves, allowedMoves);
@@ -270,7 +270,7 @@ class HighlightMoveService {
    * @param nextSquare square after previous
    * @return must or not beat
    */
-  private boolean mustBeat(Square nextSquare, Square previousSquare) throws BoardServiceException {
+  private boolean mustBeat(Square nextSquare, Square previousSquare) {
     return previousSquare.isOccupied()
         && previousSquare.getDraught().isBlack() != this.selectedSquare.getDraught().isBlack()
         && !nextSquare.isOccupied();

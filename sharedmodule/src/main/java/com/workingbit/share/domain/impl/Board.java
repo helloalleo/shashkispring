@@ -7,10 +7,7 @@ import com.workingbit.share.common.DraughtMapConverter;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.model.EnumRules;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Aleksey Popryaduhin on 23:21 21/09/2017.
@@ -20,6 +17,9 @@ public class Board implements BaseDomain {
 
   @DynamoDBHashKey(attributeName = "id")
   private String id;
+
+  @DynamoDBRangeKey(attributeName = "createdAt")
+  private Date createdAt;
 
   @JsonIgnore
   @DynamoDBAttribute(attributeName = "boardBoxId")
@@ -119,6 +119,22 @@ public class Board implements BaseDomain {
     this.id = id;
   }
 
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public boolean isCursor() {
+    return cursor;
+  }
+
+  public void setCursor(boolean cursor) {
+    this.cursor = cursor;
+  }
+
   public String getBoardBoxId() {
     return boardBoxId;
   }
@@ -205,14 +221,6 @@ public class Board implements BaseDomain {
 
   public void setRules(EnumRules rules) {
     this.rules = rules;
-  }
-
-  public Boolean getCursor() {
-    return cursor;
-  }
-
-  public void setCursor(Boolean cursor) {
-    this.cursor = cursor;
   }
 
   public void addBlackDraughts(String notation, Draught draught) {

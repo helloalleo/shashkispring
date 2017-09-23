@@ -1,5 +1,6 @@
 package com.workingbit.share.domain;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.workingbit.share.common.Utils;
 
 /**
@@ -28,6 +29,7 @@ public interface ICoordinates {
 
   void setDim(int dim);
 
+  @DynamoDBIgnore
   default String getNotation() {
     return Utils.alph.get(getH()) + (getDim() - getV());
   }

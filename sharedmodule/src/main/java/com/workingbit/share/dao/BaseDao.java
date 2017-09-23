@@ -55,6 +55,14 @@ public class BaseDao<T> {
     dynamoDBMapper.save(entity);
   }
 
+  public void batchSave(final Object... entities) {
+    dynamoDBMapper.batchSave(entities);
+  }
+
+  public void batchSave(final Iterable<T> entities) {
+    dynamoDBMapper.batchSave(entities);
+  }
+
   public List<T> findAll(Integer limit) {
 //    try {
 //      T hashKObject = clazz.newInstance();
