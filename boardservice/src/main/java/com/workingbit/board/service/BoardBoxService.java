@@ -76,8 +76,8 @@ public class BoardBoxService {
         .map(updated -> {
           Board currentBoard = updated.getBoard();
           Board updatedBoard = BoardUtils.updateBoard(currentBoard);
-          BoardUtils.updateMoveSquaresHighlightAndNotation(updatedBoard, boardBox.getBoard());
-            updatedBoard = boardService.highlight(updatedBoard);
+          BoardUtils.updateMoveSquaresHighlight(updatedBoard, boardBox.getBoard());
+          updatedBoard = boardService.highlight(updatedBoard);
           updated.setBoard(updatedBoard);
           return updated;
         });
@@ -87,14 +87,14 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updatedBox -> {
           Board boardUpdated = updatedBox.getBoard();
-          BoardUtils.updateMoveSquaresHighlightAndNotation(boardUpdated, boardBox.getBoard());
+          BoardUtils.updateMoveSquaresHighlight(boardUpdated, boardBox.getBoard());
           Square nextSquare = boardUpdated.getNextSquare();
           Square selectedSquare = boardUpdated.getSelectedSquare();
           if (isValidMove(nextSquare, selectedSquare)) {
             Log.error(String.format("Invalid move Next: %s, Selected: %s", nextSquare, selectedSquare));
             return null;
           }
-            boardUpdated = boardService.move(boardUpdated, selectedSquare, nextSquare);
+          boardUpdated = boardService.move(boardUpdated, selectedSquare, nextSquare);
           updatedBox.setBoard(boardUpdated);
           updatedBox.setBoardId(boardUpdated.getId());
           boardBoxDao.save(updatedBox);
@@ -150,7 +150,7 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          BoardUtils.updateMoveSquaresHighlightAndNotation(currentBoard, boardBox.getBoard());
+          BoardUtils.updateMoveSquaresHighlight(currentBoard, boardBox.getBoard());
           Optional<Board> undone = boardService.undo(currentBoard);
           if (undoRedoBoardAction(updated, undone)) return updated;
           return updated;
@@ -161,7 +161,7 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          BoardUtils.updateMoveSquaresHighlightAndNotation(currentBoard, boardBox.getBoard());
+          BoardUtils.updateMoveSquaresHighlight(currentBoard, boardBox.getBoard());
           Optional<Board> redone = boardService.redo(currentBoard);
           if (undoRedoBoardAction(updated, redone)) return updated;
           return updated;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.article.dao.ArticleDao;
 import com.workingbit.article.exception.ArticleServiceException;
 import com.workingbit.article.model.Articles;
+import com.workingbit.share.common.Utils;
 import com.workingbit.share.domain.impl.Article;
 import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.model.CreateArticleRequest;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,8 +47,7 @@ public class ArticleService {
    */
   public CreateArticleResponse createArticleAndBoard(CreateArticleRequest articleAndBoard) {
     Article article = articleAndBoard.getArticle();
-    article.setId(getRandomUUID());
-    article.setCreatedAt(new Date());
+    Utils.setRandomIdAndCreatedAt(article);
     article.setState(EnumArticleState.newadded);
     article.setBoardBoxId(getRandomUUID());
     CreateBoardRequest boardRequest = articleAndBoard.getBoardRequest();

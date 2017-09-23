@@ -1,6 +1,9 @@
 package com.workingbit.share.common;
 
+import com.workingbit.share.domain.BaseDomain;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,5 +39,10 @@ public class Utils {
 
   public static String getRandomUUID() {
     return UUID.randomUUID().toString();
+  }
+
+  public static void setRandomIdAndCreatedAt(BaseDomain domain) {
+    domain.setId(getRandomUUID());
+    domain.setCreatedAt(new Date());
   }
 }

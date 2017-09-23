@@ -3,6 +3,7 @@ package com.workingbit.board.service;
 import com.workingbit.board.dao.BoardBoxDao;
 import com.workingbit.board.dao.BoardDao;
 import com.workingbit.board.exception.BoardServiceError;
+import com.workingbit.share.common.Utils;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
@@ -11,13 +12,11 @@ import com.workingbit.share.model.CreateBoardRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static com.workingbit.board.service.BoardUtils.getHighlightedBoard;
 import static com.workingbit.board.service.BoardUtils.initBoard;
-import static com.workingbit.share.common.Utils.getRandomUUID;
 
 /**
  * Created by Aleksey Popryaduhin on 13:45 09/08/2017.
@@ -38,8 +37,7 @@ public class BoardService {
   public Board createBoard(CreateBoardRequest newBoardRequest) {
     Board board = initBoard(newBoardRequest.getFillBoard(), newBoardRequest.getBlack(),
         newBoardRequest.getRules());
-    board.setId(getRandomUUID());
-    board.setCreatedAt(new Date());
+    Utils.setRandomIdAndCreatedAt(board);
     board.setCursor(true);
     save(board);
     return board;
@@ -93,8 +91,7 @@ public class BoardService {
     BoardUtils.moveDraught(selectedSquare, nextSquare, toMove);
     toMove.getPrevious().put(selectedSquare.getNotation(), previous.getId());
 
-    toMove.setId(getRandomUUID());
-    toMove.setCreatedAt(new Date());
+    Utils.setRandomIdAndCreatedAt(toMove);
     toMove.setCursor(true);
 
     previous.setCursor(false);
@@ -118,8 +115,14 @@ public class BoardService {
     Square previousSquare = board.getPreviousSquare();
     if (previousSquare != null) {
       String previousId = board.getPreviousBoard(previousSquare.getNotation());
+      if (previousId == null) {
+        return Optional.empty();
+      }
       return findById(previousId)
-          .map(undoBoard -> undoRedoBoardAction(board, undoBoard));
+          .map(undoBoard -> {
+            undoBoard.setPreviousSquare(board.getSelectedSquare());
+            return undoRedoBoardAction(board, undoBoard);
+          });
     }
     return Optional.empty();
   }
@@ -128,13 +131,22 @@ public class BoardService {
     Square nextSquare = board.getNextSquare();
     if (nextSquare != null) {
       String nextId = board.getNextBoard(nextSquare.getNotation());
+      if (nextId == null) {
+        return Optional.empty();
+      }
       return findById(nextId)
-          .map(redoBoard -> undoRedoBoardAction(board, redoBoard));
+          .map(redoBoard -> {
+            redoBoard.setPreviousSquare(board.getSelectedSquare());
+            return undoRedoBoardAction(board, redoBoard);
+          });
     }
     return Optional.empty();
   }
 
   private Board undoRedoBoardAction(Board board, Board redoBoard) {
+    Utils.setRandomIdAndCreatedAt(redoBoard);
+    redoBoard.setPreviousBoard(board.getPreviousSquare().getNotation(), null);
+    redoBoard.setPreviousBoard(board.getSelectedSquare().getNotation(), board.getId());
     redoBoard.setCursor(true);
     board.setCursor(false);
     boardDao.batchSave(board, redoBoard);

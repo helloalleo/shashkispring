@@ -42,6 +42,10 @@ public class BoardUtils {
 
   private static Board updateBoard(boolean fillBoard, boolean update, Board board) {
     Board boardClone = (Board) board.deepClone();
+//    board.getAssignedSquares().forEach(square -> {
+//      square.setHighlighted(false);
+//      square.setDraught(null);
+//    });
     EnumRules rules = boardClone.getRules();
     boolean black = boardClone.isBlack();
 
@@ -287,19 +291,25 @@ public class BoardUtils {
   public static void moveDraught(Square selectedSquare, Square nextSquare, Board board) {
     getHighlightedBoard(board, selectedSquare);
     board.setNextSquare(nextSquare);
-      moveDraught(board);
-      getHighlightedBoard(board, nextSquare);
+    moveDraught(board);
+    getHighlightedBoard(board, nextSquare);
   }
 
   public static void getHighlightedBoard(Board board, Square selectedSquare) {
     try {
-      board.getAssignedSquares().forEach(square -> square.setHighlighted(false));
+      resetBoardHighlight(board);
       getHighlightedMoves(selectedSquare);
       List<Square> squares = getSquares(board.getAssignedSquares(), board.getRules().getDimension());
       board.setSquares(squares);
     } catch (ExecutionException | InterruptedException e) {
       Log.error("Unable to highlight board", e);
     }
+  }
+
+  private static void resetBoardHighlight(Board board) {
+    board.getAssignedSquares().forEach(square -> {
+      square.setHighlighted(false);
+    });
   }
 
   private static void moveDraught(Board board) {
@@ -321,7 +331,7 @@ public class BoardUtils {
     targetSquare.setHighlighted(true);
   }
 
-  public static void updateMoveSquaresHighlightAndNotation(Board currentBoard, Board origBoard) {
+  public static void updateMoveSquaresHighlight(Board currentBoard, Board origBoard) {
     Square selectedSquare = findSquareLink(currentBoard, origBoard.getSelectedSquare()).orElse(null);
     if (selectedSquare != null) {
       currentBoard.setSelectedSquare(updateSquare(selectedSquare, origBoard.getSelectedSquare()));
@@ -359,8 +369,8 @@ public class BoardUtils {
     if (square != null) {
       Square updated = findSquareLink(board, square)
           .orElseThrow(getBoardServiceExceptionSupplier("Unable to find square"));
-      updated.setDraught(square.getDraught());
-      updateMoveDraughtsNotation(updated);
+//      updated.setDraught(square.getDraught());
+//      updateMoveDraughtsNotation(updated);
       return updated;
     }
     return null;

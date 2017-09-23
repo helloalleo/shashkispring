@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -136,5 +137,25 @@ public class Draught implements ICoordinates, BaseDomain {
         ", beaten=" + beaten +
         ", highlight=" + highlighted +
         '}';
+  }
+
+  @Override
+  public String getId() {
+    return null;
+  }
+
+  @Override
+  public void setId(String id) {
+
+  }
+
+  @Override
+  public Date getCreatedAt() {
+    return null;
+  }
+
+  @Override
+  public void setCreatedAt(Date createdAt) {
+
   }
 }

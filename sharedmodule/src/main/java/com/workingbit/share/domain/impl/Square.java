@@ -5,6 +5,7 @@ import com.workingbit.share.domain.BaseDomain;
 import com.workingbit.share.domain.ICoordinates;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -159,5 +160,25 @@ public class Square implements ICoordinates, BaseDomain {
   public Square highlight(boolean highlight) {
     setHighlighted(highlight);
     return this;
+  }
+
+  @Override
+  public String getId() {
+    return null;
+  }
+
+  @Override
+  public void setId(String id) {
+
+  }
+
+  @Override
+  public Date getCreatedAt() {
+    return null;
+  }
+
+  @Override
+  public void setCreatedAt(Date createdAt) {
+
   }
 }
