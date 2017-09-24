@@ -298,6 +298,7 @@ public class BoardUtils {
   public static void highlightedBoard(Board board, Square selectedSquare) {
     resetBoardHighlight(board);
     highlightedAssignedMoves(selectedSquare);
+    updateBoard(board);
   }
 
   private static void resetBoardHighlight(Board board) {
