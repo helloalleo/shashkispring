@@ -122,6 +122,11 @@ public class Square implements ICoordinates, BaseDomain {
     this.draught = draught;
   }
 
+  public Square draught(Draught draught) {
+    this.draught = draught;
+    return this;
+  }
+
   public List<List<Square>> getDiagonals() {
     return diagonals;
   }

@@ -2,6 +2,7 @@ package com.workingbit.share.domain.impl;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.workingbit.share.common.BoardIdNotationConverter;
 import com.workingbit.share.common.DBConstants;
 import com.workingbit.share.common.DraughtMapConverter;
 import com.workingbit.share.domain.BaseDomain;
@@ -29,19 +30,11 @@ public class Board implements BaseDomain {
   /**
    * Next boards map. Key next square notation, value board id
    */
-  @JsonIgnore
-  @DynamoDBTypeConvertedJson(targetType = HashMap.class)
-  @DynamoDBAttribute(attributeName = "next")
-  private Map<String, String> next = new HashMap<String, String>();
-
-  /**
-   * Next boards map. Key next square notation, value board id
-   */
-  @DynamoDBTypeConvertedJson(targetType = LinkedList.class)
+  @DynamoDBTypeConverted(converter = BoardIdNotationConverter.class)
   @DynamoDBAttribute(attributeName = "previousBoards")
   private LinkedList<BoardIdNotation> previousBoards = new LinkedList<>();
 
-  @DynamoDBTypeConvertedJson(targetType = LinkedList.class)
+  @DynamoDBTypeConverted(converter = BoardIdNotationConverter.class)
   @DynamoDBAttribute(attributeName = "nextBoard")
   private LinkedList<BoardIdNotation> nextBoard = new LinkedList<>();
 
@@ -145,14 +138,6 @@ public class Board implements BaseDomain {
 
   public void setBoardBoxId(String boardBoxId) {
     this.boardBoxId = boardBoxId;
-  }
-
-  public Map<String, String> getNext() {
-    return next;
-  }
-
-  public void setNext(Map<String, String> next) {
-    this.next = next;
   }
 
   public LinkedList<BoardIdNotation> getPreviousBoards() {

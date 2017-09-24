@@ -75,10 +75,9 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          Board updatedBoard = BoardUtils.updateBoard(currentBoard);
-          BoardUtils.updateMoveSquaresHighlight(updatedBoard, boardBox.getBoard());
-          updatedBoard = boardService.highlight(updatedBoard);
-          updated.setBoard(updatedBoard);
+          BoardUtils.updateMoveSquaresHighlight(currentBoard, boardBox.getBoard());
+          currentBoard = boardService.highlight(currentBoard);
+          updated.setBoard(currentBoard);
           return updated;
         });
   }

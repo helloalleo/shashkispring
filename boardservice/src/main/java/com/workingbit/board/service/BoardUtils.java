@@ -40,23 +40,21 @@ public class BoardUtils {
 
   private static Board updateBoard(boolean fillBoard, boolean update, Board board) {
     Board boardClone = (Board) board.deepClone();
-//    board.getAssignedSquares().forEach(square -> {
-//      square.setHighlighted(false);
-//      square.setDraught(null);
-//    });
     EnumRules rules = boardClone.getRules();
     boolean black = boardClone.isBlack();
 
-    List<Draught> blackDraughts = new ArrayList<>();
-    List<Draught> whiteDraughts = new ArrayList<>();
-    Map<String, Draught> blackDraughtsExisted = boardClone.getBlackDraughts();
-    Map<String, Draught> whiteDraughtsExisted = boardClone.getWhiteDraughts();
+    Map<String, Draught> blackDraughts = new HashMap<>(rules.getDraughtsCount());
+    Map<String, Draught> whiteDraughts = new HashMap<>(rules.getDraughtsCount());
+    if (update) {
+      blackDraughts = boardClone.getBlackDraughts();
+      whiteDraughts = boardClone.getWhiteDraughts();
+    }
     List<Square> boardSquares = getAssignedSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
       if (update) {
-        Draught blackDraught = blackDraughtsExisted.get(square.getNotation());
-        Draught whiteDraught = whiteDraughtsExisted.get(square.getNotation());
+        Draught blackDraught = blackDraughts.get(square.getNotation());
+        Draught whiteDraught = whiteDraughts.get(square.getNotation());
         if (blackDraught != null) {
           square.setDraught(blackDraught);
         } else if (whiteDraught != null) {
@@ -70,6 +68,10 @@ public class BoardUtils {
         }
       }
     }
+
+    boardClone.setBlackDraughts(blackDraughts);
+    boardClone.setWhiteDraughts(whiteDraughts);
+
     boardClone.setAssignedSquares(boardSquares);
     updateMoveSquaresDimensionAndDiagonals(boardClone);
 
@@ -78,10 +80,10 @@ public class BoardUtils {
     return boardClone;
   }
 
-  private static void placeDraught(boolean black, EnumRules rules, List<Draught> draughts, Square square, int v, int h) {
+  private static void placeDraught(boolean black, EnumRules rules, Map<String, Draught> draughts, Square square, int v, int h) {
     Draught draught = new Draught(v, h, rules.getDimension());
     draught.setBlack(black);
-    draughts.add(draught);
+    draughts.put(square.getNotation(), draught);
     square.setDraught(draught);
   }
 
@@ -296,8 +298,6 @@ public class BoardUtils {
   public static void highlightedBoard(Board board, Square selectedSquare) {
     resetBoardHighlight(board);
     highlightedAssignedMoves(selectedSquare);
-    List<Square> squares = getSquares(board.getAssignedSquares(), board.getRules().getDimension());
-    board.setSquares(squares);
   }
 
   private static void resetBoardHighlight(Board board) {
@@ -346,7 +346,7 @@ public class BoardUtils {
   }
 
   private static Square updateSquare(Square selectedSquare, Square origSquare) {
-    return selectedSquare.highlight(origSquare.isHighlighted());
+    return selectedSquare.highlight(origSquare.isHighlighted()).draught(origSquare.getDraught());
   }
 
   private static void updateMoveDraughtsNotation(Square square) {
