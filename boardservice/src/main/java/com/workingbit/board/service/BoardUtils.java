@@ -286,16 +286,14 @@ public class BoardUtils {
     addDraught(board, notation, black, false, true);
   }
 
-  public static void moveDraught(Square selectedSquare, Square nextSquare, boolean checkAllowed, Board board) {
-    if (checkAllowed) {
-      getHighlightedBoard(board, selectedSquare);
-    }
+  public static void moveDraught(Square selectedSquare, Square nextSquare, Board board) {
+    highlightedBoard(board, selectedSquare);
     board.setNextSquare(nextSquare);
     moveDraught(board);
-    getHighlightedBoard(board, nextSquare);
+    highlightedBoard(board, nextSquare);
   }
 
-  public static void getHighlightedBoard(Board board, Square selectedSquare) {
+  public static void highlightedBoard(Board board, Square selectedSquare) {
     resetBoardHighlight(board);
     highlightedAssignedMoves(selectedSquare);
     List<Square> squares = getSquares(board.getAssignedSquares(), board.getRules().getDimension());

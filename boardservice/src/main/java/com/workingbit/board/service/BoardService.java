@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.workingbit.board.service.BoardUtils.getHighlightedBoard;
+import static com.workingbit.board.service.BoardUtils.highlightedBoard;
 import static com.workingbit.board.service.BoardUtils.initBoard;
 
 /**
@@ -56,7 +56,7 @@ public class BoardService {
     if (isValidHighlight(boardHighlight, selectedSquare)) {
       throw new BoardServiceError("Invalid highlight square");
     }
-    getHighlightedBoard(boardHighlight, selectedSquare);
+    highlightedBoard(boardHighlight, selectedSquare);
     return boardHighlight;
   }
 
@@ -76,10 +76,10 @@ public class BoardService {
    *                       moved draught, queen is a draught has become the queen
    * @throws BoardServiceError
    */
-  public Board move(Square selectedSquare, Square nextSquare, boolean checkAllowed, Board toMove) {
+  public Board move(Square selectedSquare, Square nextSquare, Board toMove) {
     Board previous = (Board) toMove.deepClone();
 
-    BoardUtils.moveDraught(selectedSquare, nextSquare, checkAllowed, toMove);
+    BoardUtils.moveDraught(selectedSquare, nextSquare, toMove);
     toMove.pushPreviousBoard(previous.getId());
 
     Utils.setRandomIdAndCreatedAt(toMove);

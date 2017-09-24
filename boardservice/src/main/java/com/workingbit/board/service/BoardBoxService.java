@@ -94,7 +94,7 @@ public class BoardBoxService {
             Log.error(String.format("Invalid move Next: %s, Selected: %s", nextSquare, selectedSquare));
             return null;
           }
-          boardUpdated = boardService.move(selectedSquare, nextSquare, true, boardUpdated);
+          boardUpdated = boardService.move(selectedSquare, nextSquare, boardUpdated);
           updatedBox.setBoard(boardUpdated);
           updatedBox.setBoardId(boardUpdated.getId());
           boardBoxDao.save(updatedBox);
