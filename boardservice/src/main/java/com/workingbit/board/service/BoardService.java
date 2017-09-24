@@ -69,7 +69,6 @@ public class BoardService {
   /**
    * @param selectedSquare
    * @param nextSquare
-   * @param checkAllowed
    * @param toMove         map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}  @return Move info:
    *                       {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
    *                       h - distance for move horizontal (minus left), targetSquare is a new square with

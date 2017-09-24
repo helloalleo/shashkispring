@@ -34,9 +34,11 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
+
     boardService.move(squareC3, squareD4, board);
     assertFalse(squareC3.isOccupied());
     assertTrue(squareD4.isOccupied());
+
     board = boardService.undo(board).get();
     squareC3 = BoardUtils.findSquareLink(board, squareC3).get();
     assertTrue(squareC3.isOccupied());
@@ -56,9 +58,11 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
+
     boardService.move(squareC3, squareD4, board);
     assertFalse(squareC3.isOccupied());
     assertTrue(squareD4.isOccupied());
+
     board = boardService.undo(board).get();
     squareC3 = BoardUtils.findSquareLink(board, squareC3).get();
     assertTrue(squareC3.isOccupied());

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.DBConstants;
 import com.workingbit.share.common.DraughtMapConverter;
 import com.workingbit.share.domain.BaseDomain;
+import com.workingbit.share.model.BoardIdNotation;
 import com.workingbit.share.model.EnumRules;
 
 import java.util.*;
@@ -14,9 +15,6 @@ import java.util.*;
  */
 @DynamoDBTable(tableName = DBConstants.BOARD_TABLE)
 public class Board implements BaseDomain {
-
-  private static Integer counter = 1;
-  private static Integer counter2 = 1;
 
   @DynamoDBHashKey(attributeName = "id")
   private String id;
@@ -41,11 +39,11 @@ public class Board implements BaseDomain {
    */
   @DynamoDBTypeConvertedJson(targetType = LinkedList.class)
   @DynamoDBAttribute(attributeName = "previousBoards")
-  private LinkedList<String> previousBoards = new LinkedList<>();
+  private LinkedList<BoardIdNotation> previousBoards = new LinkedList<>();
 
   @DynamoDBTypeConvertedJson(targetType = LinkedList.class)
   @DynamoDBAttribute(attributeName = "nextBoard")
-  private LinkedList<String> nextBoard = new LinkedList<>();
+  private LinkedList<BoardIdNotation> nextBoard = new LinkedList<>();
 
   /**
    * Black draughts associated with owner square
@@ -157,36 +155,28 @@ public class Board implements BaseDomain {
     this.next = next;
   }
 
-  public LinkedList<String> getPreviousBoards() {
+  public LinkedList<BoardIdNotation> getPreviousBoards() {
     return previousBoards;
   }
 
-  public void setPreviousBoards(LinkedList<String> previousBoards) {
+  public void setPreviousBoards(LinkedList<BoardIdNotation> previousBoards) {
     this.previousBoards = previousBoards;
   }
 
-  public void pushPreviousBoard(String boardId) {
-    this.previousBoards.push(boardId);
-  }
-
   public String popPreviousBoard() {
-    return previousBoards.isEmpty() ? null : previousBoards.pop();
+    return previousBoards.isEmpty() ? null : previousBoards.pop().getBoardId();
   }
 
-  public LinkedList<String> getNextBoard() {
-    return nextBoard;
-  }
-
-  public void setNextBoard(LinkedList<String> nextBoard) {
-    this.nextBoard = nextBoard;
+  public void pushPreviousBoard(String boardId) {
+    this.previousBoards.push(new BoardIdNotation(boardId, selectedSquare.getNotation()));
   }
 
   public String popNextBoard() {
-    return nextBoard.isEmpty() ? null : nextBoard.pop();
+    return nextBoard.isEmpty() ? null : nextBoard.pop().getBoardId();
   }
 
   public void pushNextBoard(String boardId) {
-    nextBoard.push(boardId);
+    nextBoard.push(new BoardIdNotation(boardId, selectedSquare.getNotation()));
   }
 
   public Map<String, Draught> getBlackDraughts() {
