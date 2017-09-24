@@ -118,7 +118,7 @@ public class BaseDao<T> {
     if (isBlank(entityId)) {
       return;
     }
-    findById(entityId)
+    findByKey(entityId)
         .ifPresent(dynamoDBMapper::delete);
   }
 

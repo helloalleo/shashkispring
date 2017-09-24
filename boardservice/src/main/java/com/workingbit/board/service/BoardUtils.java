@@ -2,7 +2,6 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.exception.BoardServiceError;
-import com.workingbit.share.common.Log;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
@@ -11,12 +10,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.workingbit.board.common.AppConstants.INTERNAL_SERVER_ERROR;
-import static com.workingbit.board.service.HighlightMoveService.getHighlightedMoves;
+import static com.workingbit.board.service.HighlightMoveService.highlightedAssignedMoves;
 
 /**
  * Created by Aleksey Popryaduhin on 20:56 11/08/2017.
@@ -298,14 +296,10 @@ public class BoardUtils {
   }
 
   public static void getHighlightedBoard(Board board, Square selectedSquare) {
-    try {
-      resetBoardHighlight(board);
-      getHighlightedMoves(selectedSquare);
-      List<Square> squares = getSquares(board.getAssignedSquares(), board.getRules().getDimension());
-      board.setSquares(squares);
-    } catch (ExecutionException | InterruptedException e) {
-      Log.error("Unable to highlight board", e);
-    }
+    resetBoardHighlight(board);
+    highlightedAssignedMoves(selectedSquare);
+    List<Square> squares = getSquares(board.getAssignedSquares(), board.getRules().getDimension());
+    board.setSquares(squares);
   }
 
   private static void resetBoardHighlight(Board board) {

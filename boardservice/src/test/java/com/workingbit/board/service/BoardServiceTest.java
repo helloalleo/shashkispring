@@ -74,7 +74,7 @@ public class BoardServiceTest extends BaseServiceTest {
 
     // find allowed and beaten
 //    HighlightMoveService highlightMoveUtil = new HighlightMoveService(board.getBoard(), square, getRules());
-//    Optional<List<Square>> allowedMovesMap = HighlightMoveService.getHighlightedMoves(board,square);
+//    Optional<List<Square>> allowedMovesMap = HighlightMoveService.highlightedAssignedMoves(board,square);
 //    List<Square> allowedMoves = (List<Square>) allowedMovesMap.get(allowed.name());
 //    List<Draught> beatenMoves = (List<Draught>) allowedMovesMap.get(beaten.name());
 
@@ -112,10 +112,10 @@ public class BoardServiceTest extends BaseServiceTest {
     Square square = getSquareByVH(board, 5, 2);
     Square target = getSquareByVH(board, 4, 3);
 
-//    Map<String, Object> getHighlightedMoves = boardService.getHighlightedMoves(boardId, square);
+//    Map<String, Object> highlightedAssignedMoves = boardService.highlightedAssignedMoves(boardId, square);
     // find allowed and beaten
-//    List<Square> allowedMoves = (List<Square>) getHighlightedMoves.get(allowed.name());
-//    List<Draught> beatenMoves = (List<Draught>) getHighlightedMoves.get(beaten.name());
+//    List<Square> allowedMoves = (List<Square>) highlightedAssignedMoves.get(allowed.name());
+//    List<Draught> beatenMoves = (List<Draught>) highlightedAssignedMoves.get(beaten.name());
 
     // create moveTo action
     Map<String, Object> moveTo = getMoveTo(board, square, target, null, null);
@@ -127,10 +127,10 @@ public class BoardServiceTest extends BaseServiceTest {
 
     // next move
     Object newSource = newMoveCoords.get(EnumBaseKeys.targetSquare.name());
-//    getHighlightedMoves = boardService.getHighlightedMoves(boardId, newSource);
+//    highlightedAssignedMoves = boardService.highlightedAssignedMoves(boardId, newSource);
     // find allowed and beaten
-//    allowedMoves = (List<Square>) getHighlightedMoves.get(allowed.name());
-//    beatenMoves = (List<Draught>) getHighlightedMoves.get(beaten.name());
+//    allowedMoves = (List<Square>) highlightedAssignedMoves.get(allowed.name());
+//    beatenMoves = (List<Draught>) highlightedAssignedMoves.get(beaten.name());
 
     Square nextTarget = BoardUtils.findSquareByVH(board, 3,4).get();
     // create moveTo action

@@ -2,6 +2,7 @@ package com.workingbit.board.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workingbit.board.dao.BoardDao;
+import com.workingbit.share.common.Utils;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
@@ -75,6 +76,7 @@ public class BaseServiceTest {
     createBoardRequest.setBlack(false);
     createBoardRequest.setFillBoard(false);
     createBoardRequest.setRules(EnumRules.RUSSIAN);
+    createBoardRequest.setBoardBoxId(Utils.getRandomUUID());
     return createBoardRequest;
   }
 }

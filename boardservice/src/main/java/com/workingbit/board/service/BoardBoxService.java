@@ -63,7 +63,7 @@ public class BoardBoxService {
   }
 
   public void delete(String boardBoxId) {
-    boardBoxDao.findById(boardBoxId)
+    boardBoxDao.findByKey(boardBoxId)
         .map(boardBox -> {
           boardService.delete(boardBox.getBoardId());
           boardBoxDao.delete(boardBox.getId());

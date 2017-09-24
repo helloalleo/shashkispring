@@ -7,7 +7,6 @@ import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.MovesList;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.workingbit.board.service.BoardUtils.isSubDiagonal;
@@ -29,26 +28,24 @@ class HighlightMoveService {
   }
 
   /**
-   * getHighlightedMoves moves for the selected square
+   * highlightedAssignedMoves moves for the selected square
    *
    * @param selectedSquare
    * @return
    * @throws BoardServiceError
-   * @throws ExecutionException
-   * @throws InterruptedException
    */
-  static void getHighlightedMoves(Square selectedSquare) throws BoardServiceError, ExecutionException, InterruptedException {
+  static MovesList highlightedAssignedMoves(Square selectedSquare) {
     if (selectedSquare == null || selectedSquare.getDraught() == null) {
       throw new BoardServiceError("Invalid selected square");
     }
     HighlightMoveService highlightMoveService = new HighlightMoveService(selectedSquare);
-    highlightMoveService.findAllMoves();
+    return highlightMoveService.highlightAllAssignedMoves();
   }
 
   /**
    * Entry point for initially selected square
    */
-  private MovesList findAllMoves() {
+  private MovesList highlightAllAssignedMoves() {
     List<Square> allowedMoves = new ArrayList<>();
     List<Square> beatenMoves = new ArrayList<>();
     Draught draught = selectedSquare.getDraught();

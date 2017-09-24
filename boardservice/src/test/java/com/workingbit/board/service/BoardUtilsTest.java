@@ -5,7 +5,6 @@ import com.workingbit.share.domain.ICoordinates;
 import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.EnumRules;
-import com.workingbit.share.model.MovesList;
 import org.junit.Test;
 
 import java.util.List;
@@ -123,9 +122,8 @@ public class BoardUtilsTest {
     BoardUtils.addDraught(boardBox, "d4", false);
     Optional<Square> d4 = BoardUtils.findSquareByNotation(boardBox, "d4");
     assertTrue(d4.isPresent());
-    MovesList highlightedMoves = HighlightMoveService.getHighlightedMoves(d4.get());
-    Board boardHighlighted = BoardUtils.highlightBoard(boardBox);
-    Optional<Square> e5 = BoardUtils.findSquareByNotation(boardHighlighted, "e5");
+    HighlightMoveService.highlightedAssignedMoves(d4.get());
+    Optional<Square> e5 = BoardUtils.findSquareByNotation(boardBox, "e5");
     assertTrue(e5.isPresent());
     assertTrue(e5.get().isHighlighted());
   }
@@ -140,7 +138,7 @@ public class BoardUtilsTest {
     assertTrue(d4.isOccupied());
     Square e5 = BoardUtils.findSquareByNotation(boardBox, "e5").get();
     boardBox.setNextSquare(e5);
-    boardBox = BoardUtils.moveDraught(d4, e5, true, boardBox);
+    BoardUtils.moveDraught(d4, e5, true, boardBox);
     d4 = BoardUtils.findSquareByNotation(boardBox, d4.getNotation()).get();
     assertFalse(d4.isOccupied());
     e5 = BoardUtils.findSquareByNotation(boardBox, e5.getNotation()).get();
