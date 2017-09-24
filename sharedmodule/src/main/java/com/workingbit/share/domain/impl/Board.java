@@ -35,8 +35,8 @@ public class Board implements BaseDomain {
   private LinkedList<BoardIdNotation> previousBoards = new LinkedList<>();
 
   @DynamoDBTypeConverted(converter = BoardIdNotationConverter.class)
-  @DynamoDBAttribute(attributeName = "nextBoard")
-  private LinkedList<BoardIdNotation> nextBoard = new LinkedList<>();
+  @DynamoDBAttribute(attributeName = "nextBoards")
+  private LinkedList<BoardIdNotation> nextBoards = new LinkedList<>();
 
   /**
    * Black draughts associated with owner square
@@ -152,16 +152,24 @@ public class Board implements BaseDomain {
     return previousBoards.isEmpty() ? null : previousBoards.pop().getBoardId();
   }
 
-  public void pushPreviousBoard(String boardId) {
-    this.previousBoards.push(new BoardIdNotation(boardId, selectedSquare.getNotation()));
+  public void pushPreviousBoard(String boardId, String notation) {
+    this.previousBoards.push(new BoardIdNotation(boardId, notation));
+  }
+
+  public LinkedList<BoardIdNotation> getNextBoards() {
+    return nextBoards;
+  }
+
+  public void setNextBoards(LinkedList<BoardIdNotation> nextBoards) {
+    this.nextBoards = nextBoards;
   }
 
   public String popNextBoard() {
-    return nextBoard.isEmpty() ? null : nextBoard.pop().getBoardId();
+    return nextBoards.isEmpty() ? null : nextBoards.pop().getBoardId();
   }
 
-  public void pushNextBoard(String boardId) {
-    nextBoard.push(new BoardIdNotation(boardId, selectedSquare.getNotation()));
+  public void pushNextBoard(String boardId, String notation) {
+    nextBoards.push(new BoardIdNotation(boardId, notation));
   }
 
   public Map<String, Draught> getBlackDraughts() {

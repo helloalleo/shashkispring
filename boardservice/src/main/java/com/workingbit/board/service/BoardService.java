@@ -75,19 +75,19 @@ public class BoardService {
    *                       moved draught, queen is a draught has become the queen
    * @throws BoardServiceError
    */
-  public Board move(Square selectedSquare, Square nextSquare, Board toMove) {
-    Board previous = (Board) toMove.deepClone();
+  public Board move(Square selectedSquare, Square nextSquare, Board currentBoard) {
+    currentBoard.setCursor(false);
+    boardDao.save(currentBoard);
 
-    BoardUtils.moveDraught(selectedSquare, nextSquare, toMove);
-    toMove.pushPreviousBoard(previous.getId());
+    Board nextBoard = (Board) currentBoard.deepClone();
+    BoardUtils.moveDraught(selectedSquare, nextSquare, nextBoard);
+    nextBoard.pushPreviousBoard(currentBoard.getId(), selectedSquare.getNotation());
 
-    Utils.setRandomIdAndCreatedAt(toMove);
-    toMove.setCursor(true);
-    previous.setCursor(false);
+    Utils.setRandomIdAndCreatedAt(nextBoard);
+    nextBoard.setCursor(true);
 
-    boardDao.save(previous);
-    boardDao.save(toMove);
-    return toMove;
+    boardDao.save(nextBoard);
+    return nextBoard;
   }
 
   public void save(Board board) {
@@ -107,7 +107,7 @@ public class BoardService {
     }
     boardDao.save(currentBoard);
     return findById(previousId).map(previousBoard -> {
-      previousBoard.pushNextBoard(currentBoard.getId());
+      previousBoard.pushNextBoard(currentBoard.getId(), currentBoard.getSelectedSquare().getNotation());
       boardDao.save(previousBoard);
       return previousBoard;
     });
@@ -120,7 +120,7 @@ public class BoardService {
     }
     boardDao.save(currentBoard);
     return findById(nextId).map(nextBoard -> {
-      nextBoard.pushPreviousBoard(currentBoard.getId());
+      nextBoard.pushPreviousBoard(currentBoard.getId(), currentBoard.getSelectedSquare().getNotation());
       boardDao.save(nextBoard);
       return nextBoard;
     });

@@ -17,7 +17,7 @@ public class MoveUtilTest extends BaseServiceTest {
 
   @Test
   public void doMove() throws Exception, BoardServiceError {
-    BoardBox board = getBoard();
+    BoardBox board = getBoard(false);
     Draught draught = getDraught(5, 2);
 //    ISquare square = getSquareByVH(board, 5, 2);
 //    square.setDraught(draught);

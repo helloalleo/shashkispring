@@ -35,7 +35,7 @@ class HighlightMoveService {
    * @throws BoardServiceError
    */
   static MovesList highlightedAssignedMoves(Square selectedSquare) {
-    if (selectedSquare == null || selectedSquare.getDraught() == null) {
+    if (selectedSquare == null || !selectedSquare.isOccupied()) {
       throw new BoardServiceError("Invalid selected square");
     }
     HighlightMoveService highlightMoveService = new HighlightMoveService(selectedSquare);

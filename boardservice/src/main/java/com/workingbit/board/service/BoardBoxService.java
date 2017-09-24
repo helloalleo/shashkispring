@@ -134,7 +134,7 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          Square squareLink = BoardUtils.findSquareLink(currentBoard, selectedSquare)
+          Square squareLink = BoardUtils.findSquareByLink(selectedSquare, currentBoard)
               .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
           currentBoard = boardService.addDraught(currentBoard, squareLink.getNotation(), draught);
           if (currentBoard == null) {

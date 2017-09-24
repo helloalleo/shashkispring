@@ -170,7 +170,7 @@ public class HighlightMoveServiceTest {
   }
 
   private Square getSquare(Board board, String notation) {
-    Square square = BoardUtils.findSquareByNotation(board, notation).get();
+    Square square = BoardUtils.findSquareByNotation(notation, board).get();
     System.out.println(square.getNotation());
     return square;
   }

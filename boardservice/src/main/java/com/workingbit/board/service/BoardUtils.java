@@ -43,12 +43,8 @@ public class BoardUtils {
     EnumRules rules = boardClone.getRules();
     boolean black = boardClone.isBlack();
 
-    Map<String, Draught> blackDraughts = new HashMap<>(rules.getDraughtsCount());
-    Map<String, Draught> whiteDraughts = new HashMap<>(rules.getDraughtsCount());
-    if (update) {
-      blackDraughts = boardClone.getBlackDraughts();
-      whiteDraughts = boardClone.getWhiteDraughts();
-    }
+    Map<String, Draught> blackDraughts = new HashMap<>(boardClone.getBlackDraughts());
+    Map<String, Draught> whiteDraughts = new HashMap<>(boardClone.getWhiteDraughts());
     List<Square> boardSquares = getAssignedSquares(rules.getDimension());
     for (Square square : boardSquares) {
       int v = square.getV(), h = square.getH();
@@ -180,11 +176,11 @@ public class BoardUtils {
   /**
    * Find variable link to square from board
    *
-   * @param board
    * @param square
+   * @param board
    * @return
    */
-  static Optional<Square> findSquareLink(Board board, Square square) {
+  static Optional<Square> findSquareByLink(Square square, Board board) {
     if (square == null) {
       return Optional.empty();
     }
@@ -200,7 +196,7 @@ public class BoardUtils {
     return Optional.empty();
   }
 
-  static Optional<Square> findSquareByNotation(Board board, String notation) {
+  static Optional<Square> findSquareByNotation(String notation, Board board) {
     if (StringUtils.isBlank(notation)) {
       return Optional.empty();
     }
@@ -258,7 +254,7 @@ public class BoardUtils {
   }
 
   public static void addDraught(Board board, String notation, boolean black, boolean queen, boolean remove) {
-    Optional<Square> squareOptional = findSquareByNotation(board, notation);
+    Optional<Square> squareOptional = findSquareByNotation(notation, board);
     squareOptional.ifPresent(square -> {
       Draught draught = null;
       if (!remove) {
@@ -292,7 +288,7 @@ public class BoardUtils {
     highlightedBoard(board, selectedSquare);
     board.setNextSquare(nextSquare);
     moveDraught(board);
-    highlightedBoard(board, nextSquare);
+    highlightedBoard(board, board.getSelectedSquare());
   }
 
   public static void highlightedBoard(Board board, Square selectedSquare) {
@@ -317,27 +313,38 @@ public class BoardUtils {
       throw new BoardServiceError("Unable to move the draught");
     }
     Draught draught = sourceSquare.getDraught();
+    findSquareByLink(sourceSquare, board)
+        .get().setDraught(null);
     BoardUtils.addDraught(board, targetSquare.getNotation(), draught);
-    BoardUtils.removeDraught(board, sourceSquare.getNotation(), draught.isBlack());
-    targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation())
+    targetSquare = BoardUtils.findSquareByNotation(targetSquare.getNotation(), board)
         .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
     board.setNextSquare(null);
     board.setPreviousSquare(board.getSelectedSquare());
     board.getPreviousSquare().setDraught(null);
     board.setSelectedSquare(targetSquare);
     targetSquare.setHighlighted(true);
+
+    replaceDraught(board.getWhiteDraughts(), targetSquare.getNotation(), sourceSquare.getNotation());
+    replaceDraught(board.getBlackDraughts(), targetSquare.getNotation(), sourceSquare.getNotation());
+  }
+
+  private static void replaceDraught(Map<String, Draught> draughts, String targetSquareNotation, String sourceSquareNotation) {
+    Draught draughtFromSource = draughts.remove(sourceSquareNotation);
+    if (draughtFromSource != null) {
+      draughts.put(targetSquareNotation, draughtFromSource);
+    }
   }
 
   public static void updateMoveSquaresHighlight(Board currentBoard, Board origBoard) {
-    Square selectedSquare = findSquareLink(currentBoard, origBoard.getSelectedSquare()).orElse(null);
+    Square selectedSquare = findSquareByLink(origBoard.getSelectedSquare(), currentBoard).orElse(null);
     if (selectedSquare != null) {
       currentBoard.setSelectedSquare(updateSquare(selectedSquare, origBoard.getSelectedSquare()));
     }
-    Square nextSquare = findSquareLink(currentBoard, origBoard.getNextSquare()).orElse(null);
+    Square nextSquare = findSquareByLink(origBoard.getNextSquare(), currentBoard).orElse(null);
     if (nextSquare != null) {
       currentBoard.setNextSquare(updateSquare(nextSquare, origBoard.getNextSquare()));
     }
-    Square previousSquare = findSquareLink(currentBoard, origBoard.getPreviousSquare()).orElse(null);
+    Square previousSquare = findSquareByLink(origBoard.getPreviousSquare(), currentBoard).orElse(null);
     if (previousSquare != null) {
       currentBoard.setPreviousSquare(updateSquare(previousSquare, origBoard.getPreviousSquare()));
     }
@@ -364,7 +371,7 @@ public class BoardUtils {
 
   private static Square updateSquareDimension(Square square, Board board) {
     if (square != null) {
-      Square updated = findSquareLink(board, square)
+      Square updated = findSquareByLink(square, board)
           .orElseThrow(getBoardServiceExceptionSupplier("Unable to find square"));
 //      updated.setDraught(square.getDraught());
 //      updateMoveDraughtsNotation(updated);

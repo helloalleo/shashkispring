@@ -31,8 +31,8 @@ public class BaseServiceTest {
   @Autowired
   BoardDao boardDao;
 
-  BoardBox getBoard() {
-    Board board = BoardUtils.initBoard(false, false, EnumRules.RUSSIAN);
+  BoardBox getBoard(boolean fillBoard) {
+    Board board = BoardUtils.initBoard(fillBoard, false, EnumRules.RUSSIAN);
     Utils.setRandomIdAndCreatedAt(board);
     return new BoardBox(board);
   }
