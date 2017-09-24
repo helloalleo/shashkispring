@@ -9,6 +9,7 @@ import com.workingbit.share.domain.impl.BoardBox;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.CreateBoardRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,28 +77,29 @@ public class BoardService {
   }
 
   /**
-   * @param toMove         map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}
    * @param selectedSquare
    * @param nextSquare
-   * @return Move info:
-   * {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
-   * h - distance for move horizontal (minus left), targetSquare is a new square with
-   * moved draught, queen is a draught has become the queen
+   * @param checkAllowed
+   * @param toMove         map of {boardId: String, selectedSquare: Square, targetSquare: Square, allowed: List<Square>, beaten: List<Square>}  @return Move info:
+   *                       {v, h, targetSquare, queen} v - distance for moving vertical (minus up),
+   *                       h - distance for move horizontal (minus left), targetSquare is a new square with
+   *                       moved draught, queen is a draught has become the queen
    * @throws BoardServiceError
    */
-  public Board move(Board toMove, Square selectedSquare, Square nextSquare) {
+  public Board move(Square selectedSquare, Square nextSquare, boolean checkAllowed, Board toMove) {
     Board previous = (Board) toMove.deepClone();
 
-    BoardUtils.moveDraught(selectedSquare, nextSquare, toMove);
-    toMove.getPrevious().put(selectedSquare.getNotation(), previous.getId());
+    BoardUtils.moveDraught(selectedSquare, nextSquare, checkAllowed, toMove);
+    toMove.pushPreviousBoard(previous.getId());
 
     Utils.setRandomIdAndCreatedAt(toMove);
     toMove.setCursor(true);
 
     previous.setCursor(false);
-    previous.getNext().put(nextSquare.getNotation(), toMove.getId());
+//    previous.pushPreviousBoard(toMove.getNextBoard());
 
-    boardDao.batchSave(previous, toMove);
+    boardDao.save(previous);
+    boardDao.save(toMove);
     return toMove;
   }
 
@@ -111,46 +113,47 @@ public class BoardService {
     return currentBoard;
   }
 
-  public Optional<Board> undo(Board board) {
-    Square previousSquare = board.getPreviousSquare();
-    if (previousSquare != null) {
-      String previousId = board.getPreviousBoard(previousSquare.getNotation());
-      if (previousId == null) {
-        return Optional.empty();
-      }
-      return findById(previousId)
-          .map(undoBoard -> {
-            undoBoard.setPreviousSquare(board.getSelectedSquare());
-            return undoRedoBoardAction(board, undoBoard);
-          });
+  public Optional<Board> undo(Board currentBoard) {
+    String previousId = currentBoard.popPreviousBoard();
+    if (StringUtils.isBlank(previousId)) {
+      return Optional.empty();
     }
-    return Optional.empty();
+    boardDao.save(currentBoard);
+    return findById(previousId).map(previousBoard -> {
+      previousBoard.pushNextBoard(currentBoard.getId());
+      boardDao.save(previousBoard);
+      return previousBoard;
+    });
   }
 
-  public Optional<Board> redo(Board board) {
-    Square nextSquare = board.getNextSquare();
-    if (nextSquare != null) {
-      String nextId = board.getNextBoard(nextSquare.getNotation());
-      if (nextId == null) {
-        return Optional.empty();
-      }
-      return findById(nextId)
-          .map(redoBoard -> {
-            redoBoard.setPreviousSquare(board.getSelectedSquare());
-            return undoRedoBoardAction(board, redoBoard);
-          });
+  public Optional<Board> redo(Board currentBoard) {
+    String nextId = currentBoard.popNextBoard();
+    if (StringUtils.isBlank(nextId)) {
+      return Optional.empty();
     }
-    return Optional.empty();
+    boardDao.save(currentBoard);
+    return findById(nextId).map(nextBoard -> {
+      nextBoard.pushPreviousBoard(currentBoard.getId());
+      boardDao.save(nextBoard);
+      return nextBoard;
+    });
   }
 
-  private Board undoRedoBoardAction(Board board, Board redoBoard) {
-    Utils.setRandomIdAndCreatedAt(redoBoard);
-    redoBoard.setPreviousBoard(board.getPreviousSquare().getNotation(), null);
-    redoBoard.setPreviousBoard(board.getSelectedSquare().getNotation(), board.getId());
-    redoBoard.setCursor(true);
-    board.setCursor(false);
-    boardDao.batchSave(board, redoBoard);
-    highlight(redoBoard);
-    return redoBoard;
+  private Board undoRedoBoardAction(Board currentBoard, Board nextBoard) {
+    Utils.setRandomIdAndCreatedAt(nextBoard);
+//    nextBoard.setPreviousBoards(currentBoard.getId());
+
+    Square nextSquare = currentBoard.getNextSquare();
+    currentBoard.setNextSquare(nextBoard.getPreviousSquare());
+    currentBoard.setPreviousSquare(nextSquare);
+
+//    currentBoard.setNextBoard(nextBoard.getId());
+    nextBoard.setCursor(true);
+    currentBoard.setCursor(false);
+//    System.out.println(currentBoard.getPreviousBoards().values());
+//    System.out.println(nextBoard.getPreviousBoards().values());
+    boardDao.batchSave(nextBoard, currentBoard);
+    highlight(nextBoard);
+    return nextBoard;
   }
 }

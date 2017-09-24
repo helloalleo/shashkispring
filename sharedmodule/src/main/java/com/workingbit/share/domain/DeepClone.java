@@ -8,7 +8,6 @@ import com.rits.cloning.Cloner;
 public interface DeepClone {
   default Object deepClone() {
     Cloner cloner = new Cloner();
-    cloner.setDumpClonedClasses(true);
     return cloner.deepClone(this);
   };
 }

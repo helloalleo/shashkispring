@@ -55,6 +55,8 @@ public class BaseDao<T> {
     dynamoDBMapper.save(entity);
   }
 
+
+
   public void batchSave(final Object... entities) {
     dynamoDBMapper.batchSave(entities);
   }

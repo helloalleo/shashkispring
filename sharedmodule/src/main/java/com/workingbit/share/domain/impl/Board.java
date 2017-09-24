@@ -15,6 +15,9 @@ import java.util.*;
 @DynamoDBTable(tableName = DBConstants.BOARD_TABLE)
 public class Board implements BaseDomain {
 
+  private static Integer counter = 1;
+  private static Integer counter2 = 1;
+
   @DynamoDBHashKey(attributeName = "id")
   private String id;
 
@@ -31,15 +34,18 @@ public class Board implements BaseDomain {
   @JsonIgnore
   @DynamoDBTypeConvertedJson(targetType = HashMap.class)
   @DynamoDBAttribute(attributeName = "next")
-  private Map<String, String> next = new HashMap<>();
+  private Map<String, String> next = new HashMap<String, String>();
 
   /**
    * Next boards map. Key next square notation, value board id
    */
-  @JsonIgnore
-  @DynamoDBTypeConvertedJson(targetType = HashMap.class)
-  @DynamoDBAttribute(attributeName = "previous")
-  private Map<String, String> previous = new HashMap<>();
+  @DynamoDBTypeConvertedJson(targetType = LinkedList.class)
+  @DynamoDBAttribute(attributeName = "previousBoards")
+  private LinkedList<String> previousBoards = new LinkedList<>();
+
+  @DynamoDBTypeConvertedJson(targetType = LinkedList.class)
+  @DynamoDBAttribute(attributeName = "nextBoard")
+  private LinkedList<String> nextBoard = new LinkedList<>();
 
   /**
    * Black draughts associated with owner square
@@ -151,12 +157,36 @@ public class Board implements BaseDomain {
     this.next = next;
   }
 
-  public Map<String, String> getPrevious() {
-    return previous;
+  public LinkedList<String> getPreviousBoards() {
+    return previousBoards;
   }
 
-  public void setPrevious(Map<String, String> previous) {
-    this.previous = previous;
+  public void setPreviousBoards(LinkedList<String> previousBoards) {
+    this.previousBoards = previousBoards;
+  }
+
+  public void pushPreviousBoard(String boardId) {
+    this.previousBoards.push(boardId);
+  }
+
+  public String popPreviousBoard() {
+    return previousBoards.isEmpty() ? null : previousBoards.pop();
+  }
+
+  public LinkedList<String> getNextBoard() {
+    return nextBoard;
+  }
+
+  public void setNextBoard(LinkedList<String> nextBoard) {
+    this.nextBoard = nextBoard;
+  }
+
+  public String popNextBoard() {
+    return nextBoard.isEmpty() ? null : nextBoard.pop();
+  }
+
+  public void pushNextBoard(String boardId) {
+    nextBoard.push(boardId);
   }
 
   public Map<String, Draught> getBlackDraughts() {
@@ -237,21 +267,5 @@ public class Board implements BaseDomain {
 
   public Square getPreviousSquare() {
     return previousSquare;
-  }
-
-  public String getPreviousBoard(String notation) {
-    return previous.get(notation);
-  }
-
-  public void setPreviousBoard(String notation, String boardId) {
-    previous.put(notation, boardId);
-  }
-
-  public String getNextBoard(String notation) {
-    return next.get(notation);
-  }
-
-  public void setNextBoard(String notation, String boardId) {
-    next.put(notation, boardId);
   }
 }

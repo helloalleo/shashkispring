@@ -4,9 +4,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.workingbit.share.common.DBConstants;
 import com.workingbit.share.domain.BaseDomain;
-import com.workingbit.share.model.EnumRules;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * Created by Aleksey Popryaduhin on 19:54 12/08/2017.
@@ -80,96 +80,6 @@ public class BoardBox implements BaseDomain {
 
   public void setBoard(Board board) {
     this.board = board;
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public Map<String, Draught> getBlackDraughts() {
-    return board.getBlackDraughts();
-  }
-
-  public void setBlackDraughts(HashMap<String, Draught> blackDraughts) {
-    board.setBlackDraughts(blackDraughts);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public Map<String, Draught> getWhiteDraughts() {
-    return board.getWhiteDraughts();
-  }
-
-  public void setWhiteDraughts(Map<String, Draught> whiteDraughts) {
-    board.setWhiteDraughts(whiteDraughts);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public Square getSelectedSquare() {
-    return board.getSelectedSquare();
-  }
-
-  public void setSelectedSquare(Square selectedSquare) {
-    board.setSelectedSquare(selectedSquare);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public Square getNextSquare() {
-    return board.getNextSquare();
-  }
-
-  public void setNextSquare(Square nextSquare) {
-    board.setNextSquare(nextSquare);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public Square getPreviousSquare() {
-    return board.getPreviousSquare();
-  }
-
-  public void setPreviousSquare(Square previousSquare) {
-    board.setPreviousSquare(previousSquare);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public List<Square> getSquares() {
-    return board.getSquares();
-  }
-
-  public void setSquares(List<Square> squares) {
-    board.setSquares(squares);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public List<Square> getAssignedSquares() {
-    return board.getAssignedSquares();
-  }
-
-  public void setAssignedSquares(List<Square> assignedSquares) {
-    board.setAssignedSquares(assignedSquares);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public boolean isBlack() {
-    return board.isBlack();
-  }
-
-  public void setBlack(boolean black) {
-    board.setBlack(black);
-  }
-
-  @JsonIgnore
-  @DynamoDBIgnore
-  public EnumRules getRules() {
-    return board.getRules();
-  }
-
-  public void setRules(EnumRules rules) {
-    board.setRules(rules);
   }
 
   /**

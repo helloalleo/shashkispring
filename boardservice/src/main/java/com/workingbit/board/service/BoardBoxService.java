@@ -94,7 +94,7 @@ public class BoardBoxService {
             Log.error(String.format("Invalid move Next: %s, Selected: %s", nextSquare, selectedSquare));
             return null;
           }
-          boardUpdated = boardService.move(boardUpdated, selectedSquare, nextSquare);
+          boardUpdated = boardService.move(selectedSquare, nextSquare, true, boardUpdated);
           updatedBox.setBoard(boardUpdated);
           updatedBox.setBoardId(boardUpdated.getId());
           boardBoxDao.save(updatedBox);
@@ -126,7 +126,7 @@ public class BoardBoxService {
   }
 
   public Optional<BoardBox> addDraught(BoardBox boardBox) {
-    Square selectedSquare = boardBox.getSelectedSquare();
+    Square selectedSquare = boardBox.getBoard().getSelectedSquare();
     if (selectedSquare == null
         || !selectedSquare.isOccupied()) {
       return Optional.empty();
@@ -152,7 +152,10 @@ public class BoardBoxService {
           Board currentBoard = updated.getBoard();
           BoardUtils.updateMoveSquaresHighlight(currentBoard, boardBox.getBoard());
           Optional<Board> undone = boardService.undo(currentBoard);
-          if (undoRedoBoardAction(updated, undone)) return updated;
+          if (undone.isPresent()) {
+            undoRedoBoardAction(updated, undone.get());
+            return updated;
+          }
           return updated;
         });
   }
@@ -163,18 +166,17 @@ public class BoardBoxService {
           Board currentBoard = updated.getBoard();
           BoardUtils.updateMoveSquaresHighlight(currentBoard, boardBox.getBoard());
           Optional<Board> redone = boardService.redo(currentBoard);
-          if (undoRedoBoardAction(updated, redone)) return updated;
+          if (redone.isPresent()) {
+            undoRedoBoardAction(updated, redone.get());
+            return updated;
+          }
           return updated;
         });
   }
 
-  private boolean undoRedoBoardAction(BoardBox updated, Optional<Board> redone) {
-    if (redone.isPresent()) {
-      updated.setBoard(redone.get());
-      updated.setBoardId(redone.get().getId());
-      boardBoxDao.save(updated);
-      return true;
-    }
-    return false;
+  private void undoRedoBoardAction(BoardBox updated, Board redone) {
+    updated.setBoard(redone);
+    updated.setBoardId(redone.getId());
+    boardBoxDao.save(updated);
   }
 }

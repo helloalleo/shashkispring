@@ -140,7 +140,7 @@ public class BoardUtilsTest {
     assertTrue(d4.isOccupied());
     Square e5 = BoardUtils.findSquareByNotation(boardBox, "e5").get();
     boardBox.setNextSquare(e5);
-    boardBox = BoardUtils.moveDraught(d4, e5, boardBox);
+    boardBox = BoardUtils.moveDraught(d4, e5, true, boardBox);
     d4 = BoardUtils.findSquareByNotation(boardBox, d4.getNotation()).get();
     assertFalse(d4.isOccupied());
     e5 = BoardUtils.findSquareByNotation(boardBox, e5.getNotation()).get();

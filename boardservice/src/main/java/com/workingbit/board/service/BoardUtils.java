@@ -288,8 +288,10 @@ public class BoardUtils {
     addDraught(board, notation, black, false, true);
   }
 
-  public static void moveDraught(Square selectedSquare, Square nextSquare, Board board) {
-    getHighlightedBoard(board, selectedSquare);
+  public static void moveDraught(Square selectedSquare, Square nextSquare, boolean checkAllowed, Board board) {
+    if (checkAllowed) {
+      getHighlightedBoard(board, selectedSquare);
+    }
     board.setNextSquare(nextSquare);
     moveDraught(board);
     getHighlightedBoard(board, nextSquare);
@@ -324,9 +326,11 @@ public class BoardUtils {
     Draught draught = sourceSquare.getDraught();
     BoardUtils.addDraught(board, targetSquare.getNotation(), draught);
     BoardUtils.removeDraught(board, sourceSquare.getNotation(), draught.isBlack());
-    targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation()).orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
+    targetSquare = BoardUtils.findSquareByNotation(board, targetSquare.getNotation())
+        .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
     board.setNextSquare(null);
     board.setPreviousSquare(board.getSelectedSquare());
+    board.getPreviousSquare().setDraught(null);
     board.setSelectedSquare(targetSquare);
     targetSquare.setHighlighted(true);
   }
