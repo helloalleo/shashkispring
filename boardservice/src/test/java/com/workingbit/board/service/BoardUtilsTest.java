@@ -107,7 +107,7 @@ public class BoardUtilsTest {
     System.out.println(diagonal0);
     List<Square> diagonal1 = square.getDiagonals().get(1);
     System.out.println(diagonal1);
-    assertFalse(isSubDiagonal(diagonal0, diagonal1));
+    assertFalse(isSubDiagonal(diagonal1, diagonal0));
 //     TODO more checks
 //    assertTrue(isSubDiagonal(diagonal0, Collections.singletonList(diagonal0.get(2))));
   }
@@ -138,14 +138,14 @@ public class BoardUtilsTest {
     Square d4 = BoardUtils.findSquareByNotation("d4", board).get();
     board.setNextSquare(d4);
 
-    BoardUtils.moveDraught(c3, d4, board);
+    board = BoardUtils.moveDraught(c3, board);
     c3 = BoardUtils.findSquareByNotation(c3.getNotation(), board).get();
     assertFalse(c3.isOccupied());
     d4 = BoardUtils.findSquareByNotation(d4.getNotation(), board).get();
     assertTrue(d4.isOccupied());
 
     Square e5 = BoardUtils.findSquareByNotation("e5", board).get();
-    BoardUtils.moveDraught(d4, e5, board);
+    board = BoardUtils.moveDraught(d4, board);
     d4 = BoardUtils.findSquareByNotation(d4.getNotation(), board).get();
     assertFalse(d4.isOccupied());
     e5 = BoardUtils.findSquareByNotation(e5.getNotation(), board).get();

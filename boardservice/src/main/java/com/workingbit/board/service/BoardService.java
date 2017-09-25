@@ -53,17 +53,16 @@ public class BoardService {
    */
   public Board highlight(Board boardHighlight) {
     Square selectedSquare = boardHighlight.getSelectedSquare();
-    if (isValidHighlight(boardHighlight, selectedSquare)) {
+    if (isValidHighlight(selectedSquare)) {
       throw new BoardServiceError("Invalid highlight square");
     }
-    highlightedBoard(boardHighlight, selectedSquare);
+    highlightedBoard(selectedSquare, boardHighlight);
     return boardHighlight;
   }
 
-  private boolean isValidHighlight(Board boardHighlight, Square selectedSquare) {
+  private boolean isValidHighlight(Square selectedSquare) {
     return selectedSquare == null
-        || !selectedSquare.isOccupied()
-        || selectedSquare.getDraught().isBlack() != boardHighlight.isBlack();
+        || !selectedSquare.isOccupied();
   }
 
   /**
@@ -80,7 +79,10 @@ public class BoardService {
     boardDao.save(currentBoard);
 
     Board nextBoard = (Board) currentBoard.deepClone();
-    BoardUtils.moveDraught(selectedSquare, nextSquare, nextBoard);
+    nextBoard.setSelectedSquare(selectedSquare);
+    nextBoard.setNextSquare(nextSquare);
+
+    nextBoard = BoardUtils.moveDraught(selectedSquare, nextBoard);
     nextBoard.pushPreviousBoard(currentBoard.getId(), selectedSquare.getNotation());
 
     Utils.setRandomIdAndCreatedAt(nextBoard);

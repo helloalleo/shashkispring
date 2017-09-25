@@ -49,11 +49,11 @@ class HighlightMoveService {
     List<Square> allowedMoves = new ArrayList<>();
     List<Square> beatenMoves = new ArrayList<>();
     Draught draught = selectedSquare.getDraught();
-    boolean black = draught.isBlack();
+    boolean down = draught.isBlack();
     boolean queen = draught.isQueen();
-    findBeatenMovesOnDiagonalsOfSelectedSquare(selectedSquare, black, queen, beatenMoves, allowedMoves);
+    findBeatenMovesOnDiagonalsOfSelectedSquare(selectedSquare, down, queen, beatenMoves, allowedMoves);
     if (beatenMoves.isEmpty()) {
-      findAllowedMoves(selectedSquare, allowedMoves, black, queen);
+      findAllowedMoves(selectedSquare, allowedMoves, down, queen);
     }
     MovesList movesList = new MovesList();
     movesList.setBeaten(beatenMoves);
@@ -101,7 +101,15 @@ class HighlightMoveService {
       if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
         break;
       }
-      next = down ? squareListIterator.next() : squareListIterator.previous();
+      if (down) {
+//        squareListIterator.next();
+//        if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
+//          break;
+//        }
+        next = squareListIterator.next();
+      } else {
+        next = squareListIterator.previous();
+      }
       mustBeat = mustBeat(next, previous);
       if (mustBeat) {
         if (treeContains(beatenMoves, previous)) {
@@ -149,7 +157,15 @@ class HighlightMoveService {
       if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
         break;
       }
-      next = down ? squareListIterator.next() : squareListIterator.previous();
+      if (down) {
+//        squareListIterator.next();
+//        if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
+//          break;
+//        }
+        next = squareListIterator.next();
+      } else {
+        next = squareListIterator.previous();
+      }
       mustBeat = mustBeat(next, previous);
       if (mustBeat) {
         if (leavesContain(beatenMoves, previous)) {
@@ -174,7 +190,7 @@ class HighlightMoveService {
 
   private void walkCrossDiagonalForBeaten(Square next, Square previous, boolean down, int deep, boolean queen, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
     for (List<Square> diagonal : next.getDiagonals()) {
-      if (!isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
+      if (!isSubDiagonal(Arrays.asList(previous, next), diagonal)) {
         findBeatenMovesOnHalfDiagonal(diagonal, next, down, queen, deep, false, beatenMoves, allowedMoves);
         findBeatenMovesOnHalfDiagonal(diagonal, next, !down, queen, deep, false, beatenMoves, allowedMoves);
       }
@@ -186,11 +202,11 @@ class HighlightMoveService {
     for (List<Square> diagonal : diagonals) {
       int indexOfSelected = diagonal.indexOf(selectedSquare);
       if (indexOfSelected != -1) {
-        if (!queen) {
-          findAllowed(diagonal, selectedSquare, down, allowedMoves);
-        } else {
+        if (queen) {
           findAllowedForQueen(diagonal, selectedSquare, down, allowedMoves);
           findAllowedForQueen(diagonal, selectedSquare, !down, allowedMoves);
+        } else {
+          findAllowed(diagonal, selectedSquare, down, allowedMoves);
         }
       }
     }
@@ -203,13 +219,19 @@ class HighlightMoveService {
     }
   }
 
-  private void findAllowed(List<Square> diagonal, Square selectedSquare, boolean black, List<Square> allowedMoves) {
+  private void findAllowed(List<Square> diagonal, Square selectedSquare, boolean down, List<Square> allowedMoves) {
     ListIterator<Square> squareListIterator = diagonal.listIterator(diagonal.indexOf(selectedSquare));
-    findAllowedUsingIterator(black, allowedMoves, squareListIterator);
+    findAllowedUsingIterator(down, allowedMoves, squareListIterator);
   }
 
   private void findAllowedUsingIterator(boolean black, List<Square> allowedMoves, ListIterator<Square> squareListIterator) {
-    Square next = black ? squareListIterator.next() : squareListIterator.previous();
+    Square next;
+    if (black) {
+//      squareListIterator.next();
+      next = squareListIterator.next();
+    } else {
+      next = squareListIterator.previous();
+    }
     if (canMove(next)) {
       addAllowedMove(allowedMoves, next);
     }
@@ -231,7 +253,7 @@ class HighlightMoveService {
 
   private boolean hasBeatenOnCrossDiagonal(Square next, Square previous) {
     for (List<Square> diagonal : next.getDiagonals()) {
-      if (!isSubDiagonal(diagonal, Arrays.asList(previous, next))) {
+      if (!isSubDiagonal(Arrays.asList(previous, next), diagonal)) {
         return diagonal.stream().anyMatch(square -> square.isOccupied() && square.getDraught().isBeaten());
       }
     }

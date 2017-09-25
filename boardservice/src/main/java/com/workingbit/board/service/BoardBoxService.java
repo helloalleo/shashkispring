@@ -75,6 +75,11 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
+          Square selectedSquare = boardBox.getBoard().getSelectedSquare();
+          if (!selectedSquare.isOccupied()
+              || boardBox.isBlackTurn() != selectedSquare.getDraught().isBlack()) {
+            return updated;
+          }
           BoardUtils.updateMoveSquaresHighlight(currentBoard, boardBox.getBoard());
           currentBoard = boardService.highlight(currentBoard);
           updated.setBoard(currentBoard);
@@ -96,6 +101,7 @@ public class BoardBoxService {
           boardUpdated = boardService.move(selectedSquare, nextSquare, boardUpdated);
           updatedBox.setBoard(boardUpdated);
           updatedBox.setBoardId(boardUpdated.getId());
+          updatedBox.setBlackTurn(!updatedBox.isBlackTurn());
           boardBoxDao.save(updatedBox);
           return updatedBox;
         });
@@ -176,6 +182,7 @@ public class BoardBoxService {
   private void undoRedoBoardAction(BoardBox updated, Board redone) {
     updated.setBoard(redone);
     updated.setBoardId(redone.getId());
+    updated.setBlackTurn(!updated.isBlackTurn());
     boardBoxDao.save(updated);
   }
 }

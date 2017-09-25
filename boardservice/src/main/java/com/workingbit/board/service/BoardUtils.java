@@ -6,6 +6,7 @@ import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.Draught;
 import com.workingbit.share.domain.impl.Square;
 import com.workingbit.share.model.EnumRules;
+import com.workingbit.share.model.MovesList;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -112,7 +113,7 @@ public class BoardUtils {
     return diagonals;
   }
 
-  public static boolean isSubDiagonal(List<Square> diagonal, List<Square> subDiagonal) {
+  public static boolean isSubDiagonal(List<Square> subDiagonal, List<Square> diagonal) {
     return subDiagonal.stream().allMatch(diagonal::contains);
   }
 
@@ -284,17 +285,29 @@ public class BoardUtils {
     addDraught(board, notation, black, false, true);
   }
 
-  public static void moveDraught(Square selectedSquare, Square nextSquare, Board board) {
-    highlightedBoard(board, selectedSquare);
-    board.setNextSquare(nextSquare);
-    moveDraught(board);
-    highlightedBoard(board, board.getSelectedSquare());
+  public static Board moveDraught(Square selectedSquare, Board board) {
+    List<Square> beatenSquares = highlightedBoard(selectedSquare, board);
+    moveDraught(board, beatenSquares);
+    Board deepClone = (Board) board.deepClone();
+    beatenSquares = highlightedBoard(board.getSelectedSquare(), deepClone);
+    boolean isHighlightNext = beatenSquares.isEmpty();
+    if (isHighlightNext) {
+      return deepClone;
+    }
+    return board;
   }
 
-  public static void highlightedBoard(Board board, Square selectedSquare) {
+  /**
+   * Highlight board and returns is next move allowed
+   * @param selectedSquare
+   * @param board
+   * @return is next move allowed
+   */
+  public static List<Square> highlightedBoard(Square selectedSquare, Board board) {
     resetBoardHighlight(board);
-    highlightedAssignedMoves(selectedSquare);
+    MovesList movesList = highlightedAssignedMoves(selectedSquare);
     updateBoard(board);
+    return movesList.getBeaten();
   }
 
   private static void resetBoardHighlight(Board board) {
@@ -303,31 +316,71 @@ public class BoardUtils {
     });
   }
 
-  private static void moveDraught(Board board) {
+  private static void moveDraught(Board board, List<Square> beatenSquares) {
     Square sourceSquare = board.getSelectedSquare();
     Square targetSquare = board.getNextSquare();
     if (!targetSquare.isHighlighted()
         || sourceSquare == null
-        || !sourceSquare.isOccupied()
-        || sourceSquare.getDraught().isBlack() != board.isBlack()) {
+        || !sourceSquare.isOccupied()) {
       throw new BoardServiceError("Unable to move the draught");
     }
+    if (!beatenSquares.isEmpty()) {
+      Square beatenSquare = findBeatenSquare(sourceSquare, targetSquare);
+      BoardUtils.removeDraught(board, beatenSquare.getNotation(), beatenSquare.getDraught().isBlack());
+    }
     Draught draught = sourceSquare.getDraught();
-    findSquareByLink(sourceSquare, board)
-        .get().setDraught(null);
     BoardUtils.addDraught(board, targetSquare.getNotation(), draught);
     targetSquare = BoardUtils.findSquareByNotation(targetSquare.getNotation(), board)
         .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
+    targetSquare.setDraught(draught);
     board.setNextSquare(null);
     board.setPreviousSquare(board.getSelectedSquare());
     board.getPreviousSquare().setDraught(null);
     board.setSelectedSquare(targetSquare);
     targetSquare.setHighlighted(true);
 
+    findSquareByLink(sourceSquare, board)
+        .get().setDraught(null);
+
     replaceDraught(board.getWhiteDraughts(), targetSquare.getNotation(), sourceSquare.getNotation());
     replaceDraught(board.getBlackDraughts(), targetSquare.getNotation(), sourceSquare.getNotation());
   }
 
+  private static Square findBeatenSquare(Square sourceSquare, Square targetSquare) {
+    boolean upDirection = isUpDirection(sourceSquare, targetSquare);
+    for (List<Square> diagonal : sourceSquare.getDiagonals()) {
+      if (isSubDiagonal(Arrays.asList(sourceSquare, targetSquare), diagonal)) {
+        ListIterator<Square> squareListIterator = diagonal.listIterator(diagonal.indexOf(sourceSquare));
+        if (!upDirection) {
+          while (squareListIterator.hasNext()) {
+            Square next = squareListIterator.next();
+            if (next.isOccupied() && next.getDraught().isBlack() != sourceSquare.getDraught().isBlack()) {
+              return next;
+            }
+          }
+        } else {
+          while (squareListIterator.hasPrevious()) {
+            Square next = squareListIterator.previous();
+            if (next.isOccupied() && next.getDraught().isBlack() != sourceSquare.getDraught().isBlack()) {
+              return next;
+            }
+          }
+        }
+      }
+    }
+    throw new BoardServiceError("Unable to find beaten move");
+  }
+
+  private static boolean isUpDirection(Square source, Square target) {
+    return target.getV() - source.getV() < 0;
+  }
+
+  /**
+   * Move draught on whiteDraughts and blackDraughts lists
+   * @param draughts
+   * @param targetSquareNotation
+   * @param sourceSquareNotation
+   */
   private static void replaceDraught(Map<String, Draught> draughts, String targetSquareNotation, String sourceSquareNotation) {
     Draught draughtFromSource = draughts.remove(sourceSquareNotation);
     if (draughtFromSource != null) {
