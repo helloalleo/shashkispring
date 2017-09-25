@@ -330,7 +330,3 @@ task wrapper(type: Wrapper) {
 }
 
 bootRepackage.enabled = false
-//ideaModule.dependsOn generateApi
-
-//classes.dependsOn generatedClasses
-//compileJava.dependsOn compileGeneratedJava
