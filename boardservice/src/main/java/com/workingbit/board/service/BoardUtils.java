@@ -258,11 +258,11 @@ public class BoardUtils {
     Optional<Square> squareOptional = findSquareByNotation(notation, board);
     squareOptional.ifPresent(square -> {
       Draught draught = null;
-      if (!remove) {
+      if (!remove && !isOverloadDraughts(board, black)) {
         draught = new Draught(square.getV(), square.getH(), square.getDim(), black, queen);
-        if (black && !isOverloadDraughts(board, true)) {
+        if (black) {
           board.addBlackDraughts(notation, draught);
-        } else if (!isOverloadDraughts(board, black)) {
+        } else {
           board.addWhiteDraughts(notation, draught);
         }
       } else {

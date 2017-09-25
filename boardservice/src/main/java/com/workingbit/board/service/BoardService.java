@@ -97,9 +97,11 @@ public class BoardService {
   }
 
   public Board addDraught(Board currentBoard, String notation, Draught draught) {
-    BoardUtils.addDraught(currentBoard, notation, draught);
-    boardDao.save(currentBoard);
-    return currentBoard;
+    Board deepClone = (Board) currentBoard.deepClone();
+    Utils.setRandomIdAndCreatedAt(deepClone);
+    BoardUtils.addDraught(deepClone, notation, draught);
+    boardDao.save(deepClone);
+    return deepClone;
   }
 
   public Optional<Board> undo(Board currentBoard) {

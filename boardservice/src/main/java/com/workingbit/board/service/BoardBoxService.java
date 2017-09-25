@@ -143,10 +143,9 @@ public class BoardBoxService {
           Square squareLink = BoardUtils.findSquareByLink(selectedSquare, currentBoard)
               .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR));
           currentBoard = boardService.addDraught(currentBoard, squareLink.getNotation(), draught);
-          if (currentBoard == null) {
-            return null;
-          }
+          updated.setBoardId(currentBoard.getId());
           updated.setBoard(currentBoard);
+          save(updated);
           return updated;
         });
   }

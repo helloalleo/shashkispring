@@ -36,7 +36,7 @@ public class BoardApiImpl implements BoardApi {
   public ResponseEntity<BoardBox> findBoardById(@PathVariable String boardId) {
     Optional<BoardBox> boardBoxOptional = boardBoxService.findById(boardId);
     return boardBoxOptional.map(boardBox -> new ResponseEntity<>(boardBox, HttpStatus.OK))
-        .orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        .orElse(new ResponseEntity<>(HttpStatus.GONE));
   }
 
   @Override
@@ -49,34 +49,34 @@ public class BoardApiImpl implements BoardApi {
   public ResponseEntity<BoardBox> highlightBoard(@RequestBody BoardBox boardBox) {
     return boardBoxService.highlight(boardBox)
         .map(highlighted -> new ResponseEntity<>(highlighted, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.GONE));
   }
 
   @Override
   public ResponseEntity<BoardBox> move(@RequestBody BoardBox board) {
     return boardBoxService.move(board)
         .map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.GONE));
   }
 
   @Override
   public ResponseEntity<BoardBox> addDraught(@RequestBody BoardBox board) {
     return boardBoxService.addDraught(board)
         .map(moved -> new ResponseEntity<>(moved, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.GONE));
   }
 
   @Override
   public ResponseEntity<BoardBox> undo(@RequestBody BoardBox boardBox) {
     return boardBoxService.undo(boardBox)
         .map(undone -> new ResponseEntity<>(undone, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.GONE));
   }
 
   @Override
   public ResponseEntity<BoardBox> redo(@RequestBody BoardBox boardBox) {
     return boardBoxService.redo(boardBox)
         .map(redone -> new ResponseEntity<>(redone, HttpStatus.OK))
-        .orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.GONE));
   }
 }

@@ -148,20 +148,27 @@ class HighlightMoveService {
 
   private void findBeatenMovesForDraught(List<Square> diagonal, Square selectedSquare, boolean down, int deep, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
     int indexOfSelected = diagonal.indexOf(selectedSquare);
-    ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
-    Square next, previous = selectedSquare;
     deep++;
     int moveCounter = 0;
+
+    ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
+    walkByDirectionForDraught(down, down, deep, selectedSquare, moveCounter, squareListIterator, allowedMoves, beatenMoves);
+
+    if (!down) {
+      indexOfSelected++;
+    }
+    squareListIterator = diagonal.listIterator(indexOfSelected);
+    walkByDirectionForDraught(!down, down, deep, selectedSquare, moveCounter, squareListIterator, allowedMoves, beatenMoves);
+  }
+
+  private void walkByDirectionForDraught(boolean down, boolean black, int deep, Square previous, int moveCounter, ListIterator<Square> squareListIterator, List<Square> allowedMoves, Tree.Node<Square> beatenMoves) {
+    Square next;
     boolean mustBeat;
     do {
       if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
         break;
       }
       if (down) {
-//        squareListIterator.next();
-//        if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
-//          break;
-//        }
         next = squareListIterator.next();
       } else {
         next = squareListIterator.previous();
