@@ -3,4 +3,7 @@ BOARD_RESOURCE: ${BOARD_API_URL}/board
 
 CLIENT_URL: https://wiki.shashki.online
 
+AWS_ENDPOINT: dump
+AWS_DEFAULT_REGION: eu-central-1
+
 TEST: false

@@ -25,7 +25,7 @@ public class LambdaConfiguration {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/v1/**")
-            .allowedOrigins(appProperties.getClientUrl())
+            .allowedOrigins("https://wiki.shashki.online")
             .allowedMethods("GET", "POST", "PUT", "OPTIONS")
             .allowCredentials(false)
             .maxAge(3600);
