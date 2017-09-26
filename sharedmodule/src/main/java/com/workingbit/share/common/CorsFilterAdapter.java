@@ -21,7 +21,7 @@ public class CorsFilterAdapter {
 
   public CorsFilter corsFilter() {
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(false);
+    config.setAllowCredentials(true);
     for (String clientUrl : clientUrls) {
       config.addAllowedOrigin(clientUrl);
     }
