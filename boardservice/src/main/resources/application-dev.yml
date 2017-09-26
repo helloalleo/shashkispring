@@ -7,3 +7,5 @@ AWS_DEFAULT_REGION: eu-central-1
 CLIENT_URL: localhost:4200
 
 TEST: true
+
+CONTEXT_PATH: /v1

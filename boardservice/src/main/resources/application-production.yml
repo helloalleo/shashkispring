@@ -1,3 +1,5 @@
+CONTEXT_PATH: /v1
+
 CLIENT_URL: https://wiki.shashki.online
 
 AWS_ENDPOINT: dump

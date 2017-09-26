@@ -1,6 +1,7 @@
 package com.workingbit.article.config;
 
 import com.rits.cloning.Cloner;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,17 +21,22 @@ public class LambdaConfiguration {
 
   @Bean
   public WebMvcConfigurer corsConfigurer(AppProperties appProperties) {
-    System.out.println("**************** -------" + appProperties.getClientUrl());
     return new WebMvcConfigurerAdapter() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/v1/**")
-            .allowedOrigins("https://wiki.shashki.online")
+        registry.addMapping(appProperties.getContextPath()+"/**")
+            .allowedOrigins(appProperties.getClientUrl())
             .allowedMethods("GET", "POST", "PUT", "OPTIONS")
             .allowCredentials(false)
             .maxAge(3600);
       }
     };
+  }
+
+  @Bean
+  public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer(AppProperties appProperties) {
+    System.out.println(appProperties.getContextPath() + "***********8");
+    return container -> container.setContextPath(appProperties.getContextPath());
   }
 
   @Bean
