@@ -28,7 +28,7 @@ provider:
   region: eu-west-1
 
   apiKeys:
-    - ${env:AC_API_KEY} # you can hide it in a serverless variable
+    - ARTICLES_API_KEY
   usagePlan:
     quota:
       limit: 5000
@@ -41,7 +41,6 @@ provider:
 # you can define service wide environment variables here
   environment:
     SPRING_PROFILES_ACTIVE: production
-    AC_API_KEY: 123
 
 # you can add packaging information here
 package:
