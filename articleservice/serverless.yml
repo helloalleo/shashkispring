@@ -60,14 +60,25 @@ functions:
 #    Check the event documentation for details
     events:
       - http:
-          path: v1/article
+          path: v1/articles
           method: get
+      - http:
+          path: v1/article/{articleId}
+          method: get
+          request:
+            parameters:
+              path:
+                article: true
+      - http:
+          path: v1/article/{articleId}/board
+          method: get
+          request:
+            parameters:
+              path:
+                article: true
       - http:
           path: v1/article
           method: post
-      - http:
-          path: v1/article
-          method: put
       - http:
           path: v1/article
           method: options
