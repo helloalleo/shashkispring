@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: wikiservice
+service: articleservice
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -49,10 +49,10 @@ provider:
 
 # you can add packaging information here
 package:
-  artifact: build/distributions/wikiservice-1.0-SNAPSHOT.zip
+  artifact: build/distributions/articleservice-1.0-SNAPSHOT.zip
 
 functions:
-  wiki:
+  article:
     handler: com.workingbit.article.LambdaHandler::handleRequest
 
 #    The following are a few example events you can configure
