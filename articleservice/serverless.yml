@@ -58,33 +58,14 @@ functions:
       - http:
           path: v1/articles
           method: get
-          cors:
-            origin: 'https://wiki.shashki.online'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-            allowCredentials: false
+          private: true
       - http:
           path: v1/articles
           method: options
-          cors:
-            origin: 'https://wiki.shashki.online'
-            headers:
-              - Content-Type
-              - X-Amz-Date
-              - Authorization
-              - X-Api-Key
-              - X-Amz-Security-Token
-              - X-Amz-User-Agent
-            allowCredentials: false
+          private: true
       - http:
           path: v1/article/{articleId}
           method: get
-          private: true
           request:
             parameters:
               path:
