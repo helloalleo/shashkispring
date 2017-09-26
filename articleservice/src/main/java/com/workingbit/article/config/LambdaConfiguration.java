@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
  * Created by Aleksey Popryaduhin on 13:04 09/08/2017.
@@ -18,20 +15,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @ComponentScan(value = "com.workingbit.article", lazyInit = true)
 public class LambdaConfiguration {
-
-  @Bean
-  public WebMvcConfigurer corsConfigurer(AppProperties appProperties) {
-    return new WebMvcConfigurerAdapter() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping( "/**")
-            .allowedOrigins("*")
-            .allowedMethods("GET", "POST", "PUT", "OPTIONS", "HEADER", "DELETE")
-            .allowCredentials(false)
-            .maxAge(3600);
-      }
-    };
-  }
 
   @Bean
   public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer(AppProperties appProperties) {

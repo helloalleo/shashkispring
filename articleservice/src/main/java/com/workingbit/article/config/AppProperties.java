@@ -11,8 +11,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppProperties {
 
-  @Autowired
-  private Environment env;
+  private final Environment env;
 
   @Value("${TEST}")
   private
@@ -27,6 +26,11 @@ public class AppProperties {
 
   @Value("${CONTEXT_PATH}")
   private String contextPath;
+
+  @Autowired
+  public AppProperties(Environment env) {
+    this.env = env;
+  }
 
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
