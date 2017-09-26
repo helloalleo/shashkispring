@@ -28,15 +28,15 @@ provider:
   region: eu-west-1
 
   apiKeys:
-      - ${env:AC_API_KEY} # you can hide it in a serverless variable
-    usagePlan:
-      quota:
-        limit: 5000
-        offset: 2
-        period: MONTH
-      throttle:
-        burstLimit: 200
-        rateLimit: 100
+    - ${env:AC_API_KEY} # you can hide it in a serverless variable
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
 
 # you can define service wide environment variables here
   environment:
