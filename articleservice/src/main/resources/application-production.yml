@@ -3,7 +3,7 @@ CONTEXT_PATH: /v1
 BOARD_API_URL: https://kv5auqqq20.execute-api.eu-central-1.amazonaws.com/dev
 BOARD_RESOURCE: ${BOARD_API_URL}/board
 
-CLIENT_URL: https://dg4tx5hn1gjd3.cloudfront.net
+CLIENT_URL: https://wiki.shashki.online
 
 AWS_ENDPOINT: dump
 AWS_DEFAULT_REGION: eu-central-1
