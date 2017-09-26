@@ -8,3 +8,5 @@ AWS_ENDPOINT: http://localhost:8081
 AWS_DEFAULT_REGION: eu-central-1
 
 CLIENT_URL: localhost:4200
+
+TEST: true
