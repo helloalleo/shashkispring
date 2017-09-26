@@ -26,6 +26,7 @@ public class LambdaConfiguration {
         registry.addMapping(appProperties.getContextPath() + "/**")
             .allowedOrigins(appProperties.getClientUrl())
             .allowedMethods("GET", "POST", "PUT", "OPTIONS")
+            .allowedHeaders("Access-Control-Allow-Origin")
             .allowCredentials(false)
             .maxAge(3600);
       }
