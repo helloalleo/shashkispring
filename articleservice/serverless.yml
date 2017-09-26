@@ -28,7 +28,7 @@ provider:
   region: eu-west-1
 
   apiKeys:
-    - ARTICLES_API_KEY
+    - ${opt:stage}-ARTICLES_API_KEY
   usagePlan:
     quota:
       limit: 5000
