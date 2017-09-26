@@ -1,6 +1,6 @@
 CONTEXT_PATH: /v1
 
-CLIENT_URL: https://wiki.shashki.online
+CLIENT_URL: https://dg4tx5hn1gjd3.cloudfront.net
 
 AWS_ENDPOINT: dump
 AWS_DEFAULT_REGION: eu-central-1
