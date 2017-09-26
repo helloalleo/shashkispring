@@ -2,3 +2,6 @@ spring:
   profiles:
     active: dev
   mustache.check-template-location: false
+
+HEADERS: X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,Content-Type,Access-Control-Allow-Origin,Access-Control-Allow-Headers,X-Requested-With,requestId,Correlation-Id
+METHODS: GET,POST,PUT,OPTIONS,HEADER,DELETE

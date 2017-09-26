@@ -23,13 +23,14 @@ public class AppProperties {
   String endpoint;
 
   @Value("${CLIENT_URL}")
-  private String clientUrl;
+  private String clientUrls;
 
   @Value("${CONTEXT_PATH}")
   private String contextPath;
-
-  @Value("${ARTICLE_SERVICE_URL}")
-  private String articleUrl;
+  @Value("${HEADERS}")
+  private String headers;
+  @Value("${METHODS}")
+  private String methods;
 
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
@@ -48,28 +49,19 @@ public class AppProperties {
     return endpoint;
   }
 
-  public AppProperties setEndpoint(String endpoint) {
-    this.endpoint = endpoint;
-    return this;
-  }
-
-  public String getClientUrl() {
-    return clientUrl;
+  public String getClientUrls() {
+    return clientUrls;
   }
 
   public String getContextPath() {
     return contextPath;
   }
 
-  public void setContextPath(String contextPath) {
-    this.contextPath = contextPath;
+  public String getHeaders() {
+    return headers;
   }
 
-  public String getArticleUrl() {
-    return articleUrl;
-  }
-
-  public void setArticleUrl(String articleUrl) {
-    this.articleUrl = articleUrl;
+  public String getMethods() {
+    return methods;
   }
 }

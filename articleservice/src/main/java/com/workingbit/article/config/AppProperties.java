@@ -22,10 +22,14 @@ public class AppProperties {
   String endpoint;
 
   @Value("${CLIENT_URL}")
-  private String clientUrl;
+  private String clientUrls;
 
   @Value("${CONTEXT_PATH}")
   private String contextPath;
+  @Value("${HEADERS}")
+  private String corsHeaders;
+  @Value("${METHODS}")
+  private String corsMethods;
 
   @Autowired
   public AppProperties(Environment env) {
@@ -40,27 +44,23 @@ public class AppProperties {
     return test;
   }
 
-  public void setTest(boolean test) {
-    this.test = test;
-  }
-
   public String getEndpoint() {
     return endpoint;
   }
 
-  public void setEndpoint(String endpoint) {
-    this.endpoint = endpoint;
-  }
-
-  public String getClientUrl() {
-    return clientUrl;
+  public String getClientUrls() {
+    return clientUrls;
   }
 
   public String getContextPath() {
     return contextPath;
   }
 
-  public void setContextPath(String contextPath) {
-    this.contextPath = contextPath;
+  public String getCorsHeaders() {
+    return corsHeaders;
+  }
+
+  public String getCorsMethods() {
+    return corsMethods;
   }
 }

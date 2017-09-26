@@ -10,9 +10,13 @@ import org.springframework.web.filter.CorsFilter;
 public class CorsFilterAdapter {
 
   private final String[] clientUrls;
+  private final String[] headers;
+  private final String[] methods;
 
-  public CorsFilterAdapter(String[] clientUrls) {
-    this.clientUrls = clientUrls;
+  public CorsFilterAdapter(String clientUrls, String headers, String methods) {
+    this.clientUrls = clientUrls.split(",");
+    this.headers = headers.split(",");
+    this.methods = methods.split(",");
   }
 
   public CorsFilter corsFilter() {
@@ -21,11 +25,9 @@ public class CorsFilterAdapter {
     for (String clientUrl : clientUrls) {
       config.addAllowedOrigin(clientUrl);
     }
-    String[] headers = new String[] {"Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With", "requestId", "Correlation-Id"};
     for (String header: headers) {
       config.addAllowedHeader(header);
     }
-    String [] methods = new String[] {"GET", "POST", "PUT", "OPTIONS", "HEADER", "DELETE"};
     for (String method : methods) {
       config.addAllowedMethod(method);
     }
