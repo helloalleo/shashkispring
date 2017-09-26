@@ -194,7 +194,7 @@ project(':boardservice') {
     }
 
     task batchZip(type: Zip) {
-        from sourceSets.main.output, "$buildDir/libs/deps"
+        from sourceSets.main.output, sourceSets.swagger.output, "$buildDir/libs/deps"
     }
 }
 
@@ -291,7 +291,7 @@ project(':articleservice') {
     }
 
     task batchZip(type: Zip) {
-        from sourceSets.main.output, "$buildDir/libs/deps"
+        from sourceSets.main.output, sourceSets.swagger.output, "$buildDir/libs/deps"
     }
 }
 
