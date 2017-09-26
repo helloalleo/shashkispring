@@ -23,12 +23,9 @@ import static com.workingbit.article.common.EnumArticleKeys.*;
 @Component
 public class ArticleDao extends BaseDao<Article> {
 
-  private final AppProperties appProperties;
-
   @Autowired
   public ArticleDao(AppProperties appProperties) {
     super(Article.class, appProperties.getRegion(), appProperties.getEndpoint(), appProperties.isTest());
-    this.appProperties = appProperties;
   }
 
   @Override
