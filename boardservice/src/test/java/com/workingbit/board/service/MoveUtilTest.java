@@ -1,37 +1,69 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.exception.BoardServiceError;
+import com.workingbit.share.domain.impl.Board;
 import com.workingbit.share.domain.impl.BoardBox;
-import com.workingbit.share.domain.impl.Draught;
+import com.workingbit.share.domain.impl.Square;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
 
 /**
  * Created by Aleksey Popryaduhin on 21:13 11/08/2017.
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class MoveUtilTest extends BaseServiceTest {
 
   @Test
-  public void doMove() throws Exception, BoardServiceError {
-    BoardBox board = getBoard(false);
-    Draught draught = getDraught(5, 2);
-//    ISquare square = getSquareByVH(board, 5, 2);
-//    square.setDraught(draught);
-//    ISquare target = getSquareByVH(board, 4, 3);
-//    HighlightMoveService highlightMoveService = new HighlightMoveService(board, square, getRules());
-//    Map<String, Object> allowedMovesMap = highlightMoveService.findAllowedMoves();
-//    List<ISquare> allowedMoves = (List<ISquare>) allowedMovesMap.get(allowed.name());
-//    List<IDraught> beatenMoves = (List<IDraught>) allowedMovesMap.get(beaten.name());
-//    MoveUtil moveService = MoveUtil.getService(board, square, target, allowedMoves, beatenMoves);
-//    Map<String, Object> move = moveService.move();
-//    MapUtils.debugPrint(System.out, "Move", move);
-//    int vMove = (int) move.get(v.name());
-//    int hMove = (int) move.get(h.name());
-//    boolean queenMove = (boolean) move.get(queen.name());
+  public void should_white_move() {
+    BoardBox boardBox = getBoard(false);
+    Board board = boardBox.getBoard();
+    String c3 = "c3";
+    BoardUtils.addDraught(board, c3, false);
+    Square squareC3 = BoardUtils.findSquareByNotation(c3, board);
+    String d4 = "d4";
+    Square squareD4 = BoardUtils.findSquareByNotation(d4, board);
+    squareD4.setHighlighted(true);
+    board.setSelectedSquare(squareC3);
+    board.setNextSquare(squareD4);
 
+    BoardUtils.moveDraught(squareC3, board);
+    assertFalse(squareC3.isOccupied());
+    assertTrue(squareD4.isOccupied());
+  }
+
+  @Test
+  public void should_move_white_on_edge() {
+    BoardBox boardBox = getBoard(false);
+    Board board = boardBox.getBoard();
+    String c7 = "c7";
+    BoardUtils.addDraught(board, c7, false);
+    Square squareC3 = BoardUtils.findSquareByNotation(c7, board);
+    String d8 = "d8";
+    Square squareD4 = BoardUtils.findSquareByNotation(d8, board);
+    squareD4.setHighlighted(true);
+    board.setSelectedSquare(squareC3);
+    board.setNextSquare(squareD4);
+
+    BoardUtils.moveDraught(squareC3, board);
+    assertFalse(squareC3.isOccupied());
+    assertTrue(squareD4.isOccupied());
+  }
+
+  @Test
+  public void should_move_black() {
+    BoardBox boardBox = getBoard(false);
+    Board board = boardBox.getBoard();
+    String c7 = "c7";
+    BoardUtils.addDraught(board, c7, true);
+    Square squareC7 = BoardUtils.findSquareByNotation(c7, board);
+    String d6 = "d6";
+    Square squareD6 = BoardUtils.findSquareByNotation(d6, board);
+    squareD6.setHighlighted(true);
+    board.setSelectedSquare(squareC7);
+    board.setNextSquare(squareD6);
+
+    BoardUtils.moveDraught(squareC7, board);
+    assertFalse(squareC7.isOccupied());
+    assertTrue(squareD6.isOccupied());
   }
 }

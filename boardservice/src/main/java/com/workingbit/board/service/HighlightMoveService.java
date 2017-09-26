@@ -243,16 +243,22 @@ class HighlightMoveService {
   }
 
   private void findAllowed(List<Square> diagonal, Square selectedSquare, boolean down, List<Square> allowedMoves) {
-    ListIterator<Square> squareListIterator = diagonal.listIterator(diagonal.indexOf(selectedSquare));
+    int index = diagonal.indexOf(selectedSquare);
+    if (down) {
+      index++;
+    }
+    ListIterator<Square> squareListIterator = diagonal.listIterator(index);
     findAllowedUsingIterator(down, allowedMoves, squareListIterator);
   }
 
-  private void findAllowedUsingIterator(boolean black, List<Square> allowedMoves, ListIterator<Square> squareListIterator) {
+  private void findAllowedUsingIterator(boolean down, List<Square> allowedMoves, ListIterator<Square> squareListIterator) {
     Square next;
-    if (black) {
-//      squareListIterator.next();
+    if (down) {
       next = squareListIterator.next();
     } else {
+      if (hasNotNextMove(false, squareListIterator)) {
+        return;
+      }
       next = squareListIterator.previous();
     }
     if (canMove(next)) {

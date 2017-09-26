@@ -29,12 +29,25 @@ public class HighlightMoveServiceTest {
   @Test
   public void draught_simple_moves() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
-    System.out.println(board);
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
-    System.out.println(board);
     MovesList highlight = HighlightMoveService.highlightedAssignedMoves(getSquare(updatedBoard,"c3"));
-    System.out.println(highlight);
     testCollection("d4,b4", highlight.getAllowed());
+  }
+
+  @Test
+  public void draught_simple_moves_black() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Board updatedBoard = getSquareByVHWithBlackDraught(board, "c3"); // c3
+    MovesList highlight = HighlightMoveService.highlightedAssignedMoves(getSquare(updatedBoard,"c3"));
+    testCollection("b2,d2", highlight.getAllowed());
+  }
+
+  @Test
+  public void draught_became_queen() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Board updatedBoard = getSquareByVHWithDraught(board, "c7"); // c3
+    MovesList highlight = HighlightMoveService.highlightedAssignedMoves(getSquare(updatedBoard,"c3"));
+    testCollection("b8,d8", highlight.getAllowed());
   }
 
   @Test
@@ -127,9 +140,7 @@ public class HighlightMoveServiceTest {
   public void draught_two_beaten() throws BoardServiceError, ExecutionException, InterruptedException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
-    System.out.println(updatedBoard);
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d4"); // c3
-    System.out.println(updatedBoard);
     updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d6"); // c3
     MovesList highlight = HighlightMoveService.highlightedAssignedMoves(getSquare(updatedBoard, "c3"));
     testCollection("d4,d6", highlight.getBeaten());
@@ -181,7 +192,6 @@ public class HighlightMoveServiceTest {
 
   private Square getSquare(Board board, String notation) {
     Square square = BoardUtils.findSquareByNotation(notation, board);
-    System.out.println(square.getNotation());
     return square;
   }
 
@@ -196,9 +206,4 @@ public class HighlightMoveServiceTest {
 //    currentBoard.setSelectedSquare(selectedSquare);
     return board;
   }
-
-  protected EnumRules getRules() {
-    return EnumRules.RUSSIAN;
-  }
-  
 }
