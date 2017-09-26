@@ -143,7 +143,7 @@ project(':boardservice') {
             ])
             config.setImportMappings([
                     'Board'             : 'com.workingbit.share.domain.impl.Board',
-                    'BoardBox'    : 'com.workingbit.share.domain.impl.BoardBox',
+                    'BoardBox'          : 'com.workingbit.share.domain.impl.BoardBox',
                     'Square'            : 'com.workingbit.share.domain.impl.Square',
                     'CreateBoardRequest': 'com.workingbit.share.model.CreateBoardRequest'
             ])
@@ -184,10 +184,6 @@ project(':boardservice') {
         swaggerCompile project(':sharedmodule')
     }
 
-    compileSwaggerJava.dependsOn generateApi
-    classes.dependsOn swaggerClasses
-    compileJava.dependsOn compileSwaggerJava
-
     task copyRuntimeLibs(type: Copy) {
         into "$buildDir/libs/deps/lib"
         from configurations.runtime
@@ -196,6 +192,10 @@ project(':boardservice') {
     task batchZip(type: Zip) {
         from sourceSets.main.output, sourceSets.swagger.output, "$buildDir/libs/deps"
     }
+
+    compileSwaggerJava.dependsOn generateApi
+    classes.dependsOn swaggerClasses
+    compileJava.dependsOn compileSwaggerJava
 }
 
 project(':articleservice') {
@@ -243,7 +243,7 @@ project(':articleservice') {
             ])
             config.setImportMappings([
                     'Article'              : 'com.workingbit.share.domain.impl.Article',
-                    'BoardBox'       : 'com.workingbit.share.domain.impl.BoardBox',
+                    'BoardBox'             : 'com.workingbit.share.domain.impl.BoardBox',
                     'CreateArticleRequest' : 'com.workingbit.share.model.CreateArticleRequest',
                     'CreateArticleResponse': 'com.workingbit.share.model.CreateArticleResponse'
             ])

@@ -1,7 +1,6 @@
 package com.workingbit.article.config;
 
 import com.rits.cloning.Cloner;
-import com.workingbit.article.common.AppConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,12 +19,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class LambdaConfiguration {
 
   @Bean
-  public WebMvcConfigurer corsConfigurer(AppConstants appConstants) {
+  public WebMvcConfigurer corsConfigurer(AppProperties appProperties) {
     return new WebMvcConfigurerAdapter() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins(appConstants.getClientUrl())
+            .allowedOrigins(appProperties.getClientUrl())
             .allowedMethods("GET", "POST", "PUT", "OPTIONS")
             .allowCredentials(false)
             .maxAge(3600);

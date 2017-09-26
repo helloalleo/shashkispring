@@ -340,7 +340,7 @@ public class BoardUtils {
     targetSquare.setHighlighted(true);
 
     findSquareByLink(sourceSquare, board)
-        .get().setDraught(null);
+        .orElseThrow(getBoardServiceExceptionSupplier(INTERNAL_SERVER_ERROR)).setDraught(null);
 
     replaceDraught(board.getWhiteDraughts(), targetSquare.getNotation(), sourceSquare.getNotation());
     replaceDraught(board.getBlackDraughts(), targetSquare.getNotation(), sourceSquare.getNotation());

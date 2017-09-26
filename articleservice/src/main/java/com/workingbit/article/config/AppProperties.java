@@ -22,6 +22,9 @@ public class AppProperties {
   private
   String endpoint;
 
+  @Value("${CLIENT_URL}")
+  private String clientUrl;
+
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
   }
@@ -40,5 +43,9 @@ public class AppProperties {
 
   public void setEndpoint(String endpoint) {
     this.endpoint = endpoint;
+  }
+
+  public String getClientUrl() {
+    return clientUrl;
   }
 }
