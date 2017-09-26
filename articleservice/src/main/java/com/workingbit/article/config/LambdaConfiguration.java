@@ -24,7 +24,7 @@ public class LambdaConfiguration {
     return new WebMvcConfigurerAdapter() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/v1/**")
             .allowedOrigins(appProperties.getClientUrl())
             .allowedMethods("GET", "POST", "PUT", "OPTIONS")
             .allowCredentials(false)
