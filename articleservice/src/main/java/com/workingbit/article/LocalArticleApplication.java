@@ -9,7 +9,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 /**
  * Created by Aleksey Popryaduhin on 13:04 09/08/2017.
  */
-@Profile("production")
+@Profile("dev")
 @SpringBootApplication
 public class LocalArticleApplication {
 

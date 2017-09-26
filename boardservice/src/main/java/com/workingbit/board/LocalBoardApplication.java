@@ -3,11 +3,13 @@ package com.workingbit.board;
 import com.workingbit.board.config.LambdaConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 /**
  * Created by Aleksey Popryaduhin on 14:03 10/08/2017.
  */
+@Profile("dev")
 @SpringBootApplication
 public class LocalBoardApplication {
 

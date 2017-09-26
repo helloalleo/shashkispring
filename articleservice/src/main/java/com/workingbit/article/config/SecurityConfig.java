@@ -25,7 +25,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     http
         .addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
         .authorizeRequests()
-        .antMatchers(appProperties.getContextPath() + "/**")
+        .antMatchers("/**")
         .permitAll()
         .and()
         .csrf()
@@ -33,6 +33,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   private CorsFilter corsFilter() {
-    return new CorsFilterAdapter(appProperties.getClientUrl()).corsFilter();
+    String[] clientUrls = new String[]{appProperties.getClientUrl()};
+    return new CorsFilterAdapter(clientUrls).corsFilter();
   }
 }

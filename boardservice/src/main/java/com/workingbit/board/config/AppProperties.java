@@ -28,6 +28,9 @@ public class AppProperties {
   @Value("${CONTEXT_PATH}")
   private String contextPath;
 
+  @Value("${ARTICLE_SERVICE_URL}")
+  private String articleUrl;
+
   public String getRegion() {
     return env.getProperty( "AWS_DEFAULT_REGION", System.getenv("AWS_DEFAULT_REGION"));
   }
@@ -60,5 +63,13 @@ public class AppProperties {
 
   public void setContextPath(String contextPath) {
     this.contextPath = contextPath;
+  }
+
+  public String getArticleUrl() {
+    return articleUrl;
+  }
+
+  public void setArticleUrl(String articleUrl) {
+    this.articleUrl = articleUrl;
   }
 }

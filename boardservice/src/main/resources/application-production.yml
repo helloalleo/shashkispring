@@ -1,6 +1,7 @@
 CONTEXT_PATH: /v
 
 CLIENT_URL: https://wiki.shashki.online
+ARTICLE_SERVICE_URL: https://hzvzddncfb.execute-api.eu-west-1.amazonaws.com/dev/v1
 
 AWS_ENDPOINT: dump
 AWS_DEFAULT_REGION: eu-central-1

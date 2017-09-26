@@ -9,16 +9,18 @@ import org.springframework.web.filter.CorsFilter;
  */
 public class CorsFilterAdapter {
 
-  private final String clientUrl;
+  private final String[] clientUrls;
 
-  public CorsFilterAdapter(String clientUrl) {
-    this.clientUrl = clientUrl;
+  public CorsFilterAdapter(String[] clientUrls) {
+    this.clientUrls = clientUrls;
   }
 
   public CorsFilter corsFilter() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(false);
-    config.addAllowedOrigin(clientUrl);
+    for (String clientUrl : clientUrls) {
+      config.addAllowedOrigin(clientUrl);
+    }
     String[] headers = new String[] {"Content-Type", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With", "requestId", "Correlation-Id"};
     for (String header: headers) {
       config.addAllowedHeader(header);
