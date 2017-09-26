@@ -14,8 +14,9 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 public class LambdaHandler implements RequestHandler<AwsProxyRequest, AwsProxyResponse> {
     private static SpringLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> handler;
+  private static final String basePath = "/v1";
 
-    private static SpringLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> getHandler() {
+  private static SpringLambdaContainerHandler<AwsProxyRequest, AwsProxyResponse> getHandler() {
         if (null == handler) {
             try {
                 SpringApplication application = new SpringApplication(LambdaConfiguration.class);
@@ -26,6 +27,7 @@ public class LambdaHandler implements RequestHandler<AwsProxyRequest, AwsProxyRe
 
                 handler = SpringLambdaContainerHandler.getAwsProxyHandler(appContext);
                 handler.activateSpringProfiles("production");
+              handler.stripBasePath(basePath);
             } catch (ContainerInitializationException e) {
                 e.printStackTrace();
             }

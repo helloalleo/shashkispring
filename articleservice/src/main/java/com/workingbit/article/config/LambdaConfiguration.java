@@ -35,7 +35,6 @@ public class LambdaConfiguration {
 
   @Bean
   public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer(AppProperties appProperties) {
-    System.out.println(appProperties.getContextPath() + "***********8");
     return container -> container.setContextPath(appProperties.getContextPath());
   }
 
