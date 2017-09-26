@@ -22,9 +22,9 @@ public class CorsFilterAdapter {
   public CorsFilter corsFilter() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowCredentials(true);
-    for (String clientUrl : clientUrls) {
-      config.addAllowedOrigin(clientUrl);
-    }
+//    for (String clientUrl : clientUrls) {
+      config.addAllowedOrigin("*");
+//    }
     for (String header: headers) {
       config.addAllowedHeader(header);
     }
