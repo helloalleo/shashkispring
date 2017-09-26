@@ -8,6 +8,6 @@ pipelines:
           - ./gradlew clean build copyRuntimeLibs batchZip --parallel -x test
           - npm i
           - cd articleservice
-          - ./node_modules/./bin/sls deploy
+          - ../node_modules/./bin/sls deploy
           - cd ../boardservice
-          - ./node_modules/./bin/sls deploy
+          - ../node_modules/./bin/sls deploy
