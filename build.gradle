@@ -117,30 +117,13 @@ project(':boardservice') {
     bootRepackage.enabled = false
     findMainClass.enabled = false
 
-//    bootRepackage {
-//        mainClass = 'com.workingbit.board.LocalBoardApplication'
-//    }
-
     springBoot {
         mainClass = 'com.workingbit.board.LocalBoardApplication'
         executable = true
         buildInfo()
     }
 
-//    bootRun {
-//        addResources = false
-//    }
-
     task stage(dependsOn: 'bootRepackage') {
-    }
-
-    task copyRuntimeLibs(type: Copy) {
-        into "$buildDir/libs/deps/lib"
-        from configurations.runtime
-    }
-
-    task batchZip(type: Zip) {
-        from sourceSets.main.output, "$buildDir/libs/deps"
     }
 
     def swaggerSourceFile = 'src/main/resources/boardservice-swagger.yaml'
@@ -204,6 +187,15 @@ project(':boardservice') {
     compileSwaggerJava.dependsOn generateApi
     classes.dependsOn swaggerClasses
     compileJava.dependsOn compileSwaggerJava
+
+    task copyRuntimeLibs(type: Copy) {
+        into "$buildDir/libs/deps/lib"
+        from configurations.runtime
+    }
+
+    task batchZip(type: Zip) {
+        from sourceSets.main.output, "$buildDir/libs/deps"
+    }
 }
 
 project(':articleservice') {
@@ -221,7 +213,6 @@ project(':articleservice') {
 
     bootRun {
         addResources = false
-//        classpath += sourceSets.generated.output
     }
 
     dependencies {
@@ -230,24 +221,11 @@ project(':articleservice') {
 
     bootRun {
         addResources = false
-//        classpath += sourceSets.generated.output
     }
-
-//    jar {
-//        from sourceSets.generated.output
-//    }
 
     task stage(dependsOn: 'bootRepackage') {
     }
 
-    task copyRuntimeLibs(type: Copy) {
-        into "$buildDir/libs/deps/lib"
-        from configurations.runtime
-    }
-
-    task batchZip(type: Zip) {
-        from sourceSets.main.output, "$buildDir/libs/deps"
-    }
     def swaggerSourceFile = "src/main/resources/articleservice-swagger.yaml"
     task generateApi {
         inputs.file("$projectDir/$swaggerSourceFile")
@@ -306,6 +284,15 @@ project(':articleservice') {
     compileSwaggerJava.dependsOn generateApi
     classes.dependsOn swaggerClasses
     compileJava.dependsOn compileSwaggerJava
+
+    task copyRuntimeLibs(type: Copy) {
+        into "$buildDir/libs/deps/lib"
+        from configurations.runtime
+    }
+
+    task batchZip(type: Zip) {
+        from sourceSets.main.output, "$buildDir/libs/deps"
+    }
 }
 
 sourceCompatibility = 1.8
