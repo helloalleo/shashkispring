@@ -25,7 +25,7 @@ provider:
 
 # you can overwrite defaults here
   stage: dev
-  region: us-east-1
+  region: eu-west-1
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -93,6 +93,13 @@ functions:
               path:
                 boardId: true
       - http:
+          path: v1/board/{boardId}
+          method: options
+          request:
+            parameters:
+              path:
+                boardId: true
+      - http:
           path: v1/board/highlight
           method: post
       - http:
@@ -124,8 +131,8 @@ functions:
           method: options
 
 #    Define function environment variables here
-#    environment:
-#      variable2: value2
+    environment:
+      SPRING_PROFILES_ACTIVE: production
 
 # you can add CloudFormation api templates here
 resources:
