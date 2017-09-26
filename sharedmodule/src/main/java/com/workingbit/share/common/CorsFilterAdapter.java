@@ -21,10 +21,10 @@ public class CorsFilterAdapter {
 
   public CorsFilter corsFilter() {
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowCredentials(true);
-//    for (String clientUrl : clientUrls) {
-      config.addAllowedOrigin("*");
-//    }
+    config.setAllowCredentials(false);
+    for (String clientUrl : clientUrls) {
+      config.addAllowedOrigin(clientUrl);
+    }
     for (String header: headers) {
       config.addAllowedHeader(header);
     }

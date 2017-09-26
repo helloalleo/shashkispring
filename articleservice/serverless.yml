@@ -29,14 +29,6 @@ provider:
 
   apiKeys:
     - ${opt:stage}-ARTICLES_API_KEY
-  usagePlan:
-    quota:
-      limit: 5000
-      offset: 2
-      period: MONTH
-    throttle:
-      burstLimit: 200
-      rateLimit: 100
 
 # you can define service wide environment variables here
   environment:
@@ -61,7 +53,6 @@ functions:
       - http:
           path: v1/articles
           method: options
-          private: true
       - http:
           path: v1/article/{articleId}
           method: get
