@@ -60,16 +60,16 @@ functions:
 #    Check the event documentation for details
     events:
       - http:
-          path: article
+          path: v1/article
           method: get
       - http:
-          path: article
+          path: v1/article
           method: post
       - http:
-          path: article
+          path: v1/article
           method: put
       - http:
-          path: article
+          path: v1/article
           method: options
 
 #      - s3: ${env:BUCKET}

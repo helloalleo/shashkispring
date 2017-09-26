@@ -60,36 +60,67 @@ functions:
 #    Check the event documentation for details
     events:
       - http:
-          path: board
-          method: get
-      - http:
-          path: board
+          path: v1/add-draught
           method: post
       - http:
-          path: board
-          method: put
-      - http:
-          path: board
+          path: v1/add-draught
           method: options
       - http:
-          path: board/{id}
+          path: v1/board
+          method: post
+      - http:
+          path: v1/board
+          method: options
+      - http:
+          path: v1/board/{boardId}
+          method: delete
+          request:
+            parameters:
+              path:
+                boardId: true
+      - http:
+          path: v1/board/{boardId}
+          method: options
+          request:
+            parameters:
+              path:
+                boardId: true
+      - http:
+          path: v1/board/{boardId}
           method: get
           request:
             parameters:
               path:
-                id: true
+                boardId: true
       - http:
-          path: board/{id}
-          method: options
-          request:
-            parameters:
-              path:
-                id: true
-      - http:
-          path: board/highlight
+          path: v1/board/highlight
           method: post
       - http:
-          path: board/highlight
+          path: v1/board/highlight
+          method: options
+      - http:
+          path: v1/board/move
+          method: post
+      - http:
+          path: v1/board/move
+          method: options
+      - http:
+          path: v1/board/undo
+          method: post
+      - http:
+          path: v1/board/undo
+          method: options
+      - http:
+          path: v1/board/redo
+          method: post
+      - http:
+          path: v1/board/redo
+          method: options
+      - http:
+          path: v1/boards
+          method: post
+      - http:
+          path: v1/boards
           method: options
 
 #    Define function environment variables here
