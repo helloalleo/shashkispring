@@ -25,9 +25,8 @@ public class LambdaConfiguration {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping(appProperties.getContextPath() + "/**")
-            .allowedOrigins(appProperties.getClientUrl())
-            .allowedMethods("GET", "POST", "PUT", "OPTIONS")
-            .allowedHeaders("Access-Control-Allow-Origin")
+            .allowedOrigins("*")
+            .allowedMethods("GET", "POST", "PUT", "OPTIONS", "HEADER", "DELETE")
             .allowCredentials(false)
             .maxAge(3600);
       }
