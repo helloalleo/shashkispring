@@ -20,6 +20,7 @@ public class LambdaConfiguration {
 
   @Bean
   public WebMvcConfigurer corsConfigurer(AppProperties appProperties) {
+    System.out.println("**************** -------" + appProperties.getClientUrl());
     return new WebMvcConfigurerAdapter() {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
