@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 /**
  * ResponseError
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-26T19:15:21.767+03:00")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2017-09-26T23:06:53.576+03:00")
 
 public class ResponseError   {
   @JsonProperty("code")

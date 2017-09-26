@@ -50,7 +50,7 @@ public class BaseServiceTest {
   }
 
   Square getSquareByVH(BoardBox board, int v, int h) {
-    return findSquareByVH(board.getBoard(), v, h).get();
+    return findSquareByVH(board.getBoard(), v, h);
   }
 
   protected EnumRules getRules() {

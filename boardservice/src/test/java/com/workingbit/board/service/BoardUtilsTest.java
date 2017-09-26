@@ -8,7 +8,6 @@ import com.workingbit.share.model.EnumRules;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -90,10 +89,9 @@ public class BoardUtilsTest {
   public void add_draught_to_board() throws BoardServiceError {
     Board boardBox = getBoardFilled();
     BoardUtils.addDraught(boardBox, "c3", true);
-    Optional<Square> c3 = BoardUtils.findSquareByNotation("c3", boardBox);
-    assertTrue(c3.isPresent());
-    c3.get().getDiagonals().forEach(squares -> {
-      int index = squares.indexOf(c3.get());
+    Square c3 = BoardUtils.findSquareByNotation("c3", boardBox);
+    c3.getDiagonals().forEach(squares -> {
+      int index = squares.indexOf(c3);
       Square square1 = squares.get(index);
       assertNotNull(square1.getDraught());
     });
@@ -120,35 +118,33 @@ public class BoardUtilsTest {
   public void test_highlight() throws BoardServiceError, ExecutionException, InterruptedException {
     Board boardBox = getBoard();
     BoardUtils.addDraught(boardBox, "d4", false);
-    Optional<Square> d4 = BoardUtils.findSquareByNotation("d4", boardBox);
-    assertTrue(d4.isPresent());
-    HighlightMoveService.highlightedAssignedMoves(d4.get());
-    Optional<Square> e5 = BoardUtils.findSquareByNotation("e5", boardBox);
-    assertTrue(e5.isPresent());
-    assertTrue(e5.get().isHighlighted());
+    Square d4 = BoardUtils.findSquareByNotation("d4", boardBox);
+    HighlightMoveService.highlightedAssignedMoves(d4);
+    Square e5 = BoardUtils.findSquareByNotation("e5", boardBox);
+    assertTrue(e5.isHighlighted());
   }
 
   @Test
   public void move_draught() throws BoardServiceError {
     Board board = getBoardFilled();
-    Square c3 = BoardUtils.findSquareByNotation("c3", board).get();
+    Square c3 = BoardUtils.findSquareByNotation("c3", board);
     board.setSelectedSquare(c3);
-    c3 = BoardUtils.findSquareByNotation(c3.getNotation(), board).get();
+    c3 = BoardUtils.findSquareByNotation(c3.getNotation(), board);
     assertTrue(c3.isOccupied());
-    Square d4 = BoardUtils.findSquareByNotation("d4", board).get();
+    Square d4 = BoardUtils.findSquareByNotation("d4", board);
     board.setNextSquare(d4);
 
     board = BoardUtils.moveDraught(c3, board);
-    c3 = BoardUtils.findSquareByNotation(c3.getNotation(), board).get();
+    c3 = BoardUtils.findSquareByNotation(c3.getNotation(), board);
     assertFalse(c3.isOccupied());
-    d4 = BoardUtils.findSquareByNotation(d4.getNotation(), board).get();
+    d4 = BoardUtils.findSquareByNotation(d4.getNotation(), board);
     assertTrue(d4.isOccupied());
 
-    Square e5 = BoardUtils.findSquareByNotation("e5", board).get();
+    Square e5 = BoardUtils.findSquareByNotation("e5", board);
     board = BoardUtils.moveDraught(d4, board);
-    d4 = BoardUtils.findSquareByNotation(d4.getNotation(), board).get();
+    d4 = BoardUtils.findSquareByNotation(d4.getNotation(), board);
     assertFalse(d4.isOccupied());
-    e5 = BoardUtils.findSquareByNotation(e5.getNotation(), board).get();
+    e5 = BoardUtils.findSquareByNotation(e5.getNotation(), board);
     assertTrue(e5.isOccupied());
 
     assertEquals(board.getWhiteDraughts().size(), board.getRules().getDraughtsCount());

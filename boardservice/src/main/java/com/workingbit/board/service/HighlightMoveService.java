@@ -98,7 +98,7 @@ class HighlightMoveService {
     deep++;
     boolean mustBeat;
     do {
-      if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
+      if (hasNotNextMove(down, squareListIterator)) {
         break;
       }
       if (down) {
@@ -127,7 +127,7 @@ class HighlightMoveService {
       }
       previous = next;
     }
-    while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
+    while (hasNext(down, squareListIterator));
 
     if (!walkAllowedMoves.isEmpty() && walkAllowedMoves.contains(previous)) {
       allowedMoves.addAll(walkAllowedMoves);
@@ -152,23 +152,31 @@ class HighlightMoveService {
     int moveCounter = 0;
 
     ListIterator<Square> squareListIterator = diagonal.listIterator(indexOfSelected);
-    walkByDirectionForDraught(down, down, deep, selectedSquare, moveCounter, squareListIterator, allowedMoves, beatenMoves);
+    walkOnDiagonalForDraught(down, deep, selectedSquare, moveCounter, squareListIterator, allowedMoves, beatenMoves);
 
-    if (!down) {
-      indexOfSelected++;
-    }
-    squareListIterator = diagonal.listIterator(indexOfSelected);
-    walkByDirectionForDraught(!down, down, deep, selectedSquare, moveCounter, squareListIterator, allowedMoves, beatenMoves);
+//    if (!down) {
+//      indexOfSelected++;
+//    }
+//    squareListIterator = diagonal.listIterator(indexOfSelected);
+//    walkOnDiagonalForDraught(!down, deep, selectedSquare, moveCounter, squareListIterator, allowedMoves, beatenMoves);
   }
 
-  private void walkByDirectionForDraught(boolean down, boolean black, int deep, Square previous, int moveCounter, ListIterator<Square> squareListIterator, List<Square> allowedMoves, Tree.Node<Square> beatenMoves) {
+  private void walkOnDiagonalForDraught(boolean down, int deep, Square previous, int moveCounter, ListIterator<Square> squareListIterator, List<Square> allowedMoves, Tree.Node<Square> beatenMoves) {
     Square next;
+    boolean first = down;
     boolean mustBeat;
     do {
-      if (!((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()))) {
+      if (hasNotNextMove(down, squareListIterator)) {
         break;
       }
       if (down) {
+        if (first) {
+          squareListIterator.next();
+          first = false;
+        }
+        if (hasNotNextMove(true, squareListIterator)) {
+          break;
+        }
         next = squareListIterator.next();
       } else {
         next = squareListIterator.previous();
@@ -192,7 +200,15 @@ class HighlightMoveService {
       moveCounter++;
       previous = next;
     }
-    while ((down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious()));
+    while (hasNext(down, squareListIterator));
+  }
+
+  private boolean hasNext(boolean down, ListIterator<Square> squareListIterator) {
+    return (down && squareListIterator.hasNext()) || (!down && squareListIterator.hasPrevious());
+  }
+
+  private boolean hasNotNextMove(boolean down, ListIterator<Square> squareListIterator) {
+    return !hasNext(down, squareListIterator);
   }
 
   private void walkCrossDiagonalForBeaten(Square next, Square previous, boolean down, int deep, boolean queen, Tree.Node<Square> beatenMoves, List<Square> allowedMoves) {
@@ -221,7 +237,7 @@ class HighlightMoveService {
 
   private void findAllowedForQueen(List<Square> diagonal, Square selectedSquare, boolean down, List<Square> allowedMoves) {
     ListIterator<Square> squareListIterator = diagonal.listIterator(diagonal.indexOf(selectedSquare));
-    while (down && squareListIterator.hasNext() || !down && squareListIterator.hasPrevious()) {
+    while (hasNext(down, squareListIterator)) {
       findAllowedUsingIterator(down, allowedMoves, squareListIterator);
     }
   }

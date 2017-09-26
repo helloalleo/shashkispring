@@ -48,6 +48,16 @@ public class HighlightMoveServiceTest {
   }
 
   @Test
+  public void draught_one_beat_back() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
+    Board board = getBoard();
+    Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
+    updatedBoard = getSquareByVHWithBlackDraught(updatedBoard, "d2"); // c3
+    MovesList highlight = HighlightMoveService.highlightedAssignedMoves(getSquare(updatedBoard,"c3"));
+    testCollection("d2", highlight.getBeaten());
+    testCollection("e1", highlight.getAllowed());
+  }
+
+  @Test
   public void draught_beat_sequence() throws BoardServiceError, ExecutionException, InterruptedException, TimeoutException {
     Board board = getBoard();
     Board updatedBoard = getSquareByVHWithDraught(board, "c3"); // c3
@@ -170,7 +180,7 @@ public class HighlightMoveServiceTest {
   }
 
   private Square getSquare(Board board, String notation) {
-    Square square = BoardUtils.findSquareByNotation(notation, board).get();
+    Square square = BoardUtils.findSquareByNotation(notation, board);
     System.out.println(square.getNotation());
     return square;
   }
@@ -180,7 +190,7 @@ public class HighlightMoveServiceTest {
 //    Board board = new Board(boardBox, false, EnumRules.RUSSIAN, 60);
 //    Board currentBoard = board;
 //    Optional<Square> squareByVH = BoardUtils.findSquareByNotation(currentBoard, "c3"); // 5,2
-//    Square selectedSquare = squareByVH.get();
+//    Square selectedSquare = squareByVH;
 //    Draught draught = new Draught(5, 2, getRules().getDimension());
 //    selectedSquare.setDraught(draught);
 //    currentBoard.setSelectedSquare(selectedSquare);

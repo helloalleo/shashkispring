@@ -1,6 +1,5 @@
 package com.workingbit.board.service;
 
-import com.workingbit.board.common.Messages;
 import com.workingbit.board.dao.BoardBoxDao;
 import com.workingbit.board.model.BoardBoxes;
 import com.workingbit.board.model.Strings;
@@ -19,8 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.workingbit.board.service.BoardUtils.getBoardServiceExceptionSupplier;
-
 /**
  * Created by Aleksey Popryaduhin on 07:00 22/09/2017.
  */
@@ -29,15 +26,13 @@ public class BoardBoxService {
 
   private final BoardBoxDao boardBoxDao;
   private final BoardService boardService;
-  private final Messages messages;
 
   @Autowired
   public BoardBoxService(BoardBoxDao boardBoxDao,
-                         BoardService boardService,
-                         Messages messages) {
+                         BoardService boardService
+  ) {
     this.boardBoxDao = boardBoxDao;
     this.boardService = boardService;
-    this.messages = messages;
   }
 
   public BoardBox createBoard(CreateBoardRequest createBoardRequest) {
@@ -144,8 +139,7 @@ public class BoardBoxService {
     return findById(boardBox.getId())
         .map(updated -> {
           Board currentBoard = updated.getBoard();
-          Square squareLink = BoardUtils.findSquareByLink(selectedSquare, currentBoard)
-              .orElseThrow(getBoardServiceExceptionSupplier(messages.get("internal_server_error")));
+          Square squareLink = BoardUtils.findSquareByLink(selectedSquare, currentBoard);
           currentBoard = boardService.addDraught(currentBoard, squareLink.getNotation(), draught);
           updated.setBoardId(currentBoard.getId());
           updated.setBoard(currentBoard);

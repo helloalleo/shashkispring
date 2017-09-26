@@ -28,9 +28,9 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     Board board = boardBox.getBoard();
     String c3 = "c3";
     BoardUtils.addDraught(board, c3, false);
-    Square squareC3 = BoardUtils.findSquareByNotation(c3, board).get();
+    Square squareC3 = BoardUtils.findSquareByNotation(c3, board);
     String d4 = "d4";
-    Square squareD4 = BoardUtils.findSquareByNotation(d4, board).get();
+    Square squareD4 = BoardUtils.findSquareByNotation(d4, board);
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
@@ -40,9 +40,9 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     assertTrue(squareD4.isOccupied());
 
     board = boardService.undo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertTrue(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertFalse(squareD4.isOccupied());
   }
 
@@ -52,9 +52,9 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     Board board = boardBox.getBoard();
     String c3 = "c3";
     BoardUtils.addDraught(board, c3, false);
-    Square squareC3 = BoardUtils.findSquareByNotation(c3, board).get();
+    Square squareC3 = BoardUtils.findSquareByNotation(c3, board);
     String d4 = "d4";
-    Square squareD4 = BoardUtils.findSquareByNotation(d4, board).get();
+    Square squareD4 = BoardUtils.findSquareByNotation(d4, board);
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
@@ -64,7 +64,7 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     assertTrue(squareD4.isOccupied());
 
     String e5 = "e5";
-    Square squareE5 = BoardUtils.findSquareByNotation(e5, board).get();
+    Square squareE5 = BoardUtils.findSquareByNotation(e5, board);
     squareE5.setHighlighted(true);
     board.setSelectedSquare(squareD4);
     board.setNextSquare(squareE5);
@@ -74,15 +74,15 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     assertFalse(squareD4.isOccupied());
 
     board = boardService.undo(board).get();
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
-    squareE5 = BoardUtils.findSquareByLink(squareE5, board).get();
+    squareE5 = BoardUtils.findSquareByLink(squareE5, board);
     assertFalse(squareE5.isOccupied());
 
     board = boardService.undo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertTrue(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertFalse(squareD4.isOccupied());
   }
 
@@ -91,41 +91,41 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     BoardBox boardBox = getBoard(true);
     Board board = boardBox.getBoard();
     String c3 = "c3";
-    Square squareC3 = BoardUtils.findSquareByNotation(c3, board).get();
+    Square squareC3 = BoardUtils.findSquareByNotation(c3, board);
     String d4 = "d4";
-    Square squareD4 = BoardUtils.findSquareByNotation(d4, board).get();
+    Square squareD4 = BoardUtils.findSquareByNotation(d4, board);
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
 
     board = boardService.move(squareC3, squareD4, board);
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertFalse(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
 
     String e5 = "e5";
-    Square squareE5 = BoardUtils.findSquareByNotation(e5, board).get();
+    Square squareE5 = BoardUtils.findSquareByNotation(e5, board);
     squareE5.setHighlighted(true);
     board.setSelectedSquare(squareD4);
     board.setNextSquare(squareE5);
 
     board = boardService.move(squareD4, squareE5, board);
-    squareE5 = BoardUtils.findSquareByLink(squareE5, board).get();
+    squareE5 = BoardUtils.findSquareByLink(squareE5, board);
     assertTrue(squareE5.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertFalse(squareD4.isOccupied());
 
     board = boardService.undo(board).get();
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
-    squareE5 = BoardUtils.findSquareByLink(squareE5, board).get();
+    squareE5 = BoardUtils.findSquareByLink(squareE5, board);
     assertFalse(squareE5.isOccupied());
 
     board = boardService.undo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertTrue(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertFalse(squareD4.isOccupied());
   }
 
@@ -135,29 +135,29 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     Board board = boardBox.getBoard();
     String c3 = "c3";
     BoardUtils.addDraught(board, c3, false);
-    Square squareC3 = BoardUtils.findSquareByNotation(c3, board).get();
+    Square squareC3 = BoardUtils.findSquareByNotation(c3, board);
     String d4 = "d4";
-    Square squareD4 = BoardUtils.findSquareByNotation(d4, board).get();
+    Square squareD4 = BoardUtils.findSquareByNotation(d4, board);
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
 
     board = boardService.move(squareC3, squareD4, board);
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertFalse(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
 
     board = boardService.undo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertTrue(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertFalse(squareD4.isOccupied());
 
     board = boardService.redo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertFalse(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
   }
 
@@ -166,29 +166,29 @@ public class BoardUndoRedoTest extends BaseServiceTest {
     BoardBox boardBox = getBoard(true);
     Board board = boardBox.getBoard();
     String c3 = "c3";
-    Square squareC3 = BoardUtils.findSquareByNotation(c3, board).get();
+    Square squareC3 = BoardUtils.findSquareByNotation(c3, board);
     String d4 = "d4";
-    Square squareD4 = BoardUtils.findSquareByNotation(d4, board).get();
+    Square squareD4 = BoardUtils.findSquareByNotation(d4, board);
     squareD4.setHighlighted(true);
     board.setSelectedSquare(squareC3);
     board.setNextSquare(squareD4);
 
     board = boardService.move(squareC3, squareD4, board);
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertFalse(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
 
     board = boardService.undo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertTrue(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertFalse(squareD4.isOccupied());
 
     board = boardService.redo(board).get();
-    squareC3 = BoardUtils.findSquareByLink(squareC3, board).get();
+    squareC3 = BoardUtils.findSquareByLink(squareC3, board);
     assertFalse(squareC3.isOccupied());
-    squareD4 = BoardUtils.findSquareByLink(squareD4, board).get();
+    squareD4 = BoardUtils.findSquareByLink(squareD4, board);
     assertTrue(squareD4.isOccupied());
   }
 
