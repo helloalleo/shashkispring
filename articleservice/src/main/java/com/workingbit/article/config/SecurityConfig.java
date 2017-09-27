@@ -52,7 +52,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   public class HelloFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+      System.out.println("INIT HELLO");
     }
 
     @Override
@@ -88,7 +88,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void destroy() {
-
+      System.out.println("DESTROY HELLO");
     }
   }
 }
