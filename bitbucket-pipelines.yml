@@ -5,7 +5,7 @@ pipelines:
           - gradle
           - node
         script:
-          - ./gradlew build copyRuntimeLibs batchZip --parallel -x test
+          - ./gradlew build copyRuntimeLibs batchZip -x test
           - npm i
           - cd articleservice
           - ../node_modules/.bin/sls deploy

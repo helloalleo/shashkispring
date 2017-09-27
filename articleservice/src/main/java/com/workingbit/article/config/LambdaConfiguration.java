@@ -16,6 +16,10 @@ import org.springframework.web.client.RestTemplate;
 @ComponentScan(value = "com.workingbit.article", lazyInit = true)
 public class LambdaConfiguration {
 
+  public LambdaConfiguration() {
+    System.out.println("CONSTRUCTOR");
+  }
+
   @Bean
   public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer(AppProperties appProperties) {
     return container -> container.setContextPath(appProperties.getContextPath());
