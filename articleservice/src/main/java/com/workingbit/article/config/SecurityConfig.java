@@ -29,9 +29,10 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+    System.out.println("SPRING SECURITY CONFIGURE");
     http
 //        .addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
-        .addFilterAfter(new HelloFilter(), SessionManagementFilter.class)
+        .addFilterBefore(new HelloFilter(), SessionManagementFilter.class)
         .authorizeRequests()
         .antMatchers("/**")
         .permitAll()
