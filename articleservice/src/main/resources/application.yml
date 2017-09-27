@@ -3,5 +3,5 @@ spring:
     active: dev
   mustache.check-template-location: false
 
-HEADERS: Content-Type,Content-Length,Connection,Date,x-amzn-RequestId,Access-Control-Allow-Origin,Content-Encoding,Vary,X-Amzn-Trace-Id,X-Cache,Via,X-Amz-Cf-Id,
+HEADERS: Content-Type,Content-Length,Connection,Date,x-amzn-RequestId,Access-Control-Allow-Origin,Content-Encoding,Vary,X-Amzn-Trace-Id,X-Cache,Via,X-Amz-Cf-Id
 METHODS: GET,POST,PUT,OPTIONS,HEADER,DELETE
