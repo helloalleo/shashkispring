@@ -1,6 +1,7 @@
 package com.workingbit.article.config;
 
 import com.workingbit.share.common.CorsFilterAdapter;
+import com.workingbit.share.common.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,11 +30,10 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    System.out.println("SPRING SECURITY CONFIGURE");
+    Log.debug("SPRING SECURITY CONFIGURE");
     http
 //        .addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
         .addFilterBefore(new HelloFilter(), HeaderWriterFilter.class)
-        .addFilterAfter(new HelloFilter(), HeaderWriterFilter.class)
         .authorizeRequests()
         .antMatchers("/**")
         .permitAll()
@@ -53,24 +53,24 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
   public class HelloFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-      System.out.println("INIT HELLO");
+      Log.debug("INIT HELLO");
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-      System.out.println("*****************************");
+      Log.debug("*****************************");
       HttpServletRequest httpRequest = (HttpServletRequest) request;
       Enumeration<String> headerNames = httpRequest.getHeaderNames();
 
       if (headerNames != null) {
         while (headerNames.hasMoreElements()) {
           String name = headerNames.nextElement();
-          System.out.println("Header: " + name + " " + httpRequest.getHeader(name));
+          Log.debug("Header: " + name + " " + httpRequest.getHeader(name));
         }
       }
 
       String origin = httpRequest.getHeader("Origin");
-      System.out.println(origin);
+      Log.debug(origin);
       UriComponentsBuilder urlBuilder;
       // Build more efficiently if we can: we only need scheme, host, port for origin comparison
       urlBuilder = UriComponentsBuilder.newInstance().
@@ -80,16 +80,16 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
       UriComponents actualUrl = urlBuilder.build();
       UriComponents originUrl = UriComponentsBuilder.fromOriginHeader(origin).build();
 
-      System.out.println("ActualUrl: " + actualUrl);
-      System.out.println("OriginUrl: " + originUrl);
-      System.out.println("*****************************");
+      Log.debug("ActualUrl: " + actualUrl);
+      Log.debug("OriginUrl: " + originUrl);
+      Log.debug("*****************************");
       //doFilter
       chain.doFilter(httpRequest, response);
     }
 
     @Override
     public void destroy() {
-      System.out.println("DESTROY HELLO");
+      Log.debug("DESTROY HELLO");
     }
   }
 }
