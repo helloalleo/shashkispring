@@ -2,6 +2,7 @@ package com.workingbit.article.config;
 
 import com.workingbit.share.common.CorsFilterAdapter;
 import com.workingbit.share.common.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,7 +34,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     Log.debug("SPRING SECURITY CONFIGURE");
     http
         .addFilterBefore(corsFilter(), HeaderWriterFilter.class) //adds your custom CorsFilter
-//        .addFilterBefore(new HelloFilter(), HeaderWriterFilter.class)
+        .addFilterAfter(new HelloFilter(), HeaderWriterFilter.class)
         .authorizeRequests()
         .antMatchers("/**")
         .permitAll()
@@ -70,18 +71,20 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
       }
 
       String origin = httpRequest.getHeader("Origin");
-      Log.debug(origin);
-      UriComponentsBuilder urlBuilder;
-      // Build more efficiently if we can: we only need scheme, host, port for origin comparison
-      urlBuilder = UriComponentsBuilder.newInstance().
-          scheme(httpRequest.getScheme()).
-          host(httpRequest.getServerName()).
-          port(httpRequest.getServerPort());
-      UriComponents actualUrl = urlBuilder.build();
-      UriComponents originUrl = UriComponentsBuilder.fromOriginHeader(origin).build();
+      if (StringUtils.isNotBlank(origin)) {
+        Log.debug(origin);
+        UriComponentsBuilder urlBuilder;
+        // Build more efficiently if we can: we only need scheme, host, port for origin comparison
+        urlBuilder = UriComponentsBuilder.newInstance().
+            scheme(httpRequest.getScheme()).
+            host(httpRequest.getServerName()).
+            port(httpRequest.getServerPort());
+        UriComponents actualUrl = urlBuilder.build();
+        UriComponents originUrl = UriComponentsBuilder.fromOriginHeader(origin).build();
 
-      Log.debug("ActualUrl: " + actualUrl);
-      Log.debug("OriginUrl: " + originUrl);
+        Log.debug("ActualUrl: " + actualUrl);
+        Log.debug("OriginUrl: " + originUrl);
+      }
       Log.debug("*****************************");
       //doFilter
       chain.doFilter(httpRequest, response);
