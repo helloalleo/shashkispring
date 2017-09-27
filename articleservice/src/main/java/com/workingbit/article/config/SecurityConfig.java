@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.session.SessionManagementFilter;
+import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,7 +32,8 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     System.out.println("SPRING SECURITY CONFIGURE");
     http
 //        .addFilterBefore(corsFilter(), SessionManagementFilter.class) //adds your custom CorsFilter
-        .addFilterBefore(new HelloFilter(), SessionManagementFilter.class)
+        .addFilterBefore(new HelloFilter(), HeaderWriterFilter.class)
+        .addFilterAfter(new HelloFilter(), HeaderWriterFilter.class)
         .authorizeRequests()
         .antMatchers("/**")
         .permitAll()
@@ -71,11 +72,11 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
       String origin = httpRequest.getHeader("Origin");
       System.out.println(origin);
       UriComponentsBuilder urlBuilder;
-        // Build more efficiently if we can: we only need scheme, host, port for origin comparison
-        urlBuilder = UriComponentsBuilder.newInstance().
-            scheme(httpRequest.getScheme()).
-            host(httpRequest.getServerName()).
-            port(httpRequest.getServerPort());
+      // Build more efficiently if we can: we only need scheme, host, port for origin comparison
+      urlBuilder = UriComponentsBuilder.newInstance().
+          scheme(httpRequest.getScheme()).
+          host(httpRequest.getServerName()).
+          port(httpRequest.getServerPort());
       UriComponents actualUrl = urlBuilder.build();
       UriComponents originUrl = UriComponentsBuilder.fromOriginHeader(origin).build();
 
